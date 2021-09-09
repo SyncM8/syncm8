@@ -1,0 +1,38 @@
+name: Deploy Backend to Prod
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+    
+    steps:
+      - uses: actions/checkout@v2 
+      - name: Deploy in EC2
+        uses: aws-actions/configure-aws-credentials@v1
+        env:
+          PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
+          HOSTNAME : ${{ secrets.EC2_HOSTNAME  }}
+      
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${HOSTNAME} '
+          
+            #Now we have got the access of EC2 and we will start the deploy .
+            cd /home/ubuntu/syncm8 &&
+            git checkout master &&
+            git fetch --all &&
+            git reset --hard origin/master &&
+            git pull origin master &&
+            source syncm8env/bin/activate &&
+            pip install -r requirements.txt &&
+            
+
+          '
+      
+            
