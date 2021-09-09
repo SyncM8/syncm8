@@ -8,12 +8,17 @@ type_defs = gql(load_schema_from_path("../schema.graphql"))
 schema = make_executable_schema(type_defs, query, mutation)
 
 
-static_dir = os.path.join('client', 'public')
+static_dir = os.path.join('build', 'public')
 
 app = Flask(__name__,
     root_path=os.path.abspath(".."),
     static_folder=static_dir,
     static_url_path='')
+
+
+@app.route("/test")
+def hello():
+    return "<h1 style='color:blue'>Test is successful.</h1>"
 
 
 @app.route('/')
