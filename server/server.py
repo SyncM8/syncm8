@@ -8,7 +8,7 @@ type_defs = gql(load_schema_from_path("../schema.graphql"))
 schema = make_executable_schema(type_defs, query, mutation)
 
 
-static_dir = os.path.join('build', 'public')
+static_dir = os.path.join('client', 'build')
 
 app = Flask(__name__,
     root_path=os.path.abspath(".."),
