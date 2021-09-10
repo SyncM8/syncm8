@@ -21,8 +21,12 @@ jobs:
           npm ci
 
       - name: Run ESLint
-        run: npm run lint
+        run: |
+          cd client
+          npm run lint
 
       - name: Run Frontend Tests
-        run: npm run test
+        run: |
+          cd client
+          npm run test
 
