@@ -18,7 +18,7 @@ app = Flask(__name__,
 
 @app.route("/test")
 def hello():
-    return "<h1 style='color:blue'>Test is successful.</h1>"
+    return "<h1 style='color:blue'>The test is successful.</h1>"
 
 
 @app.route('/')
