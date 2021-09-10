@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2 
       - name: Deploy in EC2
-        uses: aws-actions/configure-aws-credentials@v1
         env:
           PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
           HOSTNAME : ${{ secrets.EC2_HOSTNAME  }}
