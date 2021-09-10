@@ -24,10 +24,10 @@ jobs:
           
             #Now we have got the access of EC2 and we will start the deploy .
             cd /home/ubuntu/syncm8 &&
-            git checkout master &&
+            git checkout main &&
             git fetch --all &&
-            git reset --hard origin/master &&
-            git pull origin master &&
+            git reset --hard origin/main &&
+            git pull origin main &&
             cd server &&
             source syncm8env/bin/activate &&
             pip install -r requirements.txt &&
