@@ -16,6 +16,11 @@ app = Flask(__name__,
     static_url_path='')
 
 
+@app.route("/test")
+def hello():
+    return "<h1 style='color:blue'>The test is successful.</h1>"
+
+
 @app.route('/')
 def root():
     return send_from_directory(static_dir, "index.html")
