@@ -2,7 +2,7 @@ from ariadne import QueryType, MutationType
 from uuid import uuid4
 
 class Coffee:
-   def __init__(self, size, name, coffee_type):
+   def __init__(self, size: str, name: str, coffee_type: str):
        self.size = size
        self.name = name
        self.type = coffee_type

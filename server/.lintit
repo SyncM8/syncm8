@@ -1,0 +1,6 @@
+#!/bin/bash
+
+python -m black  src/
+python -m isort  src/
+python -m flake8 src/
+python -m mypy   src/
