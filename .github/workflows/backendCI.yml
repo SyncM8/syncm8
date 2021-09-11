@@ -5,7 +5,7 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  eslintAndTests:
+  pythonLintAndTests:
     runs-on: ubuntu-latest
     
     steps:
