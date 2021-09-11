@@ -1,5 +1,6 @@
 from ariadne import QueryType, MutationType
 from uuid import uuid4
+from typing import List
 
 class Coffee:
    def __init__(self, size: str, name: str, coffee_type: str):
@@ -11,7 +12,7 @@ class Coffee:
 query = QueryType()
 mutation = MutationType()
 
-orders = []
+orders: List = []
 
 @query.field("orders")
 def resolve_orders(_, info):
