@@ -19,11 +19,6 @@ jobs:
           cd server
           python -m pip install -r requirements.txt
 
-      - name: Run Python Lint
-        run: |
-          cd server
-          source .lintit
-
       - name: Run Backend Tests
         run: |
           cd server
