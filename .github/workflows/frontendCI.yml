@@ -5,9 +5,9 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  eslintAndTests:
+  frontendTests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
 
@@ -15,18 +15,12 @@ jobs:
         with:
           node-version: 10.x
 
-      - name: Install modules
+      - name: Install Modules
         run: |
           cd client
           npm ci
-
-      - name: Run ESLint
-        run: |
-          cd client
-          npm run lint
 
       - name: Run Frontend Tests
         run: |
           cd client
           npm run test
-
