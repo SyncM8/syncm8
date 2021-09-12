@@ -7,7 +7,7 @@ on:
 jobs:
   eslintAndTests:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v2
 
@@ -29,4 +29,3 @@ jobs:
         run: |
           cd client
           npm run test
-
