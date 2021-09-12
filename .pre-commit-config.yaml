@@ -1,9 +1,11 @@
 fail_fast: false
 default_language_version:
     python: python3.8
+ci:
+    submodules: true
 repos:
-- repo: local  # make sure that node_modules is installed, otherwise eslint will fail
-  hooks:
+-   repo: local  # make sure that node_modules is installed, otherwise eslint will fail
+    hooks:
     - id: download node_modules
       name: download node_modules
       entry: bash -c '[ -d "./client/node_modules" ] || (cd client && npm ci && echo "Installed node_modules")'
