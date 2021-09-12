@@ -1,0 +1,17 @@
+*.env
+.flaskenv
+*.pyc
+*.pyo
+*env/
+venv/
+.venv/
+env*
+*.egg
+*.egg-info/
+__pycache__
+.tox/
+.cache/
+.pytest_cache/
+dist/
+build/
+docs/_build/

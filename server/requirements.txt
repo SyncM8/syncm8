@@ -22,7 +22,10 @@ pycodestyle==2.7.0
 pyflakes==2.3.1
 pyparsing==2.4.7
 pytest==6.2.5
+python-http-client==3.3.2
 regex==2021.8.28
+sendgrid==6.8.1
+starkbank-ecdsa==1.1.1
 starlette==0.14.2
 toml==0.10.2
 tomli==1.2.1
