@@ -1,22 +1,18 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
+  parser: "@typescript-eslint/parser",
   parserOptions: {
     tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json'],
+    project: ["./tsconfig.json"],
   },
-  plugins: [
-    '@typescript-eslint',
-    'prettier',
-  ],
+  plugins: ["@typescript-eslint", "react", "react-hooks"],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
-    'prettier',
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
   ],
-  rules: {
-    'prettier/prettier': 2,
-  },
+  ignorePatterns: [".eslintrc.js"],
 };
-
