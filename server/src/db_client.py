@@ -9,4 +9,4 @@ users = db["users"]
 
 cursor = users.find({})
 for document in cursor:
-        print(document)
+    print(document)
