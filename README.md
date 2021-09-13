@@ -2,3 +2,4 @@
 ![Frontend Tests](https://github.com/SyncM8/syncm8/actions/workflows/frontendCI.yml/badge.svg)
 ![Backend Deploy](https://github.com/SyncM8/syncm8/actions/workflows/backendProd.yml/badge.svg)
 ![Frontend Deploy](https://github.com/SyncM8/syncm8/actions/workflows/frontendProd.yml/badge.svg)
+![pre-commit](https://github.com/SyncM8/syncm8/actions/workflows/pre-commit.yml/badge.svg)
