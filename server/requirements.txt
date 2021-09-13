@@ -7,6 +7,7 @@ botocore==1.21.40
 cfgv==3.3.1
 click==8.0.1
 distlib==0.3.2
+dnspython==1.16.0
 filelock==3.0.12
 flake8==3.9.2
 Flask==2.0.1
@@ -30,6 +31,7 @@ pre-commit==2.15.0
 py==1.10.0
 pycodestyle==2.7.0
 pyflakes==2.3.1
+pymongo==3.12.0
 pyparsing==2.4.7
 pytest==6.2.5
 python-dateutil==2.8.2
