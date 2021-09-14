@@ -5,11 +5,10 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
   },
-  plugins: ["@typescript-eslint", "react", "react-hooks", "jsdoc"],
+  plugins: ["@typescript-eslint", "react", "react-hooks"],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:jsdoc/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:import/recommended",
