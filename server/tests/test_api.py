@@ -21,7 +21,6 @@ def client():
 
 def test_test(client):
     """Test that test endpoint is working."""
-
     res = client.get("/test")
     assert res.status_code == 200
     assert b"The test is successful" in res.data
