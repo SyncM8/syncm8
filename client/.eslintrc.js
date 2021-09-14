@@ -14,5 +14,10 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
+  settings: {
+    react: {
+      version: "17.0",
+    },
+  },
   ignorePatterns: [".eslintrc.js"],
 };
