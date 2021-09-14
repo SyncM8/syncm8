@@ -4,15 +4,11 @@ import logo from "./logo.svg";
 
 import "./App.css";
 
-const myAdd2: (baseValue: number, increment: number) => number = function (
-  x,
-  y
-) {
-  return x + y;
-};
-
-console.log(myAdd2(1, 2));
-
+/**
+ * App default component
+ *
+ * @returns {React.Component} default component
+ */
 function App(): React.ReactElement {
   return (
     <div className="App">
