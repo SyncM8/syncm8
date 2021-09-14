@@ -21,6 +21,12 @@ repos:
     rev: 19.3b0
     hooks:
     -   id: black
+-   repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1
+    hooks:
+    -   id: pydocstyle
+        args:
+        -   "--ignore=D100,D104,D203"
 -   repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:

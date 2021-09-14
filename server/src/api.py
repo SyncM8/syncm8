@@ -21,22 +21,25 @@ app = Flask(
 
 @app.route("/test")
 def hello():
+    """Serve test html."""
     return "<h1 style='color:blue'>The test is successful.</h1>"
 
 
 @app.route("/")
 def root():
+    """Serve default index.html file."""
     return send_from_directory(static_dir, "index.html")
 
 
 @app.route("/graphql", methods=["GET"])
 def graphql_playground():
-    """Serve GraphiQL playground"""
+    """Serve GraphQL playground."""
     return PLAYGROUND_HTML, 200
 
 
 @app.route("/graphql", methods=["POST"])
 def graphql_server():
+    """Receive GraphQL commands."""
     data = request.get_json()
 
     success, result = graphql_sync(schema, data, context_value=request, debug=app.debug)
@@ -45,5 +48,6 @@ def graphql_server():
     return jsonify(result), status_code
 
 
-def run():
-    app.run(debug=True)
+def get_app():
+    """Return flask app."""
+    return app
