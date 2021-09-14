@@ -45,5 +45,5 @@ def graphql_server():
     return jsonify(result), status_code
 
 
-def run():
-    app.run(debug=True)
+def get_app():
+    return app
