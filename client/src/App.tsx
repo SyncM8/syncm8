@@ -1,35 +1,21 @@
-import React from "react";
-
-import logo from "./logo.svg";
-
+import React, { FC } from "react";
 import "./App.css";
 
-/**
- * App default component
- *
- * @returns {React.Component} default component
- */
-function App(): React.ReactElement {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img alt="logo" className="App-logo" src={logo} />
+import { Layout } from "antd";
 
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
+const { Header, Footer, Sider, Content } = Layout;
 
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App: FC = () => (
+  <>
+    <Layout>
+      <Header>Header</Header>
+      <Layout>
+        <Content>Content</Content>
+        <Sider>Sider</Sider>
+      </Layout>
+      <Footer>Footer</Footer>
+    </Layout>
+  </>
+);
 
 export default App;
