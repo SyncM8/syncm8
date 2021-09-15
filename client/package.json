@@ -5,7 +5,6 @@
   "dependencies": {
     "@apollo/client": "^3.4.11",
     "@craco/craco": "^6.3.0",
-    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^26.0.24",
@@ -45,6 +44,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
     "eslint": "^7.32.0",
