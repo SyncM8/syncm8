@@ -1,4 +1,4 @@
-name: Deploy Frontend To Prod
+name: Frontend CD
 
 on:
   push:

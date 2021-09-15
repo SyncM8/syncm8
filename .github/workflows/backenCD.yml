@@ -1,4 +1,4 @@
-name: Deploy Backend to Prod
+name: Backend CD
 
 on:
   push:
