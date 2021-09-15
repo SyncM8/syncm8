@@ -1,35 +1,36 @@
-import React from "react";
+import React, { FC } from "react";
+import "./App.less";
 
-import logo from "./logo.svg";
+import { Input, Col, Row, Button, PageHeader, Tabs, Typography } from "antd";
 
-import "./App.css";
+const { Title } = Typography;
+const { TabPane } = Tabs;
 
-/**
- * App default component
- *
- * @returns {React.Component} default component
- */
-function App(): React.ReactElement {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img alt="logo" className="App-logo" src={logo} />
-
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App: FC = () => (
+  <>
+    <PageHeader
+      className="site-page-header"
+      // title="Title"
+      // subTitle="This is a subtitle"
+    >
+      <Row>
+        <Col span={8}>
+          <Input.Search placeholder="sync with..." />
+        </Col>
+        <Col offset={8} span={4}>
+          <Tabs defaultActiveKey="dashboard">
+            <TabPane tab="Dashboard" key="dashboard" />
+            <TabPane tab="Mates" key="mates" />
+            <TabPane tab="Families" key="families" />
+          </Tabs>
+        </Col>
+        <Col span={4}>Profile Here</Col>
+      </Row>
+    </PageHeader>
+    <Title>Title</Title>
+    <Button type="primary">Button Here</Button>
+    <Title level={2}>Second Title</Title>
+  </>
+);
 
 export default App;

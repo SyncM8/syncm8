@@ -19,5 +19,5 @@ module.exports = {
       version: "17.0",
     },
   },
-  ignorePatterns: [".eslintrc.js"],
+  ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };
