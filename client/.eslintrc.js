@@ -14,5 +14,10 @@ module.exports = {
     "plugin:import/recommended",
     "plugin:import/typescript",
   ],
-  ignorePatterns: [".eslintrc.js"],
+  settings: {
+    react: {
+      version: "17.0",
+    },
+  },
+  ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };

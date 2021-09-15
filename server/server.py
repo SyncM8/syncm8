@@ -1,4 +1,4 @@
-from src.api import run
+from src.api import get_app
 
 if __name__ == "__main__":
-    run()
+    get_app().run(debug=True)
