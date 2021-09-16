@@ -45,6 +45,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/dom": "^8.5.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/react-router-dom": "^5.1.9",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
