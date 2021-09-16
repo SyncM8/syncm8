@@ -17,7 +17,9 @@ jobs:
       - name: Install Dependencies
         run: |
           cd server
-          python -m pip install -r requirements.txt
+          pip install pipenv
+          pipenv shell
+          pipenv install --dev
 
       - name: Run Backend Tests
         run: |
