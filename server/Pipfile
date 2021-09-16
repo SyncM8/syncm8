@@ -6,10 +6,10 @@ name = "pypi"
 [packages]
 ariadne = "*"
 flask = "*"
-pymongo = "*"
 sendgrid = "*"
-boto3 = "*"
+boto3 = {extras = ["crt"], version = "*"}
 uwsgi = "*"
+pymongo = {extras = ["srv"], version = "*"}
 
 [dev-packages]
 pytest = "*"
