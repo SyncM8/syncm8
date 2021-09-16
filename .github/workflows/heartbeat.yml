@@ -2,7 +2,7 @@ name: Heartbeat
 
 on:
   schedule:
-    - cron: '0 0 0/2 ? * * *' #every other hour
+    - cron: '0 0/2 * * *' #every other hour
   workflow_dispatch:
 
 jobs:
