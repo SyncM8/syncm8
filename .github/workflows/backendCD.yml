@@ -29,8 +29,8 @@ jobs:
             git reset --hard origin/main &&
             git pull origin main &&
             cd server &&
-            pipenv
+            pipenv shell &&
             source prod.env &&
-            pip install -r requirements.txt &&
+            pipenv install --deploy &&
             sudo systemctl restart syncm8.service
           '
