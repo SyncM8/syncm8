@@ -10,6 +10,7 @@ sendgrid = "*"
 boto3 = {extras = ["crt"], version = "*"}
 uwsgi = "*"
 pymongo = {extras = ["srv"], version = "*"}
+flask-login = "*"
 
 [dev-packages]
 pytest = "*"

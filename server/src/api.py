@@ -3,6 +3,7 @@ import os
 from ariadne import gql, graphql_sync, load_schema_from_path, make_executable_schema
 from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, jsonify, request, send_from_directory
+from flask_login import LoginManager
 
 from .model import mutation, query
 
@@ -18,6 +19,10 @@ app = Flask(
     static_folder=static_dir,
     static_url_path="",
 )
+app.config["REMEMBER_COOKIE_HTTPONLY"] = True
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 @app.route("/test")
