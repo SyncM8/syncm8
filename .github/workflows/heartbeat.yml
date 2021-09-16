@@ -1,0 +1,21 @@
+name: Heartbeat
+
+on:
+  schedule:
+    - cron: '0 0/2 * * *' #every other hour
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cheack Heartbeat
+        run : |
+          RES=$(curl https://backend.syncm8.com/test)
+          GOOD_RES="<h1 style='color:blue'>The test is successful.</h1>"
+          if [ "$RES" == "$GOOD_RES" ];
+            then echo 'Success';
+            else exit 1;
+          fi
+          echo 'done'
