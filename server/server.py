@@ -1,4 +1,5 @@
-from src.api import get_app
+# do not change this import statement, .ini file expeccts exactly this
+from src.api import app
 
 if __name__ == "__main__":
-    get_app().run(debug=True)
+    app.run(debug=True)
