@@ -7,22 +7,27 @@ from flask_login import LoginManager
 
 from .model import mutation, query
 
+# from .user import UserManager
+
 type_defs = gql(load_schema_from_path("../schema.graphql"))
 schema = make_executable_schema(type_defs, query, mutation)
 
 
 static_dir = os.path.join("client", "build")
 
-app = Flask(
-    __name__,
-    root_path=os.path.abspath(".."),
-    static_folder=static_dir,
-    static_url_path="",
-)
-app.config["REMEMBER_COOKIE_HTTPONLY"] = True
+app = Flask(__name__)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+# user_manager = UserManager()
+
+# # The user loader looks up a user by their user ID, and is called by
+# # flask-login to get the current user from the session.  Return None
+# # if the user ID isn't valid.
+# @login_manager.user_loader
+# def user_loader(user_id):
+#     return user_manager.lookup_user(user_id)
 
 
 @app.route("/test")
