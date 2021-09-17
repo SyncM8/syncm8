@@ -1,13 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
+import App from "./components/App/App";
 import reportWebVitals from "./reportWebVitals";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
 const client = new ApolloClient({
-  uri: "https://backend.syncm8.com",
+  uri: process.env.REACT_APP_API_URL,
   cache: new InMemoryCache(),
 });
 
