@@ -1,9 +1,8 @@
-import React, { useState } from "react";
 import { Typography, Button, notification } from "antd";
 import { Redirect } from "react-router-dom";
 import * as queryString from "query-string";
 import axios from "axios";
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 type LoginPageProps = {
   loggedIn: boolean;
@@ -33,10 +32,6 @@ export default function LoginPage({
       scope: "openid",
     };
 
-    const bodyFormData = new FormData();
-    Object.entries(options).forEach(([key, value]) =>
-      bodyFormData.append(key, value)
-    );
     window.location.href =
       "https://accounts.google.com/o/oauth2/v2/auth?" +
       queryString.stringify(options);
@@ -44,7 +39,7 @@ export default function LoginPage({
 
   function checkloginCallback() {
     const parsedParams = queryString.parse(window.location.hash);
-    console.log(parsedParams);
+
     if ("error" in parsedParams) {
       openNotification(String(parsedParams["error"]));
     } else if ("access_token" in parsedParams) {
@@ -64,7 +59,7 @@ export default function LoginPage({
       <>
         <Title>Login</Title>
         <Button type="primary" onClick={doLogin}>
-          Login Google Pls
+          Login with Google
         </Button>
       </>
     );
