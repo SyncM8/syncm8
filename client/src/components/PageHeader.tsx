@@ -11,7 +11,7 @@ import {
 } from "antd";
 import React, { FC } from "react";
 import { withRouter } from "react-router";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { Link, RouteComponentProps, useLocation } from "react-router-dom";
 
 const { TabPane } = Tabs;
 
@@ -27,33 +27,37 @@ const menu = (
   </Menu>
 );
 
-const PageHeaderPage: FC<RouteComponentProps> = ({ history }) => (
-  <>
-    <PageHeader className="site-page-header">
-      <Row>
-        <Col span={8}>
-          <Input.Search placeholder="sync with..." />
-        </Col>
-        <Col offset={8} span={4}>
-          <Tabs
-            onChange={(key) => {
-              history.push(`/${key}`);
-            }}
-            animated={{ inkBar: true, tabPane: false }}
-          >
-            <TabPane tab="Dashboard" key="" />
-            <TabPane tab="Mates" key="mates" />
-            <TabPane tab="Families" key="families" />
-          </Tabs>
-        </Col>
-        <Col span={4}>
-          <Dropdown overlay={menu} trigger={["click"]}>
-            <Avatar size="large" icon={<UserOutlined />} />
-          </Dropdown>
-        </Col>
-      </Row>
-    </PageHeader>
-  </>
-);
+const PageHeaderPage: FC<RouteComponentProps> = ({ history }) => {
+  const location = useLocation();
+  return (
+    <>
+      <PageHeader className="site-page-header">
+        <Row>
+          <Col span={8}>
+            <Input.Search placeholder="sync with..." />
+          </Col>
+          <Col offset={8} span={4}>
+            <Tabs
+              activeKey={location.pathname}
+              onChange={(key) => {
+                history.push(key);
+              }}
+              animated={{ inkBar: true, tabPane: false }}
+            >
+              <TabPane tab="Dashboard" key="/" />
+              <TabPane tab="Mates" key="/mates" />
+              <TabPane tab="Families" key="/families" />
+            </Tabs>
+          </Col>
+          <Col span={4}>
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <Avatar size="large" icon={<UserOutlined />} />
+            </Dropdown>
+          </Col>
+        </Row>
+      </PageHeader>
+    </>
+  );
+};
 
 export default withRouter(PageHeaderPage);
