@@ -1,14 +1,12 @@
 import { Typography } from "antd";
-import React, { Component } from "react";
+import React, { FC } from "react";
 
 const { Title } = Typography;
 
-export default class FamiliesPage extends Component {
-  render(): React.ReactNode {
-    return (
-      <>
-        <Title>Families!</Title>
-      </>
-    );
-  }
-}
+const FamiliesPage: FC = () => (
+  <>
+    <Title>Families!</Title>
+  </>
+);
+
+export default FamiliesPage;

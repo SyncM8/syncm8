@@ -14,12 +14,16 @@ module.exports = {
     "import",
   ],
   extends: [
+    "airbnb",
+    "airbnb-typescript",
+    "airbnb/hooks",
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:import/recommended",
     "plugin:import/typescript",
+    "prettier",
   ],
   settings: {
     react: {

@@ -1,5 +1,4 @@
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { createMemoryHistory } from "history";
 import React from "react";
 import { Router } from "react-router-dom";
@@ -33,17 +32,12 @@ test("renders mates and families tabs", () => {
 
 test("navigates to Mates page", () => {
   const history = createMemoryHistory();
+  history.push("/mates");
   render(
     <Router history={history}>
       <App />
     </Router>
   );
-  const matesElement = screen.getByText("Mates");
-  expect(matesElement).toBeInTheDocument();
-
-  const leftClick = { button: 0 };
-  userEvent.click(screen.getByText("Mates"), leftClick);
-
   const matesTitleElement = screen.getByText("Mates!");
   expect(matesTitleElement).toBeInTheDocument();
 });
