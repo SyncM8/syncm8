@@ -2,14 +2,13 @@ import os
 import tempfile
 
 import pytest
-from src.api import get_app
+from src.api import app
 
 
 @pytest.fixture
 def client():
     """Get client api app for testing."""
     db_fd, db_path = tempfile.mkstemp()
-    app = get_app()
     # app = create_app({'TESTING': True, 'DATABASE': db_path})
 
     with app.test_client() as client:
