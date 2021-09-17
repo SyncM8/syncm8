@@ -27,7 +27,7 @@ const menu = (
   </Menu>
 );
 
-const PageHeaderPage: FC<RouteComponentProps> = ({ history }) => {
+const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
   const location = useLocation();
   return (
     <>
@@ -60,4 +60,4 @@ const PageHeaderPage: FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(PageHeaderPage);
+export default withRouter(HeaderPage);

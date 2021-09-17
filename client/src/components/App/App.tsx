@@ -3,15 +3,15 @@ import "./App.less";
 import React, { FC } from "react";
 import { Route, Switch } from "react-router-dom";
 
-import AddMatesPage from "./components/AddMatesPage";
-import DashboardPage from "./components/DashboardPage";
-import FamiliesPage from "./components/FamiliesPages";
-import MatesPage from "./components/MatesPage";
-import PageHeader from "./components/PageHeader";
+import AddMatesPage from "../AddMates/AddMatesPage";
+import DashboardPage from "../Dashboard/DashboardPage";
+import FamiliesPage from "../Families/FamiliesPages";
+import Header from "../Header/Header";
+import MatesPage from "../Mates/MatesPage";
 
 const App: FC = () => (
   <>
-    <PageHeader />
+    <Header />
     <Switch>
       <Route path="/mates">
         <MatesPage />
