@@ -85,7 +85,9 @@ const AddMatesPage: FC = () => {
       <Row style={{ padding: "10px 30px" }}>
         <Title level={2}>M8s</Title>
       </Row>
-      <Row>{cards}</Row>
+      <Row style={{ padding: "10px 30px" }} gutter={[24, 24]}>
+        {cards}
+      </Row>
     </>
   );
 };
