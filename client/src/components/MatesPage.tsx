@@ -1,5 +1,5 @@
-import React, { Component } from "react";
 import { Typography } from "antd";
+import React, { Component } from "react";
 
 const { Title } = Typography;
 

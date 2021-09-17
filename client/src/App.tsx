@@ -1,12 +1,13 @@
-import { Input, Col, Row, Button, PageHeader, Tabs, Typography } from "antd";
+import "./App.less";
+
+import { Button, Col, Input, PageHeader, Row, Tabs, Typography } from "antd";
 import React, { FC } from "react";
 import { withRouter } from "react-router";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
+import { Route, RouteComponentProps, Switch } from "react-router-dom";
 
-import "./App.less";
 import DashboardPage from "./components/DashboardPage";
-import MatesPage from "./components/MatesPage";
 import FamiliesPage from "./components/FamiliesPages";
+import MatesPage from "./components/MatesPage";
 
 const { TabPane } = Tabs;
 const { Title } = Typography;

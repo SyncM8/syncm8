@@ -4,8 +4,15 @@ module.exports = {
   parserOptions: {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
+    sourceType: "module",
   },
-  plugins: ["@typescript-eslint", "react", "react-hooks"],
+  plugins: [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "simple-import-sort",
+    "import",
+  ],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -18,6 +25,13 @@ module.exports = {
     react: {
       version: "17.0",
     },
+  },
+  rules: {
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "import/first": "error", // make sure all imports are at the top
+    "import/newline-after-import": "error",
+    "import/no-duplicates": "error",
   },
   ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };
