@@ -1,14 +1,12 @@
-import React, { Component } from "react";
 import { Typography } from "antd";
+import React, { FC } from "react";
 
 const { Title } = Typography;
 
-export default class DashboardPage extends Component {
-  render(): React.ReactNode {
-    return (
-      <>
-        <Title>Dashboard!</Title>
-      </>
-    );
-  }
-}
+const DashboardPage: FC = () => (
+  <>
+    <Title>Dashboard!</Title>
+  </>
+);
+
+export default DashboardPage;
