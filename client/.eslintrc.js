@@ -12,6 +12,7 @@ module.exports = {
     "react-hooks",
     "simple-import-sort",
     "import",
+    "prettier",
   ],
   extends: [
     "airbnb",
@@ -36,6 +37,7 @@ module.exports = {
     "import/first": "error", // make sure all imports are at the top
     "import/newline-after-import": "error",
     "import/no-duplicates": "error",
+    "import/no-extraneous-dependencies": "off",
   },
   ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };

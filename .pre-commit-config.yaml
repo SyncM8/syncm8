@@ -46,6 +46,7 @@ repos:
         args:
         -   "--config=./client/.prettierrc"
         -   "--write"
+        -   "./client/src"
 -   repo: https://github.com/eslint/eslint  # TODO(#12): remove "File ignored by default" warning
     rev: v7.32.0
     hooks:

@@ -1,9 +1,9 @@
 import { Typography } from "antd";
-import React, { FC } from "react";
+import React from "react";
 
 const { Title } = Typography;
 
-const FamiliesPage: FC = () => (
+const FamiliesPage = (): JSX.Element => (
   <>
     <Title>Families!</Title>
   </>
