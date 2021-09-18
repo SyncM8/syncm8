@@ -1,3 +1,4 @@
+import React from "react";
 import { Typography, Button, notification } from "antd";
 import { Redirect } from "react-router-dom";
 import * as queryString from "query-string";
@@ -26,7 +27,7 @@ export default function LoginPage({
   function doLogin() {
     const options = {
       client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID ?? "",
-      redirect_uri: (process.env.REACT_APP_API_URL ?? "") + "/login",
+      redirect_uri: (process.env.REACT_APP_HOST_URL ?? "") + "/login",
       response_type: "token",
       include_granted_scopes: "true",
       scope: "openid",
@@ -39,12 +40,14 @@ export default function LoginPage({
 
   function checkloginCallback() {
     const parsedParams = queryString.parse(window.location.hash);
+    window.location.hash = "";
 
     if ("error" in parsedParams) {
       openNotification(String(parsedParams["error"]));
     } else if ("access_token" in parsedParams) {
+      console.log(parsedParams);
       axios
-        .post((process.env.REACT_APP_API_URL ?? "") + "/login", {})
+        .post((process.env.REACT_APP_API_URL ?? "") + "/login", parsedParams)
         .then(() => setLoggedIn(true))
         .catch((err) => openNotification(String(err)));
     }

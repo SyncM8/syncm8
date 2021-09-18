@@ -8,6 +8,7 @@ import DashboardPage from "../Dashboard/DashboardPage";
 import MatesPage from "../Mates/MatesPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import LoginPage from "../Login/LoginPage";
+import axios from "axios";
 
 const { TabPane } = Tabs;
 
@@ -27,9 +28,24 @@ const ProtectedRoute = ({
   );
 };
 
+const apiPath = process.env.REACT_APP_API_URL ?? "";
+
 const App: FC<RouteComponentProps> = ({ history }) => {
   const [loggedIn, setLoggedIn] = useState(false);
-
+  function checkLoggedIn() {
+    axios
+      .get(apiPath + "/isLoggedIn")
+      .then((res) => {
+        console.log(res.data);
+        // let resLoggedIn = false;
+        // if ('isLoggedIn' in res.data) {
+        //   resLoggedIn = res.data['isLoggedIn']; // eslint-disable-line
+        // }
+        // setLoggedIn(resLoggedIn);
+      })
+      .catch((err) => console.log(err));
+  }
+  checkLoggedIn();
   return (
     <>
       <PageHeader className="site-page-header">

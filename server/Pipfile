@@ -11,6 +11,10 @@ boto3 = {extras = ["crt"], version = "*"}
 uwsgi = "*"
 pymongo = {extras = ["srv"], version = "*"}
 flask-login = "*"
+google-auth = "*"
+flask-cors = "*"
+requests = "*"
+google-api-python-client = "*"
 
 [dev-packages]
 pytest = "*"

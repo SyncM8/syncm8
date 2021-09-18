@@ -16,3 +16,4 @@ dist/
 build/
 docs/_build/
 *cache/
+google*.json
