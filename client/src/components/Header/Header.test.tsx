@@ -12,6 +12,7 @@ test("renders Header", () => {
       <Header />
     </Router>
   );
+  expect(screen.getByLabelText("search-input")).toBeInTheDocument();
   expect(screen.getByText("Dashboard")).toBeInTheDocument();
   expect(screen.getByText("Mates")).toBeInTheDocument();
   expect(screen.getByText("Families")).toBeInTheDocument();

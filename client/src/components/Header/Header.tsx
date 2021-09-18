@@ -60,7 +60,10 @@ const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
       <PageHeader>
         <Row>
           <Col span={8}>
-            <Input.Search placeholder="sync with..." />
+            <Input.Search
+              placeholder="sync with..."
+              aria-label="search-input"
+            />
           </Col>
           <Col offset={6} span={6}>
             <Tabs

@@ -23,7 +23,7 @@ const AddMatesPage: FC = () => {
   const [form] = Form.useForm<AddMateFormType>();
   const [mates, setMates] = useState<AddMateType[]>([]);
 
-  const onAddMate = async ({ name, lastSeen }: AddMateFormType) => {
+  const onAddMate = ({ name, lastSeen }: AddMateFormType) => {
     setMates((prevArray) => [
       ...prevArray,
       { name, lastSynced: lastSeen.toDate(), ts: new Date().getTime() },
