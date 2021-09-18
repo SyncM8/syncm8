@@ -1,4 +1,9 @@
-import { UserOutlined } from "@ant-design/icons";
+import {
+  ContactsOutlined,
+  DashboardOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import {
   Avatar,
   Col,
@@ -27,6 +32,27 @@ const menu = (
   </Menu>
 );
 
+const dashboardTab = (
+  <>
+    <DashboardOutlined />
+    Dashboard
+  </>
+);
+
+const matesTab = (
+  <>
+    <ContactsOutlined />
+    Mates
+  </>
+);
+
+const familiesTab = (
+  <>
+    <TeamOutlined />
+    Families
+  </>
+);
+
 const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
   const location = useLocation();
   return (
@@ -36,7 +62,7 @@ const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
           <Col span={8}>
             <Input.Search placeholder="sync with..." />
           </Col>
-          <Col offset={8} span={4}>
+          <Col offset={6} span={6}>
             <Tabs
               activeKey={location.pathname}
               onChange={(key) => {
@@ -44,13 +70,13 @@ const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
               }}
               animated={{ inkBar: true, tabPane: false }}
             >
-              <TabPane tab="Dashboard" key="/" />
-              <TabPane tab="Mates" key="/mates" />
-              <TabPane tab="Families" key="/families" />
+              <TabPane tab={dashboardTab} key="/" />
+              <TabPane tab={matesTab} key="/mates" />
+              <TabPane tab={familiesTab} key="/families" />
             </Tabs>
           </Col>
           <Col span={4}>
-            <Dropdown overlay={menu} trigger={["click"]}>
+            <Dropdown overlay={menu} trigger={["click", "hover"]}>
               <Avatar size="large" icon={<UserOutlined />} />
             </Dropdown>
           </Col>
