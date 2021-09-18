@@ -3,11 +3,11 @@ import "./App.less";
 import React, { FC } from "react";
 import { Route, Switch } from "react-router-dom";
 
-import AddMatesPage from "../AddMates/AddMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import Header from "../Header/Header";
 import MatesPage from "../Mates/MatesPage";
+import NewMatesPage from "../NewMates/NewMatesPage";
 
 const App: FC = () => (
   <>
@@ -20,7 +20,7 @@ const App: FC = () => (
         <FamiliesPage />
       </Route>
       <Route path="/add-mates">
-        <AddMatesPage />
+        <NewMatesPage />
       </Route>
       <Route path="/">
         <DashboardPage />

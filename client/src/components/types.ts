@@ -1,12 +1,12 @@
 import { Moment } from "moment";
 
-export type AddMateFormType = {
+export type NewMatesFormType = {
   name: string;
   lastSeen: Moment;
 };
 
-export type AddMateType = {
+export type NewMateType = {
   name: string;
   lastSynced: Date;
-  ts: number;
+  id: number;
 };

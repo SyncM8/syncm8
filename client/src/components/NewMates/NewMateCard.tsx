@@ -6,16 +6,16 @@ import {
 import { Avatar, Card } from "antd";
 import React, { FC } from "react";
 
-import { AddMateType } from "../types";
+import { NewMateType } from "../types";
 
-type AddMateCardProps = {
-  mate: AddMateType;
-  removeMate: (mate: AddMateType) => void;
+type NewMateCardProps = {
+  mate: NewMateType;
+  removeMate: (mate: NewMateType) => void;
 };
 
 const { Meta } = Card;
 
-const AddMateCard: FC<AddMateCardProps> = ({ mate, removeMate }) => (
+const NewMateCard: FC<NewMateCardProps> = ({ mate, removeMate }) => (
   <Card
     actions={[
       <DeleteOutlined key="delete" onClick={() => removeMate(mate)} />,
@@ -30,4 +30,4 @@ const AddMateCard: FC<AddMateCardProps> = ({ mate, removeMate }) => (
   </Card>
 );
 
-export default AddMateCard;
+export default NewMateCard;

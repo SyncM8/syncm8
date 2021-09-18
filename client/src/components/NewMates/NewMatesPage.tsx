@@ -13,44 +13,35 @@ import {
 import React, { FC, useState } from "react";
 import { Prompt } from "react-router";
 
-import { AddMateFormType, AddMateType } from "../types";
-import AddMateCard from "./AddMateCard";
+import { NewMatesFormType, NewMateType } from "../types";
+import NewMatesCard from "./NewMateCard";
 
 const { Title } = Typography;
 const { Footer } = Layout;
 
-const AddMatesPage: FC = () => {
-  const [form] = Form.useForm<AddMateFormType>();
-  const [mates, setMates] = useState<AddMateType[]>([]);
+const NewMatesPage: FC = () => {
+  const [form] = Form.useForm<NewMatesFormType>();
+  const [mates, setMates] = useState<NewMateType[]>([]);
+  const [id, setId] = useState<number>(0);
 
-  const onAddMate = ({ name, lastSeen }: AddMateFormType) => {
-    setMates((prevArray) => [
-      ...prevArray,
-      { name, lastSynced: lastSeen.toDate(), ts: new Date().getTime() },
-    ]);
+  const addNewMate = ({ name, lastSeen }: NewMatesFormType) => {
+    const lastSynced = lastSeen === undefined ? new Date() : lastSeen.toDate();
+    setMates((prevArray) => [...prevArray, { name, lastSynced, id }]);
     form.resetFields();
+    setId(id + 1);
   };
 
-  const removeMate = (mate: AddMateType) => {
-    setMates((mateArr) =>
-      mateArr.filter(
-        (m8) =>
-          !(
-            m8.name === mate.name &&
-            m8.lastSynced === mate.lastSynced &&
-            m8.ts === mate.ts
-          )
-      )
-    );
+  const removeMate = (mate: NewMateType) => {
+    setMates((mateArr) => mateArr.filter((m8) => m8.id !== mate.id));
   };
 
-  const handleAddMates = () => {
+  const submitNewMates = () => {
     // TODO send to backend here
   };
 
   const cards = mates.map((mate) => (
-    <Col span={6} key={mate.ts}>
-      <AddMateCard mate={mate} removeMate={removeMate} />
+    <Col span={6} key={mate.id}>
+      <NewMatesCard mate={mate} removeMate={removeMate} />
     </Col>
   ));
 
@@ -74,15 +65,11 @@ const AddMatesPage: FC = () => {
           </Col>
 
           <Col>
-            <Form layout="inline" form={form} onFinish={onAddMate}>
+            <Form layout="inline" form={form} onFinish={addNewMate}>
               <Form.Item label="Name" name="name" rules={[{ required: true }]}>
                 <Input autoFocus />
               </Form.Item>
-              <Form.Item
-                label="Last Seen"
-                name="lastSeen"
-                rules={[{ required: true }]}
-              >
+              <Form.Item label="Last Seen" name="lastSeen">
                 <DatePicker />
               </Form.Item>
               <Form.Item>
@@ -109,7 +96,7 @@ const AddMatesPage: FC = () => {
             <Button
               type="primary"
               disabled={!pageUnsaved}
-              onClick={handleAddMates}
+              onClick={submitNewMates}
             >
               Assign M8s to Families
             </Button>
@@ -120,4 +107,4 @@ const AddMatesPage: FC = () => {
   );
 };
 
-export default AddMatesPage;
+export default NewMatesPage;

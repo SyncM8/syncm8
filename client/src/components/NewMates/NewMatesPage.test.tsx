@@ -4,13 +4,13 @@ import React from "react";
 import { act } from "react-dom/test-utils";
 import { Router } from "react-router-dom";
 
-import AddMatesPage from "./AddMatesPage";
+import NewMatesPage from "./NewMatesPage";
 
-test("renders AddMatesPage", () => {
+test("renders NewMatesPage", () => {
   const history = createMemoryHistory();
   render(
     <Router history={history}>
-      <AddMatesPage />
+      <NewMatesPage />
     </Router>
   );
 
@@ -22,7 +22,7 @@ test("add and remove a mate card", async () => {
   const history = createMemoryHistory();
   render(
     <Router history={history}>
-      <AddMatesPage />
+      <NewMatesPage />
     </Router>
   );
 
