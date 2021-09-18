@@ -44,16 +44,22 @@ const AddMatesPage: FC = () => {
     );
   };
 
+  const handleAddMates = () => {
+    // TODO send to backend here
+  };
+
   const cards = mates.map((mate) => (
     <Col span={6} key={mate.ts}>
       <AddMateCard mate={mate} removeMate={removeMate} />
     </Col>
   ));
 
+  const pageUnsaved = mates.length > 0;
+
   return (
     <>
       <Prompt
-        when={mates.length > 0}
+        when={pageUnsaved}
         message="Leaving will erase all your unsaved info. Are you sure?"
       />
       <Layout style={{ minHeight: "100vh" }}>
@@ -100,7 +106,11 @@ const AddMatesPage: FC = () => {
           <Space>
             Once You’ve added all Your M8s (contacts) you can assign them to
             families
-            <Button type="primary" disabled={mates.length === 0}>
+            <Button
+              type="primary"
+              disabled={!pageUnsaved}
+              onClick={handleAddMates}
+            >
               Assign M8s to Families
             </Button>
           </Space>

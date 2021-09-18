@@ -57,7 +57,7 @@ const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
   const location = useLocation();
   return (
     <>
-      <PageHeader className="site-page-header">
+      <PageHeader>
         <Row>
           <Col span={8}>
             <Input.Search placeholder="sync with..." />
