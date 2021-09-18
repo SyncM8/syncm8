@@ -32,7 +32,7 @@ class UserManager:
     def add_google_user(self, google_id):
         """Add user and return the user."""
         newUser = User(self.uuid, google_id)
-        self.known_users[self.uuid] = newUser
+        self.known_users[google_id] = newUser
         self.uuid += 1
         return newUser
 

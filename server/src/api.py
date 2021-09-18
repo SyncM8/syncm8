@@ -13,7 +13,11 @@ from .user import UserManager
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET_KEY")
-CORS(app, origins=["http://localhost:3000", "https://syncm8.com"])
+CORS(
+    app,
+    origins=["http://localhost:3000", "https://syncm8.com"],
+    supports_credentials=True,
+)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -27,6 +31,7 @@ user_manager = UserManager()
 @login_manager.user_loader
 def load_user(user_id):
     print(user_id)
+    # import pdb; pdb.set_trace()
     return user_manager.lookup_user(user_id)
 
 
