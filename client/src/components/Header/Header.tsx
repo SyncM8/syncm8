@@ -14,7 +14,7 @@ import {
   Row,
   Tabs,
 } from "antd";
-import React, { FC } from "react";
+import React from "react";
 import { withRouter } from "react-router";
 import { Link, RouteComponentProps, useLocation } from "react-router-dom";
 
@@ -53,7 +53,7 @@ const familiesTab = (
   </>
 );
 
-const HeaderPage: FC<RouteComponentProps> = ({ history }) => {
+const HeaderPage = ({ history }: RouteComponentProps): JSX.Element => {
   const location = useLocation();
   return (
     <>

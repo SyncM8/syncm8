@@ -4,7 +4,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Card } from "antd";
-import React, { FC } from "react";
+import React from "react";
 
 import { NewMateType } from "../types";
 
@@ -15,7 +15,7 @@ type NewMateCardProps = {
 
 const { Meta } = Card;
 
-const NewMateCard: FC<NewMateCardProps> = ({ mate, removeMate }) => (
+const NewMateCard = ({ mate, removeMate }: NewMateCardProps): JSX.Element => (
   <Card
     actions={[
       <DeleteOutlined key="delete" onClick={() => removeMate(mate)} />,

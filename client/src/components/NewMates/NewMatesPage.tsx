@@ -10,7 +10,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import { Prompt } from "react-router";
 
 import { NewMatesFormType, NewMateType } from "../types";
@@ -19,7 +19,7 @@ import NewMatesCard from "./NewMateCard";
 const { Title } = Typography;
 const { Footer } = Layout;
 
-const NewMatesPage: FC = () => {
+const NewMatesPage = (): JSX.Element => {
   const [form] = Form.useForm<NewMatesFormType>();
   const [mates, setMates] = useState<NewMateType[]>([]);
   const [id, setId] = useState<number>(0);

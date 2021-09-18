@@ -1,6 +1,6 @@
 import "./App.less";
 
-import React, { FC } from "react";
+import React from "react";
 import { Route, Switch } from "react-router-dom";
 
 import DashboardPage from "../Dashboard/DashboardPage";
@@ -9,7 +9,7 @@ import Header from "../Header/Header";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
-const App: FC = () => (
+const App = (): JSX.Element => (
   <>
     <Header />
     <Switch>
