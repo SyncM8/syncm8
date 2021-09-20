@@ -34,7 +34,7 @@ const App: FC<RouteComponentProps> = ({ history }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   function checkLoggedIn() {
     axios
-      .get(apiPath + "/isLoggedIn", { withCredentials: true })
+      .get(apiPath + "/isLoggedIn")
       .then((res) => {
         console.log(res.data);
         // let resLoggedIn = false;

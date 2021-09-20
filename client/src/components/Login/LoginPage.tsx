@@ -47,9 +47,7 @@ export default function LoginPage({
     } else if ("access_token" in parsedParams) {
       console.log(parsedParams);
       axios
-        .post((process.env.REACT_APP_API_URL ?? "") + "/login", parsedParams, {
-          withCredentials: true,
-        })
+        .post((process.env.REACT_APP_API_URL ?? "") + "/login", parsedParams)
         .then(() => setLoggedIn(true))
         .catch((err) => openNotification(String(err)));
     }

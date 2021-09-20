@@ -1,4 +1,7 @@
+"""Syncm8 Api."""
 import os
+from http import HTTPStatus
+from typing import Any, Callable, Optional, TypeVar, cast
 
 import flask_login
 from ariadne import gql, graphql_sync, load_schema_from_path, make_executable_schema
@@ -7,9 +10,13 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_login import LoginManager, login_required, login_user
 
-from .google_client import verify_google_token
-from .model import mutation, query
-from .user import UserManager
+from .clients.db import connect_db
+from .clients.google import is_google_token_valid
+from .gql import mutation, query
+from .model.user import User
+
+connect_db()
+
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET_KEY")
@@ -19,61 +26,84 @@ CORS(
     supports_credentials=True,
 )
 
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def csrf_protection(fn: F) -> F:
+    """Decorate mutationg functions to add CSRF protection."""
+
+    def protected(*args: Any, **kwargs: Any) -> Any:
+        if "X-Requested-With" in request.headers:
+            return fn(*args, **kwargs)
+        else:
+            return ("X-Requested-With header missing", HTTPStatus.FORBIDDEN)
+
+    return cast(F, protected)
+
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.session_protection = "strong"
 
-user_manager = UserManager()
 
-# The user loader looks up a user by their user ID, and is called by
-# flask-login to get the current user from the session.  Return None
-# if the user ID isn't valid.
 @login_manager.user_loader
-def load_user(user_id):
-    print(user_id)
-    # import pdb; pdb.set_trace()
-    return user_manager.lookup_user(user_id)
+def load_user(user_id: str) -> Optional[User]:
+    """
+    Look up a user by their user ID.
+
+    Called by flask-login to get the current user from the session.
+    Returns None if the user ID isn't valid.
+    """
+    return User.lookup_user(user_id)
 
 
 type_defs = gql(load_schema_from_path("../schema.graphql"))
 schema = make_executable_schema(type_defs, query, mutation)
 
 
-@app.route("/test")
-def hello():
+@app.route("/test", methods=["GET"])
+def test() -> Any:
     """Serve test html."""
     return "<h1 style='color:blue'>The test is successful.</h1>"
 
 
+@csrf_protection
 @app.route("/login", methods=["Post"])
-def login():
-    googleToken = request.json.get("access_token")
-    isValid, google_id = verify_google_token(googleToken)
+def login() -> Any:
+    """
+    Lgoin to app using google token.
 
-    if isValid:
-        new_user = user_manager.add_google_user(google_id)
-        print(new_user.get_id())
-        print(login_user(new_user, remember=True))
-        return {"isLoggedIn": True}
-    else:
-        return {"isLoggedIn": False}
+    If no user with specified google id exists, preforms sign up.
+    """
+    googleToken = request.json.get("access_token")  # type: ignore
+    error, is_valid = is_google_token_valid(googleToken)
+
+    if not error and is_valid:
+        error, new_user = User.add_google_user(googleToken)
+        if not error:
+            login_user(new_user, remember=True)
+            return {"isLoggedIn": True}
+
+    return {"isLoggedIn": False, "errors": error.get_dict_repr() if error else {}}
 
 
 @login_required
 @app.route("/isLoggedIn", methods=["GET"])
-def is_logged_in():
-    return {"isLoggedIn": flask_login.current_user.get_id()}
+def is_logged_in() -> Any:
+    """Return whether the user is logged in."""
+    return {"isLoggedIn": flask_login.current_user.is_authenticated}
 
 
 @app.route("/graphql", methods=["GET"])
-def graphql_playground():
+def graphql_playground() -> Any:
     """Serve GraphQL playground."""
     return PLAYGROUND_HTML, 200
 
 
+@csrf_protection
 @app.route("/graphql", methods=["POST"])
-def graphql_server():
-    """Receive GraphQL commands."""
+def graphql_server() -> Any:
+    """Receive and execute GraphQL commands."""
     data = request.get_json()
 
     success, result = graphql_sync(schema, data, context_value=request, debug=app.debug)

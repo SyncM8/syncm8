@@ -19,6 +19,7 @@ google-api-python-client = "*"
 [dev-packages]
 pytest = "*"
 pre-commit = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.8"

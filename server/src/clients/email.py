@@ -1,3 +1,4 @@
+"""Sample email_client."""
 import os
 
 from sendgrid import SendGridAPIClient

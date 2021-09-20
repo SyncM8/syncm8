@@ -5,11 +5,15 @@ import App from "./components/App/App";
 import reportWebVitals from "./reportWebVitals";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { BrowserRouter as Router } from "react-router-dom";
+import axios from "axios";
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_API_URL,
   cache: new InMemoryCache(),
 });
+
+axios.defaults.headers.common["X-Requested-With"] = "XmlHttpRequest"; // eslint-disable-line
+axios.defaults.withCredentials = true;
 
 ReactDOM.render(
   <React.StrictMode>
