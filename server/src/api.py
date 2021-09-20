@@ -43,8 +43,13 @@ def graphql_server():
     data = request.get_json()
 
     success, result = graphql_sync(schema, data, context_value=request, debug=app.debug)
-
     status_code = 200 if success else 400
+
+    response = jsonify(result)
+    response.status_code = status_code
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
     return jsonify(result), status_code
 
 

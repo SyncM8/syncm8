@@ -9,8 +9,11 @@ import App from "./components/App/App";
 import reportWebVitals from "./reportWebVitals";
 
 const client = new ApolloClient({
-  uri: "https://backend.syncm8.com",
+  uri: "/graphql",
   cache: new InMemoryCache(),
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+  },
 });
 
 ReactDOM.render(
