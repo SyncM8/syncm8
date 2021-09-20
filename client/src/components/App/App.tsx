@@ -1,16 +1,15 @@
-import { Input, Col, Row, PageHeader, Tabs } from "antd";
-import React, { FC, useState } from "react";
+import React, { useState } from "react";
 import { withRouter } from "react-router";
-import { RouteComponentProps, Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 
 import "./App.less";
 import DashboardPage from "../Dashboard/DashboardPage";
-import MatesPage from "../Mates/MatesPage";
 import FamiliesPage from "../Families/FamiliesPages";
+import Header from "../Header/Header";
+import MatesPage from "../Mates/MatesPage";
+import NewMatesPage from "../NewMates/NewMatesPage";
 import LoginPage from "../Login/LoginPage";
 import axios from "axios";
-
-const { TabPane } = Tabs;
 
 type ProtectedRoutesPropTypes = {
   children: React.ReactNode;
@@ -30,7 +29,7 @@ const ProtectedRoute = ({
 
 const apiPath = process.env.REACT_APP_API_URL ?? "";
 
-const App: FC<RouteComponentProps> = ({ history }) => {
+const App = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(false);
   function checkLoggedIn() {
     axios
@@ -46,34 +45,19 @@ const App: FC<RouteComponentProps> = ({ history }) => {
       .catch((err) => console.log(err));
   }
   checkLoggedIn();
+
   return (
     <>
-      <PageHeader className="site-page-header">
-        <Row>
-          <Col span={8}>
-            <Input.Search placeholder="sync with..." />
-          </Col>
-          <Col offset={8} span={4}>
-            <Tabs
-              onChange={(key) => {
-                history.push(`/${key}`); // eslint-disable-line
-              }}
-              animated={{ inkBar: true, tabPane: false }}
-            >
-              <TabPane tab="Dashboard" key="" />
-              <TabPane tab="Mates" key="mates" />
-              <TabPane tab="Families" key="families" />
-            </Tabs>
-          </Col>
-          <Col span={4}>Profile Here</Col>
-        </Row>
-      </PageHeader>
+      <Header />
       <Switch>
         <Route path="/login">
           <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         </Route>
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
           <MatesPage />
+        </ProtectedRoute>
+        <ProtectedRoute loggedIn={loggedIn} path="/add-mates">
+          <NewMatesPage />
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/families">
           <FamiliesPage />

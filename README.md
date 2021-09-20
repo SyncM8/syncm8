@@ -4,3 +4,4 @@
 ![Frontend Deploy](https://github.com/SyncM8/syncm8/actions/workflows/frontendCD.yml/badge.svg)
 ![pre-commit](https://github.com/SyncM8/syncm8/actions/workflows/pre-commit.yml/badge.svg)
 ![Heartbeat](https://github.com/SyncM8/syncm8/actions/workflows/heartbeat.yml/badge.svg)
+![CodeQL](https://github.com/SyncM8/syncm8/actions/workflows/codeql-analysis.yml/badge.svg)

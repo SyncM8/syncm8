@@ -10,7 +10,8 @@ module.exports = {
             modifyVars: {
               "@primary-color": "#F6A959",
               "@success-color": "#59A6F6",
-              "body-background": "#F7F8FC",
+              "@body-background": "#F7F8FC",
+              "@header-background": "#F0F2F5",
             },
             javascriptEnabled: true,
           },

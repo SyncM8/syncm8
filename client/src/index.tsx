@@ -1,11 +1,13 @@
+import "./index.css";
+
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./components/App/App";
-import reportWebVitals from "./reportWebVitals";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { BrowserRouter as Router } from "react-router-dom";
 import axios from "axios";
+
+import App from "./components/App/App";
+import reportWebVitals from "./reportWebVitals";
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_API_URL,
