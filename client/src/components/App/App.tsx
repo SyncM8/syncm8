@@ -34,7 +34,6 @@ const App = (): JSX.Element => {
     axios
       .get(`${apiPath}/isLoggedIn`)
       .then((res) => {
-        console.log(res.data);
         let resLoggedIn = false;
         if ("isLoggedIn" in res.data) {
           resLoggedIn = res.data.isLoggedIn; //  eslint-disable-line

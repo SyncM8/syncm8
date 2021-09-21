@@ -84,7 +84,7 @@ def login() -> Any:
             login_user(new_user, remember=True)
             return {"isLoggedIn": True}
 
-    return {"isLoggedIn": False, "errors": error.get_dict_repr() if error else {}}
+    return {"isLoggedIn": False, "error": error.get_dict_repr() if error else "None"}
 
 
 @login_required

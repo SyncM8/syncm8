@@ -42,7 +42,17 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
     } else if ("access_token" in parsedParams) {
       axios
         .post(`${process.env.REACT_APP_API_URL ?? ""}/login`, parsedParams)
-        .then(() => setLoggedIn(true))
+        .then((res) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          if (res.data.isLoggedIn) {
+            setLoggedIn(true);
+          } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            console.log(res.data.error);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            openNotification(JSON.stringify(res.data.error));
+          }
+        })
         .catch((err) => openNotification(String(err)));
     }
   }
