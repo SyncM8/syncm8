@@ -29,4 +29,4 @@ jobs:
       - name: Run Backend Tests
         run: |
           cd server
-          pienv run pytest tests
+          pipenv run pytest tests
