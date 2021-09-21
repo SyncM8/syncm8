@@ -16,9 +16,6 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
     notification.open({
       message: "Login error",
       description: errorMessage,
-      onClick: () => {
-        console.log("Notification Clicked!");
-      },
     });
   }
 
@@ -43,7 +40,6 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
     if ("error" in parsedParams) {
       openNotification(String(parsedParams.error));
     } else if ("access_token" in parsedParams) {
-      console.log(parsedParams);
       axios
         .post(`${process.env.REACT_APP_API_URL ?? ""}/login`, parsedParams)
         .then(() => setLoggedIn(true))
