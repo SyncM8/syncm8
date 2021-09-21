@@ -17,11 +17,10 @@ jobs:
       - name: Install Dependencies
         run: |
           cd server
-          pip install pipenv
-          pipenv shell
+          python -m pip install --upgrade pipenv wheel
           pipenv install --dev
 
       - name: Run Backend Tests
         run: |
           cd server
-          python -m pytest tests
+          pienv run pytest tests
