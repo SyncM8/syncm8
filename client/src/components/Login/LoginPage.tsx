@@ -16,6 +16,9 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
     notification.open({
       message: "Login error",
       description: errorMessage,
+      onClick: () => {
+        console.log("Notification Clicked!");
+      },
     });
   }
 
