@@ -1,8 +1,9 @@
-import React from "react";
-import { Typography, Button, notification } from "antd";
-import { Redirect } from "react-router-dom";
-import * as queryString from "query-string";
+import { Button, notification, Typography } from "antd";
 import axios from "axios";
+import * as queryString from "query-string";
+import React from "react";
+import { Redirect } from "react-router-dom";
+
 const { Title } = Typography;
 
 type LoginPageProps = {
@@ -10,10 +11,7 @@ type LoginPageProps = {
   setLoggedIn: (value: boolean) => void;
 };
 
-export default function LoginPage({
-  loggedIn,
-  setLoggedIn,
-}: LoginPageProps): JSX.Element {
+const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   function openNotification(errorMessage: string) {
     notification.open({
       message: "Login error",
@@ -24,30 +22,30 @@ export default function LoginPage({
     });
   }
 
-  function doLogin() {
+  const doLogin = () => {
     const options = {
       client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID ?? "",
-      redirect_uri: (process.env.REACT_APP_HOST_URL ?? "") + "/login",
+      redirect_uri: `${process.env.REACT_APP_HOST_URL ?? ""}/login`,
       response_type: "token",
       include_granted_scopes: "true",
       scope: "openid",
     };
 
-    window.location.href =
-      "https://accounts.google.com/o/oauth2/v2/auth?" +
-      queryString.stringify(options);
-  }
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${queryString.stringify(
+      options
+    )}`;
+  };
 
   function checkloginCallback() {
     const parsedParams = queryString.parse(window.location.hash);
     window.location.hash = "";
 
     if ("error" in parsedParams) {
-      openNotification(String(parsedParams["error"]));
+      openNotification(String(parsedParams.error));
     } else if ("access_token" in parsedParams) {
       console.log(parsedParams);
       axios
-        .post((process.env.REACT_APP_API_URL ?? "") + "/login", parsedParams)
+        .post(`${process.env.REACT_APP_API_URL ?? ""}/login`, parsedParams)
         .then(() => setLoggedIn(true))
         .catch((err) => openNotification(String(err)));
     }
@@ -57,13 +55,13 @@ export default function LoginPage({
 
   // Redirect if authentication is done:
   if (loggedIn) return <Redirect to="/" />;
-  else
-    return (
-      <>
-        <Title>Login</Title>
-        <Button type="primary" onClick={doLogin}>
-          Login with Google
-        </Button>
-      </>
-    );
-}
+  return (
+    <>
+      <Title>Login</Title>
+      <Button type="primary" onClick={doLogin}>
+        Login with Google
+      </Button>
+    </>
+  );
+};
+export default LoginPage;

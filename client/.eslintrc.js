@@ -38,6 +38,7 @@ module.exports = {
     "import/newline-after-import": "error",
     "import/no-duplicates": "error",
     "import/no-extraneous-dependencies": "off",
+    "arrow-body-style": ["error", "as-needed"],
   },
   ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };

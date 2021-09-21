@@ -1,10 +1,10 @@
 import "./index.css";
 
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import axios from "axios";
 
 import App from "./components/App/App";
 import reportWebVitals from "./reportWebVitals";

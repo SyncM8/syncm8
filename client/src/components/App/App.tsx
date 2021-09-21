@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { withRouter } from "react-router";
-import { Route, Switch, Redirect } from "react-router-dom";
-
 import "./App.less";
+
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
+
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import Header from "../Header/Header";
+import LoginPage from "../Login/LoginPage";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
-import LoginPage from "../Login/LoginPage";
-import axios from "axios";
 
 type ProtectedRoutesPropTypes = {
   children: React.ReactNode;
@@ -21,30 +21,31 @@ const ProtectedRoute = ({
   children,
   loggedIn,
   path,
-}: ProtectedRoutesPropTypes) => {
-  return (
-    <Route path={path}>{loggedIn ? children : <Redirect to="/login" />}</Route>
-  );
-};
+}: ProtectedRoutesPropTypes) => (
+  <Route path={path}>{loggedIn ? children : <Redirect to="/login" />}</Route>
+);
 
 const apiPath = process.env.REACT_APP_API_URL ?? "";
 
 const App = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(false);
-  function checkLoggedIn() {
+
+  useEffect(() => {
     axios
-      .get(apiPath + "/isLoggedIn")
+      .get(`${apiPath}/isLoggedIn`)
       .then((res) => {
         console.log(res.data);
-        // let resLoggedIn = false;
-        // if ('isLoggedIn' in res.data) {
-        //   resLoggedIn = res.data['isLoggedIn']; // eslint-disable-line
-        // }
-        // setLoggedIn(resLoggedIn);
+        let resLoggedIn = false;
+        if ("isLoggedIn" in res.data) {
+          resLoggedIn = res.data.isLoggedIn; //  eslint-disable-line
+        }
+        if (loggedIn !== resLoggedIn) {
+          setLoggedIn(resLoggedIn);
+        }
       })
       .catch((err) => console.log(err));
-  }
-  checkLoggedIn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -70,4 +71,4 @@ const App = (): JSX.Element => {
   );
 };
 
-export default withRouter(App);
+export default App;
