@@ -3,6 +3,7 @@ import "./App.less";
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 
+import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import Header from "../Header/Header";
@@ -21,6 +22,9 @@ const App = (): JSX.Element => (
       </Route>
       <Route path="/add-mates">
         <NewMatesPage />
+      </Route>
+      <Route path="/assign-families">
+        <AssignMatesPage />
       </Route>
       <Route path="/">
         <DashboardPage />

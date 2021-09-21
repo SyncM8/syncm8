@@ -4,29 +4,23 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Avatar, Card } from "antd";
-import React, { CSSProperties } from "react";
+import React from "react";
 
 import { NewMateType } from "../types";
 
-type NewMateCardProps = {
+type MateCardProps = {
   mate: NewMateType;
   removeMate: (mate: NewMateType) => void;
-  style?: CSSProperties;
 };
 
 const { Meta } = Card;
 
-const NewMateCard = ({
-  mate,
-  removeMate,
-  style,
-}: NewMateCardProps): JSX.Element => (
+const MateCard = ({ mate, removeMate }: MateCardProps): JSX.Element => (
   <Card
     actions={[
       <DeleteOutlined key="delete" onClick={() => removeMate(mate)} />,
       <EllipsisOutlined key="ellipsis" />,
     ]}
-    style={style}
   >
     <Meta
       avatar={<Avatar size="small" icon={<UserOutlined />} />}
@@ -36,8 +30,4 @@ const NewMateCard = ({
   </Card>
 );
 
-NewMateCard.defaultProps = {
-  style: {},
-};
-
-export default NewMateCard;
+export default MateCard;

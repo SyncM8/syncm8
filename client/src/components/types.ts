@@ -8,5 +8,5 @@ export type NewMatesFormType = {
 export type NewMateType = {
   name: string;
   lastSynced: Date;
-  id: number;
+  id: number | string;
 };
