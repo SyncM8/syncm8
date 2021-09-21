@@ -15,6 +15,7 @@ google-auth = "*"
 flask-cors = "*"
 requests = "*"
 google-api-python-client = "*"
+mongoengine = "*"
 
 [dev-packages]
 pytest = "*"
