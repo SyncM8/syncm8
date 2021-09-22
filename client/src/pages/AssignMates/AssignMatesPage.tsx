@@ -178,6 +178,7 @@ const AssignMatesPage = (): JSX.Element => {
           family="unassigned"
           removeMate={removeMate}
         />
+        <Divider />
         <Row wrap={false} style={{ overflow: "auto" }}>
           {Object.keys(groups)
             .filter((family) => family !== "unassigned")
@@ -186,7 +187,6 @@ const AssignMatesPage = (): JSX.Element => {
                 key={family}
                 style={{ width: 220, marginLeft: 5, marginRight: 5 }}
               >
-                <Divider />
                 <Row justify="center">
                   <Col>
                     <Title level={2}>{family}</Title>

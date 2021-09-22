@@ -13,8 +13,8 @@ test("renders AssignMatesPage page", () => {
       <AssignMatesPage />
     </Router>
   );
-  const textElement = screen.getByText("Assigning M8s");
-  expect(textElement).toBeInTheDocument();
+  expect(screen.getByText("Assigning M8s")).toBeInTheDocument();
+  expect(screen.getByText("Plato")).toBeInTheDocument();
 });
 
 test("removes a mate card", async () => {
@@ -33,4 +33,22 @@ test("removes a mate card", async () => {
       expect(screen.getAllByLabelText("delete")).toHaveLength(matesLength - 1)
     );
   });
+});
+
+test("move Plato card to school", () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <AssignMatesPage />
+    </Router>
+  );
+
+  const platoCard = screen.getByText("Plato");
+  const schoolDrop = screen.getByText("school");
+
+  fireEvent.dragStart(platoCard);
+  fireEvent.dragOver(schoolDrop);
+  fireEvent.dragEnter(schoolDrop);
+  fireEvent.drop(platoCard);
+  fireEvent.dragEnd(schoolDrop);
 });
