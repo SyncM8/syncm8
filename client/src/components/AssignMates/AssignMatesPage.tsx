@@ -1,18 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import {
-  Button,
-  Col,
-  DatePicker,
-  Divider,
-  Form,
-  Input,
-  Layout,
-  message,
-  Popover,
-  Row,
-  Space,
-  Typography,
-} from "antd";
+import { Button, Col, Divider, Layout, Row, Space, Typography } from "antd";
 import React, { CSSProperties, useState } from "react";
 import {
   DragDropContext,
@@ -23,6 +10,7 @@ import {
   DropResult,
   NotDraggingStyle,
 } from "react-beautiful-dnd";
+import { Prompt } from "react-router";
 
 import NewMatesCard from "../NewMates/NewMateCard";
 import { NewMateType } from "../types";
@@ -57,7 +45,7 @@ const initialMates = philosophers.map(
       id: `mate-id-${index}`,
     } as NewMateType)
 );
-const families = ["school", "work"];
+const families = ["school", "work", "life", "college", "concert"];
 const initialGroup: Record<string, NewMateType[]> = families.reduce(
   (object, family) => ({
     ...object,
@@ -67,20 +55,18 @@ const initialGroup: Record<string, NewMateType[]> = families.reduce(
 );
 // hardcoded data for demo
 
-const grid = 8;
 // horizontal
-const getItemStyle = (
+const horizontalGetItemStyle = (
   draggableStyle: StyleType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isDragging: boolean
 ): CSSType => ({
   userSelect: "none",
-  background: isDragging ? "lightgreen" : "grey",
-  padding: 8,
-  margin: `0 8px 0 0`,
+  margin: "0 8px 0 0",
   ...draggableStyle,
 });
 
-const getListStyle = (isDraggingOver: boolean) => ({
+const horizontalGetListStyle = (isDraggingOver: boolean) => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
   display: "flex",
   padding: 8,
@@ -91,26 +77,21 @@ const getListStyle = (isDraggingOver: boolean) => ({
 // vertical
 const verticalGetItemStyle = (
   draggableStyle: StyleType,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isDragging: boolean
 ): CSSType => ({
-  // some basic styles to make the items look a bit nicer
   userSelect: "none",
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
-
-  // change background colour if dragging
-  background: isDragging ? "lightgreen" : "grey",
-
-  // styles we need to apply on draggables
+  margin: "0 auto 8px auto",
+  width: 200,
   ...draggableStyle,
 });
 
 const verticalGetListStyle = (isDraggingOver: boolean) => ({
   background: isDraggingOver ? "lightblue" : "lightgrey",
-  padding: grid,
-  width: 250,
+  padding: 8,
+  width: 220,
   minHeight: 125,
-  // display: "flex"  // don't add this
+  borderRadius: 5,
 });
 
 const reorder = (list: NewMateType[], startIndex: number, endIndex: number) => {
@@ -141,26 +122,23 @@ const move = (
   return result;
 };
 
-type NewFamilyFormType = {
-  familyName: string;
-};
-
 const AssignMatesPage = (): JSX.Element => {
-  const [form] = Form.useForm<NewFamilyFormType>();
   const [groups, setGroups] =
     useState<Record<string, NewMateType[]>>(initialGroup);
 
-  const addNewFamily = async ({ familyName }: NewFamilyFormType) => {
-    if (Object.keys(groups).includes(familyName)) {
-      await message.error(`Family name ${familyName} already exists`);
-    } else {
-      await message.success(`Added ${familyName}`);
-      setGroups((prevGroup) => ({
-        ...prevGroup,
-        [familyName]: [],
-      }));
-    }
-    form.resetFields();
+  const removeMate = (mate: NewMateType): void => {
+    const newGroup: Record<string, NewMateType[]> = Object.keys(groups).reduce(
+      (object, family) => ({
+        ...object,
+        [family]: groups[family].filter((m8) => m8.id !== mate.id),
+      }),
+      {}
+    );
+    setGroups(newGroup);
+  };
+
+  const submitNewAssignments = () => {
+    // TODO send to backend here
   };
 
   const onDragEnd = ({ source, destination }: DropResult): void => {
@@ -193,40 +171,32 @@ const AssignMatesPage = (): JSX.Element => {
     }));
   };
 
+  const pageUnsaved = Object.keys(groups)
+    .filter((family) => family !== "unassigned")
+    .some((family) => groups[family].length !== 0);
+
   return (
     <DragDropContext onDragEnd={onDragEnd}>
+      <Prompt
+        when={pageUnsaved}
+        message="Leaving will erase all your unsaved info. Are you sure?"
+      />
       <Layout style={{ minHeight: "100vh" }}>
         <Row style={{ backgroundColor: "#F0F2F5", padding: "30px" }}>
           <Col>
-            <Title>Populating M8s</Title>
+            <Title>Assigning M8s</Title>
           </Col>
         </Row>
         <Row style={{ padding: "30px" }}>
           <Col span={6}>
             <Title level={2}>Unassigned Mates</Title>
           </Col>
-          <Col>
-            <Form layout="inline" form={form} onFinish={addNewFamily}>
-              <Form.Item
-                label="FamilyName"
-                name="familyName"
-                rules={[{ required: true }]}
-              >
-                <Input autoFocus />
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary" htmlType="submit">
-                  Add New Family
-                </Button>
-              </Form.Item>
-            </Form>
-          </Col>
         </Row>
         <Droppable droppableId="unassigned" direction="horizontal">
           {(provided, snapshot) => (
             <div
               ref={provided.innerRef}
-              style={getListStyle(snapshot.isDraggingOver)}
+              style={horizontalGetListStyle(snapshot.isDraggingOver)}
             >
               {groups.unassigned.map((item, index) => (
                 <Draggable
@@ -239,7 +209,7 @@ const AssignMatesPage = (): JSX.Element => {
                       ref={draggableProvided.innerRef}
                       {...draggableProvided.draggableProps}
                       {...draggableProvided.dragHandleProps}
-                      style={getItemStyle(
+                      style={horizontalGetItemStyle(
                         draggableProvided.draggableProps.style,
                         draggableSnapshot.isDragging
                       )}
@@ -247,9 +217,7 @@ const AssignMatesPage = (): JSX.Element => {
                       <NewMatesCard
                         mate={item}
                         style={{ width: 200 }}
-                        removeMate={(rMate) =>
-                          console.log("pressed remove", rMate)
-                        }
+                        removeMate={removeMate}
                       />
                     </div>
                   )}
@@ -259,65 +227,65 @@ const AssignMatesPage = (): JSX.Element => {
             </div>
           )}
         </Droppable>
-
-        {Object.keys(groups)
-          .filter((key) => key !== "unassigned")
-          .map((key) => (
-            <span key={key} style={{ float: "left", display: "inline-grid" }}>
-              <Divider />
-
-              <Row style={{ padding: "30px" }}>
-                <Col span={6}>
-                  <Title level={2}>{key}</Title>
-                </Col>
-              </Row>
-              <Droppable droppableId={key} direction="vertical">
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    style={verticalGetListStyle(snapshot.isDraggingOver)}
-                  >
-                    {groups[key].map((item, index) => (
-                      <Draggable
-                        key={item.id}
-                        draggableId={item.id as string}
-                        index={index}
-                      >
-                        {(draggableProvided, draggableSnapshot) => (
-                          <div
-                            ref={draggableProvided.innerRef}
-                            {...draggableProvided.draggableProps}
-                            {...draggableProvided.dragHandleProps}
-                            style={verticalGetItemStyle(
-                              draggableProvided.draggableProps.style,
-                              draggableSnapshot.isDragging
-                            )}
-                          >
-                            <NewMatesCard
-                              mate={item}
-                              style={{ width: 200 }}
-                              removeMate={(rMate) =>
-                                console.log("pressed remove", rMate)
-                              }
-                            />
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </span>
-          ))}
-
+        <Row wrap={false} style={{ overflow: "auto" }}>
+          {Object.keys(groups)
+            .filter((key) => key !== "unassigned")
+            .map((key) => (
+              <Col
+                key={key}
+                style={{ width: 220, marginLeft: 5, marginRight: 5 }}
+              >
+                <Divider />
+                <Row justify="center">
+                  <Col>
+                    <Title level={2}>{key}</Title>
+                  </Col>
+                </Row>
+                <Droppable droppableId={key} direction="vertical">
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      style={verticalGetListStyle(snapshot.isDraggingOver)}
+                    >
+                      {groups[key].map((item, index) => (
+                        <Draggable
+                          key={item.id}
+                          draggableId={item.id as string}
+                          index={index}
+                        >
+                          {(draggableProvided, draggableSnapshot) => (
+                            <div
+                              ref={draggableProvided.innerRef}
+                              {...draggableProvided.draggableProps}
+                              {...draggableProvided.dragHandleProps}
+                              style={verticalGetItemStyle(
+                                draggableProvided.draggableProps.style,
+                                draggableSnapshot.isDragging
+                              )}
+                            >
+                              <NewMatesCard
+                                mate={item}
+                                style={{ width: 200 }}
+                                removeMate={removeMate}
+                              />
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </Col>
+            ))}
+        </Row>
         <Footer style={{ position: "sticky", bottom: "0" }}>
           <Space>
             Once you’ve assigned all Your M8s (contacts), click to save
             <Button
               type="primary"
-              // disabled={!pageUnsaved}
-              // onClick={submitNewMates}
+              disabled={!pageUnsaved}
+              onClick={submitNewAssignments}
             >
               Save family assignments
             </Button>

@@ -1,3 +1,5 @@
+import "./NewMatePage.css";
+
 import {
   DeleteOutlined,
   EllipsisOutlined,
@@ -26,7 +28,12 @@ const NewMateCard = ({
       <DeleteOutlined key="delete" onClick={() => removeMate(mate)} />,
       <EllipsisOutlined key="ellipsis" />,
     ]}
-    style={style}
+    style={{
+      ...style,
+      borderRadius: 7,
+      borderBottomRightRadius: 7,
+      borderBottomLeftRadius: 7,
+    }} // CSS magic
   >
     <Meta
       avatar={<Avatar size="small" icon={<UserOutlined />} />}

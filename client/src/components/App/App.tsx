@@ -26,7 +26,7 @@ const App = (): JSX.Element => (
       <Route path="/assign-families">
         <AssignMatesPage />
       </Route>
-      <Route path="/">
+      <Route path="/" exact>
         <DashboardPage />
       </Route>
     </Switch>
