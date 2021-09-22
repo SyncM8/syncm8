@@ -1,8 +1,12 @@
 import { Button, notification, Typography } from "antd";
 import axios from "axios";
-import * as queryString from "query-string";
+import { parse, stringify } from "querystring";
 import React from "react";
 import { Redirect } from "react-router-dom";
+
+import { loginPath, LoginResponse } from "../../api";
+// // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+// const axios = require('axios').default;
 
 const { Title } = Typography;
 
@@ -28,28 +32,24 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
       scope: "openid",
     };
 
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${queryString.stringify(
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${stringify(
       options
     )}`;
   };
 
   function checkloginCallback() {
-    const parsedParams = queryString.parse(window.location.hash);
+    const parsedParams = parse(window.location.hash);
     window.location.hash = "";
 
     if ("error" in parsedParams) {
       openNotification(String(parsedParams.error));
     } else if ("access_token" in parsedParams) {
       axios
-        .post(`${process.env.REACT_APP_API_URL ?? ""}/login`, parsedParams)
+        .post<LoginResponse>(loginPath, parsedParams)
         .then((res) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           if (res.data.isLoggedIn) {
             setLoggedIn(true);
           } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            console.log(res.data.error);
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             openNotification(JSON.stringify(res.data.error));
           }
         })

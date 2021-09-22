@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 
+import { isLoggedInPath, IsLoggedInResponse } from "../../api";
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import Header from "../Header/Header";
@@ -25,18 +26,16 @@ const ProtectedRoute = ({
   <Route path={path}>{loggedIn ? children : <Redirect to="/login" />}</Route>
 );
 
-const apiPath = process.env.REACT_APP_API_URL ?? "";
-
 const App = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     axios
-      .get(`${apiPath}/isLoggedIn`)
+      .get<IsLoggedInResponse>(isLoggedInPath)
       .then((res) => {
         let resLoggedIn = false;
         if ("isLoggedIn" in res.data) {
-          resLoggedIn = res.data.isLoggedIn; //  eslint-disable-line
+          resLoggedIn = res.data.isLoggedIn;
         }
         if (loggedIn !== resLoggedIn) {
           setLoggedIn(resLoggedIn);
