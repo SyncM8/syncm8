@@ -1,4 +1,4 @@
-import "./NewMatePage.css";
+import "./NewMateCard.css";
 
 import {
   DeleteOutlined,
@@ -8,7 +8,7 @@ import {
 import { Avatar, Card } from "antd";
 import React, { CSSProperties } from "react";
 
-import { NewMateType } from "../types";
+import { NewMateType } from "../../pages/types";
 
 type NewMateCardProps = {
   mate: NewMateType;
