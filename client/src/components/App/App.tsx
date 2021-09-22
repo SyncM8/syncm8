@@ -41,7 +41,7 @@ const App = (): JSX.Element => {
           setLoggedIn(resLoggedIn);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
