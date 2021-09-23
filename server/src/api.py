@@ -1,19 +1,19 @@
 """Syncm8 Api."""
 import os
 from http import HTTPStatus
-from typing import Any, Callable, Optional, TypeVar, cast
+from typing import Any, Callable, Optional, TypedDict, TypeVar, cast
 
-import flask_login
 from ariadne import gql, graphql_sync, load_schema_from_path, make_executable_schema
 from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flask_login import LoginManager, login_required, login_user
+from flask_login import LoginManager, current_user, login_user
 
 from .clients.db import connect_db
 from .clients.google import is_google_token_valid
 from .gql import mutation, query
 from .model.user import User
+from .utils.error import AppErrorDictType
 
 connect_db()
 
@@ -67,9 +67,16 @@ def test() -> Any:
     return "<h1 style='color:blue'>The test is successful.</h1>"
 
 
-@csrf_protection
+class LoginResponse(TypedDict):
+    """Response for the isLoggedIn route."""
+
+    isLoggedIn: bool
+    error: Optional[AppErrorDictType]
+
+
 @app.route("/login", methods=["Post"])
-def login() -> Any:
+@csrf_protection
+def login() -> LoginResponse:
     """
     Lgoin to app using google token.
 
@@ -82,16 +89,21 @@ def login() -> Any:
         error, new_user = User.add_google_user(googleToken)
         if not error:
             login_user(new_user, remember=True)
-            return {"isLoggedIn": True}
+            return {"isLoggedIn": True, "error": None}
 
-    return {"isLoggedIn": False, "error": error.get_dict_repr() if error else {}}
+    return {"isLoggedIn": False, "error": error.get_dict_repr() if error else None}
 
 
-@login_required
+class IsLoggedInResponse(TypedDict):
+    """Response for the isLoggedIn route."""
+
+    isLoggedIn: bool
+
+
 @app.route("/isLoggedIn", methods=["GET"])
-def is_logged_in() -> Any:
+def is_logged_in() -> IsLoggedInResponse:
     """Return whether the user is logged in."""
-    return {"isLoggedIn": flask_login.current_user.is_authenticated}
+    return {"isLoggedIn": current_user.is_authenticated}
 
 
 @app.route("/graphql", methods=["GET"])
@@ -100,7 +112,6 @@ def graphql_playground() -> Any:
     return PLAYGROUND_HTML, 200
 
 
-@csrf_protection
 @app.route("/graphql", methods=["POST"])
 def graphql_server() -> Any:
     """Receive and execute GraphQL commands."""

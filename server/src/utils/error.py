@@ -1,6 +1,6 @@
 """Helper module for app errors."""
 from enum import Enum
-from typing import Any, Callable, Dict, TypeVar, Union, cast
+from typing import Any, Callable, TypedDict, TypeVar, cast
 
 
 class ErrorCode(Enum):
@@ -12,6 +12,17 @@ class ErrorCode(Enum):
     GOOGLE_API_ERROR = 3
     MONGO_ERROR = 4
 
+    def __repr__(self) -> str:
+        """Return string repr."""
+        return self.name
+
+
+class AppErrorDictType(TypedDict):
+    """Return type for AppError get_dict_repr."""
+
+    status_code: str
+    error_details: str
+
 
 class AppError:
     """Records details about errors."""
@@ -21,14 +32,14 @@ class AppError:
         self.status_code = status_code
         self.error_details = error_details
 
-    def get_dict_repr(self) -> Dict[str, Union[str, int]]:
+    def get_dict_repr(self) -> AppErrorDictType:
         """
         Get dictionary representation of error details.
 
         Use for sending error details over http.
         """
         return {
-            "status_code": self.status_code.value,
+            "status_code": self.status_code.name,
             "error_details": self.error_details,
         }
 
