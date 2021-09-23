@@ -22,6 +22,7 @@ pytest-mock = "*"
 pytest = "*"
 pre-commit = "*"
 mypy = "*"
+mongomock = "*"
 
 [requires]
 python_version = "3.8"

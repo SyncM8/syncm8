@@ -106,7 +106,12 @@ def test_get_user_info_happy() -> None:
             (
                 {"status": "200"},
                 json.dumps(
-                    {"name": myName, "email": myEmail, "picture": myPicture, "id": myId}
+                    {
+                        "given_name": myName,
+                        "email": myEmail,
+                        "picture": myPicture,
+                        "id": myId,
+                    }
                 ),
             )
         ]
@@ -115,7 +120,7 @@ def test_get_user_info_happy() -> None:
     error, userInfo = get_user_info(token="", http=http, http2=http2)
     assert not error
     assert userInfo is not None
-    assert userInfo["name"] == myName
+    assert userInfo["given_name"] == myName
     assert userInfo["email"] == myEmail
     assert userInfo["id"] == myId
     assert userInfo["picture"] == myPicture

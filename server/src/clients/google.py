@@ -63,11 +63,11 @@ def is_google_token_valid(
 
 
 @error_bounded(
-    (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user info"), False)
+    (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user info"), None)
 )
 def get_user_info(
     token: str,
-    fields: List[str] = ["name", "email", "picture", "id"],
+    fields: List[str] = ["given_name", "email", "picture", "id"],
     http: Optional[httplib2.Http] = None,
     http2: Optional[httplib2.Http] = None,
 ) -> Tuple[Optional[AppError], Optional[Dict[str, str]]]:

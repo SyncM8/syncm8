@@ -1,5 +1,5 @@
 """MongoDb user model."""
-# 'annotation' import neede to return enclosing type:
+# 'annotations' import neede to return enclosing type:
 # https://www.python.org/dev/peps/pep-0563/
 from __future__ import annotations
 
@@ -40,6 +40,7 @@ class User(Document, UserMixin):
         error, user_info = get_user_info(
             token=token, fields=["given_name", "email", "picture", "id"]
         )
+
         if not error and user_info:
             existing_user = User.lookup_google_user(user_info["id"])
             if existing_user:
