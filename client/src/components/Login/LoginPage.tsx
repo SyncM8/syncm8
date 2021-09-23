@@ -38,9 +38,9 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   };
 
   function checkloginCallback() {
-    const parsedParams = parse(window.location.hash);
+    // window.location.hash keeps the hash, part so we chop it off with substr
+    const parsedParams = parse(window.location.hash.substr(1));
     window.location.hash = "";
-
     if ("error" in parsedParams) {
       openNotification(String(parsedParams.error));
     } else if ("access_token" in parsedParams) {
