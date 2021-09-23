@@ -1,5 +1,6 @@
 """Helper module for app errors."""
 from enum import Enum
+from functools import wraps
 from typing import Any, Callable, TypedDict, TypeVar, cast
 
 
@@ -51,6 +52,7 @@ def error_bounded(error_ret: Any) -> Callable[[F], F]:
     """Decorate functions in order to record and log exceptions."""
 
     def decorator_error_bounded(fn: F) -> F:
+        @wraps(decorator_error_bounded)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 return fn(*args, **kwargs)
