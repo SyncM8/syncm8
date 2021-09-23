@@ -13,6 +13,7 @@ from src.utils.error import AppError, ErrorCode
 @pytest.fixture
 def client() -> Generator[FlaskClient, None, None]:
     """Get client api app for testing."""
+    app.secret_key = "test_key"
     with app.test_client() as client:
         yield client
 
