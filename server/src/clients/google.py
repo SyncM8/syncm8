@@ -34,7 +34,6 @@ def is_google_token_valid(
     - was issued by google
     - is allowed to be used by our app
     """
-    print("called")
     with build("oauth2", "v2", http=http) as service:
         token_info_request = service.tokeninfo(access_token=token)
         token_info = token_info_request.execute(http=http2)
