@@ -9,6 +9,8 @@ from src.api import IsLoggedInResponse, LoginResponse, app
 from src.model.user import User
 from src.utils.error import AppError, ErrorCode
 
+CSFR_HEADERS = {"X-Requested-With": "XmlHttpRequest"}
+
 
 @pytest.fixture
 def client() -> Generator[FlaskClient, None, None]:
@@ -69,9 +71,6 @@ def patch_lookup_user(mocker: MockerFixture, user: User, validId: str) -> None:
         "src.api.User.lookup_user",
         side_effect=(lambda x: user if x == validId else None),
     )
-
-
-CSFR_HEADERS = {"X-Requested-With": "XmlHttpRequest"}
 
 
 def test_log_in_happy(client: FlaskClient, mocker: MockerFixture) -> None:

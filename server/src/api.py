@@ -30,7 +30,7 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 def csrf_protection(fn: F) -> F:
-    """Decorate mutationg functions to add CSRF protection."""
+    """Decorate mutating functions to add CSRF protection."""
 
     def protected(*args: Any, **kwargs: Any) -> Any:
         if "X-Requested-With" in request.headers:

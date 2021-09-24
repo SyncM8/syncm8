@@ -30,7 +30,7 @@ def is_google_token_valid(
     Check wheter or not the JWT is a valid google access token.
 
     Determines wheter or not the given JWT is:
-    - not expires
+    - not expired
     - was issued by google
     - is allowed to be used by our app
     """

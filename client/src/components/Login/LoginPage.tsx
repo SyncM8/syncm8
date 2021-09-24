@@ -5,8 +5,6 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 
 import { loginPath, LoginResponse } from "../../api";
-// // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-// const axios = require('axios').default;
 
 const { Title } = Typography;
 

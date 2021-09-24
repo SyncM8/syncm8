@@ -1,20 +1,4 @@
-"""
-Test the user model.
-
-add google user, existing
-add google user new
-get user info returns error
-
-lookup google users passes google_id
-
-lookup user passes pk
-
-
-mock = Mock(return_value=None)
-mock('foo', bar=object())
-mock.assert_called_once_with('foo', bar=ANY)
-TODO: probably should disconnect mongoengine after tests finish
-"""
+"""Test the user model."""
 
 from typing import Dict, Generator
 
