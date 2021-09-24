@@ -24,6 +24,7 @@ userNikola = {
 @pytest.fixture
 def db_connection() -> Generator[None, None, None]:
     """Connect to a mock mongodb instance."""
+    disconnect()
     connect("mongoenginetest", host="mongomock://localhost")
     yield None
     disconnect()
