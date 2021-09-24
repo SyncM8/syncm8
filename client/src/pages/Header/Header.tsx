@@ -26,6 +26,10 @@ const menu = (
       <Link to="/add-mates">Add Mates</Link>
     </Menu.Item>
     <Menu.Divider />
+    <Menu.Item key="assign-families">
+      <Link to="/assign-families">Assign Families</Link>
+    </Menu.Item>
+    <Menu.Divider />
     <Menu.Item key="settings">
       <Link to="/settings">Setting</Link>
     </Menu.Item>
