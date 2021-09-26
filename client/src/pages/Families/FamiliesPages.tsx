@@ -5,6 +5,7 @@ import React from "react";
 import NewMateCard from "../../components/NewMateCard/NewMateCard";
 import { NewMateType } from "../types";
 
+/* Hardcoded data below */
 const family = "College";
 const syncs: NewMateType[] = [
   {
@@ -73,12 +74,21 @@ const matesObj = syncs.reduce((prevObj: Record<string, NewMateType>, sync) => {
   }
   return prevObj;
 }, {});
+/* Hardcoded data above */
 
 const { confirm } = Modal;
 const { Title } = Typography;
 
+/**
+ * FamiliesPage
+ * @returns
+ */
 const FamiliesPage = (): JSX.Element => {
-  const removeMate = (mate: NewMateType) => {
+  /**
+   * Remove mate from server
+   * @param mate to be removed
+   */
+  const removeMate = (mate: NewMateType): void => {
     confirm({
       title: `Are you sure you want to delete ${mate.name}?`,
       icon: <ExclamationCircleOutlined />,
