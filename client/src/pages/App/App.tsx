@@ -2,9 +2,10 @@ import "./App.less";
 
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import { isLoggedInPath, IsLoggedInResponse } from "../../api";
+import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
@@ -12,25 +13,6 @@ import Header from "../Header/Header";
 import LoginPage from "../Login/LoginPage";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
-
-type ProtectedRoutesPropTypes = {
-  children: React.ReactNode;
-  loggedIn: boolean;
-  path: string;
-  exact?: boolean | undefined;
-};
-
-const ProtectedRoute = ({
-  children,
-  loggedIn,
-  path,
-  exact,
-}: ProtectedRoutesPropTypes) => (
-  <Route exact={exact} path={path}>
-    {loggedIn ? children : <Redirect to="/login" />}
-  </Route>
-);
-ProtectedRoute.defaultProps = { exact: false };
 
 const App = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(false);
