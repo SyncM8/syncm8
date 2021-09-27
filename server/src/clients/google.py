@@ -33,6 +33,9 @@ def is_google_token_valid(
     - not expired
     - was issued by google
     - is allowed to be used by our app
+
+    (NB: the htto and http2 parameters are only used during testing - if you can figure
+    out a better way to make the tests work, go ahead and remove them)
     """
     with build("oauth2", "v2", http=http) as service:
         token_info_request = service.tokeninfo(access_token=token)
@@ -76,6 +79,9 @@ def get_user_info(
 
     Returns the requested fields from the user's information if they exist in
     the form of a dictionary.
+
+    (NB: the htto and http2 parameters are only used during testing - if you can figure
+    out a better way to make the tests work, go ahead and remove them)
     """
     creds = Credentials(token) if token else None
     with build("oauth2", "v2", credentials=creds, http=http) as service:

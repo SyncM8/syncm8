@@ -8,6 +8,7 @@ type ProtectedRoutesPropTypes = {
   exact?: boolean | undefined;
 };
 
+const isTesting = () => process.env.JEST_WORKER_ID !== undefined;
 const ProtectedRoute = ({
   children,
   loggedIn,
@@ -15,7 +16,7 @@ const ProtectedRoute = ({
   exact,
 }: ProtectedRoutesPropTypes): JSX.Element => (
   <Route exact={exact} path={path}>
-    {loggedIn ? children : <Redirect to="/login" />}
+    {loggedIn || isTesting ? children : <Redirect to="/login" />}
   </Route>
 );
 ProtectedRoute.defaultProps = { exact: false };

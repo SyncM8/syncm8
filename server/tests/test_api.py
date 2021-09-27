@@ -1,5 +1,5 @@
 """Test the api."""
-from typing import Any, Generator, cast
+from typing import Generator, cast
 from unittest.mock import Mock
 
 import pytest
@@ -27,7 +27,7 @@ def test_test_route(client: FlaskClient) -> None:
     assert b"test is successful" in res.data
 
 
-def test_non_existent_route(client: Any) -> None:
+def test_non_existent_route(client: FlaskClient) -> None:
     """Test getting non-existant page."""
     res = client.get("/")
     assert res.status_code == 404
@@ -111,7 +111,10 @@ def test_log_in_invalid_token(client: FlaskClient, mocker: MockerFixture) -> Non
     json_response = cast(LoginResponse, res.get_json())
     assert not json_response["isLoggedIn"]
     assert json_response["error"] is not None
-    assert json_response["error"]["status_code"] == "INVALID_AUDIENCE_GOOGLE_TOKEN"
+    assert (
+        json_response["error"]["status_code"]
+        == ErrorCode.INVALID_AUDIENCE_GOOGLE_TOKEN.name
+    )
 
     # check logged in
     res2 = client.get("/isLoggedIn")
@@ -132,7 +135,7 @@ def test_log_in_get_user_info_failure(
     json_response = cast(LoginResponse, res.get_json())
     assert not json_response["isLoggedIn"]
     assert json_response["error"] is not None
-    assert json_response["error"]["status_code"] == "GOOGLE_API_ERROR"
+    assert json_response["error"]["status_code"] == ErrorCode.GOOGLE_API_ERROR.name
 
     # check logged in
     res2 = client.get("/isLoggedIn")
