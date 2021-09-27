@@ -13,8 +13,8 @@ import {
 import React, { useState } from "react";
 import { Prompt } from "react-router";
 
+import NewMatesCard from "../../components/NewMateCard/NewMateCard";
 import { NewMatesFormType, NewMateType } from "../types";
-import NewMatesCard from "./NewMateCard";
 
 const { Title } = Typography;
 const { Footer } = Layout;

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 
 import { isLoggedInPath, IsLoggedInResponse } from "../../api";
+import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
 import FamiliesPage from "../Families/FamiliesPages";
 import Header from "../Header/Header";
@@ -16,15 +17,20 @@ type ProtectedRoutesPropTypes = {
   children: React.ReactNode;
   loggedIn: boolean;
   path: string;
+  exact?: boolean | undefined;
 };
 
 const ProtectedRoute = ({
   children,
   loggedIn,
   path,
+  exact,
 }: ProtectedRoutesPropTypes) => (
-  <Route path={path}>{loggedIn ? children : <Redirect to="/login" />}</Route>
+  <Route exact={exact} path={path}>
+    {loggedIn ? children : <Redirect to="/login" />}
+  </Route>
 );
+ProtectedRoute.defaultProps = { exact: false };
 
 const App = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -55,13 +61,16 @@ const App = (): JSX.Element => {
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
           <MatesPage />
         </ProtectedRoute>
-        <ProtectedRoute loggedIn={loggedIn} path="/add-mates">
-          <NewMatesPage />
-        </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/families">
           <FamiliesPage />
         </ProtectedRoute>
-        <ProtectedRoute loggedIn={loggedIn} path="/">
+        <ProtectedRoute loggedIn={loggedIn} path="/add-mates">
+          <NewMatesPage />
+        </ProtectedRoute>
+        <ProtectedRoute loggedIn={loggedIn} path="/assign-families">
+          <AssignMatesPage />
+        </ProtectedRoute>
+        <ProtectedRoute loggedIn={loggedIn} path="/" exact>
           <DashboardPage />
         </ProtectedRoute>
       </Switch>
