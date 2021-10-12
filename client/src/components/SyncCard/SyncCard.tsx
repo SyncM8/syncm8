@@ -59,7 +59,7 @@ const SyncCard = ({
       <Meta
         avatar={icon}
         title={sync.title.trim() || "No Title"}
-        description={sync.ts.toLocaleDateString()}
+        description={sync.ts.toISOString().split("T")[0]}
       />
       {sync.details && <Divider />}
       {shortDetail}
