@@ -223,7 +223,7 @@ const MatesPage = (): JSX.Element => {
         </Form.Item>
         <Form.Item label="Date">
           <DatePicker
-            value={moment.utc(editingSync.ts)} // moment defaults to local time, which messes with JS's Date
+            value={moment.utc(editingSync.ts)} // moment defaults to local time, while JS's Date is UTC
             onChange={(date, dateString) =>
               changeFormValue(SyncModalEnum.DATE, dateString)
             }
