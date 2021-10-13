@@ -64,6 +64,8 @@ test("renders editing modal when clicking edit", async () => {
     await waitFor(() =>
       expect(screen.queryByText("Title")).toBeInTheDocument()
     );
+
+    fireEvent.click(screen.getByText("Cancel"));
   });
 });
 
@@ -98,7 +100,7 @@ test("adds new sync", async () => {
   });
 
   await act(async () => {
-    const saveBtn = screen.getByText("OK");
+    const saveBtn = screen.getByText("Save");
     fireEvent.click(saveBtn);
 
     await waitFor(() => {

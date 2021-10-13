@@ -134,9 +134,9 @@ const MatesPage = (): JSX.Element => {
 
   /**
    * Open modal to edit specified sync
-   * @param sync
+   * @param sync to be edited
    */
-  const editSync = (sync: SyncType) => {
+  const openEditSyncModal = (sync: SyncType) => {
     setState({ ...state, isModalVisible: true, editingSync: { ...sync } });
   };
 
@@ -144,7 +144,7 @@ const MatesPage = (): JSX.Element => {
    * Add a new sync then edit
    */
   const addSync = () => {
-    editSync({
+    openEditSyncModal({
       id: id++,
       title: "",
       details: "",
@@ -157,7 +157,7 @@ const MatesPage = (): JSX.Element => {
    * Handle save on editing sync
    * TODO: save on server
    */
-  const handleOk = () => {
+  const handleSaveEditSync = () => {
     const newSyncs = [
       ...syncs.filter((sync) => sync.id !== editingSync.id),
       editingSync,
@@ -168,14 +168,14 @@ const MatesPage = (): JSX.Element => {
   /**
    * Turn off editing modal
    */
-  const handleCancel = () => {
+  const closeEditModal = () => {
     setState({ ...state, isModalVisible: false });
   };
 
   /**
    * Handle changing form values on editing sync
-   * @param label
-   * @param value
+   * @param label of sync to change
+   * @param value new value to replace
    */
   const changeFormValue = (label: SyncModalEnum, value: string) => {
     let newEditingSync = { ...editingSync };
@@ -204,7 +204,12 @@ const MatesPage = (): JSX.Element => {
   };
 
   const ModalForm = (
-    <Modal visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal
+      visible={isModalVisible}
+      onOk={handleSaveEditSync}
+      onCancel={closeEditModal}
+      okText="Save"
+    >
       <Form layout="vertical">
         <Form.Item label="Title">
           <Input
@@ -276,7 +281,7 @@ const MatesPage = (): JSX.Element => {
                   <Col span={6} key={sync.id}>
                     <SyncCard
                       sync={sync}
-                      editSync={editSync}
+                      editSync={openEditSyncModal}
                       removeSync={removeSync}
                     />
                   </Col>
@@ -294,7 +299,11 @@ const MatesPage = (): JSX.Element => {
             </Button>
           </div>
         </Col>
-        <Col span={6} className="timeline-sidebar" style={{ height: "100vh" }}>
+        <Col
+          span={6}
+          className="timeline-sidebar"
+          style={{ height: "inherit" }}
+        >
           <Row justify="center">
             <Col>
               <Title level={2}>Timeline</Title>
