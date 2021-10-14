@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 CORS(
     app,
-    origins=["http://localhost:3000", "https://syncm8.com"],
+    origins=["http://localhost:3000", "https://syncm8.com", "https://www.syncm8.com"],
     supports_credentials=True,
 )
 
