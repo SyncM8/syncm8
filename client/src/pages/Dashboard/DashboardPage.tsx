@@ -95,6 +95,10 @@ const initialSyncs: UpcomingSyncType[] = [
   },
 ];
 
+/**
+ * DashboardPage
+ * @returns JSX.Element
+ */
 const DashboardPage = (): JSX.Element => {
   const [state, setState] = useState<DashboardPageState>({
     syncs: initialSyncs,
@@ -103,10 +107,18 @@ const DashboardPage = (): JSX.Element => {
 
   const { syncs, isModalVisible } = state;
 
+  /**
+   * remove specified sync from Dashboard
+   * @param syncId to be removed
+   */
   const removeSync = (syncId: number) => {
     setState({ ...state, syncs: syncs.filter((sync) => sync.id !== syncId) });
   };
 
+  /**
+   * TODO rename this fn
+   * @param syncId to be added
+   */
   const addSyncSummary = (syncId: number) => {
     setState({ ...state, isModalVisible: true });
     console.log(isModalVisible, syncId); // eslint-disable-line no-console

@@ -11,7 +11,6 @@ test("renders Dashboard page", () => {
   expect(screen.queryByText("Upcoming Syncs")).toBeInTheDocument();
 });
 
-// check, edit, close, calendar / carry-out, close
 test("remove previous sync when clicking check btn", async () => {
   render(<DashboardPage />);
   expect(screen.queryByText("Bartholomew")).toBeInTheDocument();
@@ -61,7 +60,7 @@ test("remove upcoming sync when clicking carry-out btn", async () => {
   });
 });
 
-test("remove upcoming when clicking decline btn", async () => {
+test("remove upcoming sync when clicking decline btn", async () => {
   render(<DashboardPage />);
   expect(screen.queryByText("Judas")).toBeInTheDocument();
   const btns = screen.getAllByLabelText("close");
