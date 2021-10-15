@@ -16,5 +16,6 @@ def connect_db(app: Flask) -> None:
         "password": mongo_password,
         "host": mongo_host,
         "w": "majority",
+        "connect": False,
     }
     MongoEngine(app)
