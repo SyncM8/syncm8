@@ -74,6 +74,4 @@ class User(Document, UserMixin):
 
     def __str__(self) -> str:
         """Return string representation of user."""
-        return "User, oid: {0}, first_name: {1}, email: {2}".format(
-            self.id, self.first_name, self.email
-        )
+        return f"User, oid: {self.id}, first_name: {self.first_name}, email: {self.email}"
