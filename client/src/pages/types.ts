@@ -10,3 +10,17 @@ export type NewMateType = {
   lastSynced: Date;
   id: number | string;
 };
+
+export enum SyncStatusEnum {
+  COMPLETED = "Completed",
+  SNOOZED = "Snoozed",
+  DECLINED = "Declined",
+}
+
+export type SyncType = {
+  id: number;
+  ts: Date;
+  title: string;
+  details: string;
+  syncStatus: SyncStatusEnum;
+};

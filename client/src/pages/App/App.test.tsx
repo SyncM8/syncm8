@@ -38,6 +38,6 @@ test("navigates to Mates page", () => {
       <App />
     </Router>
   );
-  const matesTitleElement = screen.getByText("Mates!");
+  const matesTitleElement = screen.getByText("M8");
   expect(matesTitleElement).toBeInTheDocument();
 });
