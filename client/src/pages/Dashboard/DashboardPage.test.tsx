@@ -35,18 +35,6 @@ test("remove previous sync when clicking decline btn", async () => {
   });
 });
 
-test("remove previous sync when clicking calendar btn", async () => {
-  render(<DashboardPage />);
-  expect(screen.queryByText("Bartholomew")).toBeInTheDocument();
-  const btn = screen.getAllByLabelText("calendar")[0];
-  await act(async () => {
-    fireEvent.click(btn);
-    await waitFor(() =>
-      expect(screen.queryByText("Bartholomew")).not.toBeInTheDocument()
-    );
-  });
-});
-
 test("remove upcoming sync when clicking carry-out btn", async () => {
   render(<DashboardPage />);
   expect(screen.queryByText("Judas")).toBeInTheDocument();
@@ -73,17 +61,24 @@ test("remove upcoming sync when clicking decline btn", async () => {
   });
 });
 
+/* Summary Modal */
 test("open edit summary modal when clicking edit btn", async () => {
   render(<DashboardPage />);
   expect(screen.queryByText("John")).toBeInTheDocument();
   expect(screen.queryByText("M8")).not.toBeInTheDocument();
   expect(screen.queryByText("Sync Date")).not.toBeInTheDocument();
+  expect(screen.queryByText("Title")).not.toBeInTheDocument();
+  expect(screen.queryByText("Details")).not.toBeInTheDocument();
+  expect(screen.queryByText("Reschedule")).not.toBeInTheDocument();
   const editBtn = screen.getAllByLabelText("edit")[1];
   await act(async () => {
     fireEvent.click(editBtn);
     await waitFor(() => {
       expect(screen.queryByText("M8")).toBeInTheDocument();
       expect(screen.queryByText("Sync Date")).toBeInTheDocument();
+      expect(screen.queryByText("Title")).toBeInTheDocument();
+      expect(screen.queryByText("Details")).toBeInTheDocument();
+      expect(screen.queryByText("Reschedule")).not.toBeInTheDocument();
     });
   });
 });
@@ -133,6 +128,28 @@ test("remove previous sync after saving edited sync", async () => {
     fireEvent.click(screen.getByText("Save"));
     await waitFor(() => {
       expect(screen.queryByText("John")).not.toBeInTheDocument();
+    });
+  });
+});
+
+/* Reschedule Modal */
+test("open edit reschedule modal when clicking calendar btn", async () => {
+  render(<DashboardPage />);
+  expect(screen.queryByText("John")).toBeInTheDocument();
+  expect(screen.queryByText("M8")).not.toBeInTheDocument();
+  expect(screen.queryByText("Sync Date")).not.toBeInTheDocument();
+  expect(screen.queryByText("Title")).not.toBeInTheDocument();
+  expect(screen.queryByText("Details")).not.toBeInTheDocument();
+  expect(screen.queryByText("Reschedule")).not.toBeInTheDocument();
+  const calendarBtn = screen.getAllByLabelText("calendar")[1];
+  await act(async () => {
+    fireEvent.click(calendarBtn);
+    await waitFor(() => {
+      expect(screen.queryByText("M8")).toBeInTheDocument();
+      expect(screen.queryByText("Sync Date")).toBeInTheDocument();
+      expect(screen.queryByText("Title")).not.toBeInTheDocument();
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+      expect(screen.queryByText("Reschedule")).toBeInTheDocument();
     });
   });
 });

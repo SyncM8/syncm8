@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import {
   Col,
+  DatePicker,
   Divider,
   Form,
   Input,
@@ -17,6 +18,7 @@ import {
   Timeline,
   Typography,
 } from "antd";
+import moment from "moment";
 import React, { useState } from "react";
 
 import DashboardCard from "../../components/DashboardCard/DashboardCard";
@@ -25,16 +27,21 @@ import { UpcomingSyncType } from "../types";
 
 const { Title } = Typography;
 
-type EditSyncType = {
-  sync: UpcomingSyncType;
-  title: string;
-  details: string;
-};
+enum EditModalEnum {
+  SUMMARY = "Summary",
+  RESCHEDULE = "Reschedule",
+}
 
 type DashboardPageState = {
   syncs: UpcomingSyncType[];
   isModalVisible: boolean;
-  editingSync: EditSyncType;
+  editingSync: UpcomingSyncType;
+  editingMode: EditModalEnum;
+  editingInfo: {
+    title: string;
+    details: string;
+    date: Date;
+  };
 };
 
 let id = 0;
@@ -120,14 +127,17 @@ const DashboardPage = (): JSX.Element => {
   const [state, setState] = useState<DashboardPageState>({
     syncs: initialSyncs,
     isModalVisible: false,
-    editingSync: {
-      sync: initialSyncs[0],
+    editingSync: initialSyncs[0],
+    editingMode: EditModalEnum.SUMMARY,
+    editingInfo: {
       title: "",
       details: "",
+      date: new Date(),
     },
   });
 
-  const { syncs, isModalVisible, editingSync } = state;
+  const { syncs, isModalVisible, editingSync, editingInfo, editingMode } =
+    state;
 
   /**
    * remove specified sync from Dashboard
@@ -138,14 +148,16 @@ const DashboardPage = (): JSX.Element => {
   };
 
   /**
-   * edit sync summary in modal
-   * @param syncId to be added
+   * open modal to change sync information
+   * @param sync to be added
    */
-  const editSyncSummary = (sync: UpcomingSyncType) => {
+  const openEditModal = (sync: UpcomingSyncType, mode: EditModalEnum) => {
     setState({
       ...state,
       isModalVisible: true,
-      editingSync: { sync, title: "", details: "" },
+      editingSync: sync,
+      editingMode: mode,
+      editingInfo: { title: "", details: "", date: sync.upcomingSync },
     });
   };
 
@@ -182,7 +194,9 @@ const DashboardPage = (): JSX.Element => {
                   placement="bottom"
                   key={`${sync.id}-edit`}
                 >
-                  <EditOutlined onClick={() => editSyncSummary(sync)} />
+                  <EditOutlined
+                    onClick={() => openEditModal(sync, EditModalEnum.SUMMARY)}
+                  />
                 </Popover>,
                 <Popover
                   content="Decline this sync"
@@ -196,7 +210,11 @@ const DashboardPage = (): JSX.Element => {
                   placement="bottom"
                   key={`${sync.id}-calendar`}
                 >
-                  <CalendarOutlined onClick={() => removeSync(sync)} />
+                  <CalendarOutlined
+                    onClick={() =>
+                      openEditModal(sync, EditModalEnum.RESCHEDULE)
+                    }
+                  />
                 </Popover>,
               ]}
             />
@@ -209,64 +227,84 @@ const DashboardPage = (): JSX.Element => {
   /**
    * Saves the editing sync
    */
-  const handleSummarySave = () => {
+  const handleModalSave = () => {
     // TODO handle server saving
     setState({
       ...state,
-      syncs: syncs.filter((s) => editingSync.sync.id !== s.id),
+      syncs: syncs.filter((s) => editingSync.id !== s.id),
       isModalVisible: false,
     });
   };
 
-  const SummaryModal = (
+  const summaryForm = (
+    <>
+      <Form.Item label="Title">
+        <Input
+          value={editingInfo.title}
+          placeholder="New Title"
+          onChange={(e) =>
+            setState({
+              ...state,
+              editingInfo: { ...editingInfo, title: e.target.value },
+            })
+          }
+        />
+      </Form.Item>
+      <Form.Item label="Details">
+        <Input.TextArea
+          autoSize
+          value={editingInfo.details}
+          placeholder="Add details here..."
+          onChange={(e) =>
+            setState({
+              ...state,
+              editingInfo: { ...editingInfo, details: e.target.value },
+            })
+          }
+        />
+      </Form.Item>
+    </>
+  );
+
+  const rescheduleForm = (
+    <Form.Item label="Reschedule">
+      <DatePicker
+        value={moment.utc(editingInfo.date)} // moment defaults to local time, while JS's Date is UTC
+        onChange={(date, dateString) =>
+          setState({
+            ...state,
+            editingInfo: { ...editingInfo, date: new Date(dateString) },
+          })
+        }
+      />
+    </Form.Item>
+  );
+
+  const SyncModal = (
     <Modal
       onCancel={() => setState({ ...state, isModalVisible: false })}
-      onOk={handleSummarySave}
+      onOk={handleModalSave}
       visible={isModalVisible}
       okText="Save"
     >
       <Form layout="vertical">
         <Form.Item label="M8">
-          <Input value={editingSync.sync.name} disabled />
+          <Input value={editingSync.name} disabled />
         </Form.Item>
         <Form.Item label="Sync Date">
           <Input
-            value={editingSync.sync.upcomingSync.toLocaleDateString()}
+            value={editingSync.upcomingSync.toLocaleDateString()}
             disabled
           />
         </Form.Item>
-        <Form.Item label="Title">
-          <Input
-            value={editingSync.title}
-            placeholder="New Title"
-            onChange={(e) =>
-              setState({
-                ...state,
-                editingSync: { ...editingSync, title: e.target.value },
-              })
-            }
-          />
-        </Form.Item>
-        <Form.Item label="Details">
-          <Input.TextArea
-            autoSize
-            value={editingSync.details}
-            placeholder="Add details here..."
-            onChange={(e) =>
-              setState({
-                ...state,
-                editingSync: { ...editingSync, details: e.target.value },
-              })
-            }
-          />
-        </Form.Item>
+        {editingMode === EditModalEnum.SUMMARY ? summaryForm : rescheduleForm}
       </Form>
     </Modal>
   );
 
   const UpcomingSyncsNode = (
     <>
-      {SummaryModal}
+      {SyncModal}
       <Row justify="center">
         <Col>
           <Title level={3}>Upcoming Syncs</Title>
