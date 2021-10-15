@@ -1,0 +1,1 @@
+"""MongoeDB schema models."""

@@ -8,10 +8,12 @@ venv/
 env*
 *.egg
 *.egg-info/
-__pycache__
+__pycache__/
 .tox/
 .cache/
 .pytest_cache/
 dist/
 build/
 docs/_build/
+*cache/
+google*.json
