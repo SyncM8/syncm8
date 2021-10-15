@@ -15,10 +15,10 @@ from .gql import mutation, query
 from .model.user import User
 from .utils.error import AppErrorDictType
 
-connect_db()
-
-
 app = Flask(__name__)
+
+connect_db(app)
+
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 CORS(
     app,
