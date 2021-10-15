@@ -8,5 +8,4 @@ const MatesPage = (): JSX.Element => (
     <Title>Mates!</Title>
   </>
 );
-
 export default MatesPage;

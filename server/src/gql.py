@@ -1,4 +1,4 @@
-from typing import List
+"""Sample gql."""
 from uuid import uuid4
 
 from ariadne import MutationType, QueryType
@@ -18,18 +18,18 @@ class Coffee:
 query = QueryType()
 mutation = MutationType()
 
-orders: List = []
+# orders: List = []
 
 
-@query.field("orders")
-def resolve_orders(_, info):
-    """Query fn."""
-    return orders
+# @query.field("orders")
+# def resolve_orders(_, info):
+#     """Query fn."""
+#     return orders
 
 
-@mutation.field("orderCoffee")
-def resolve_order_coffee(_, info, size, name, type):
-    """Mutation fn."""
-    newOrder = Coffee(size, name, type)
-    orders.append(newOrder)
-    return newOrder
+# @mutation.field("orderCoffee")
+# def resolve_order_coffee(_, info, size, name, type):
+#     """Mutation fn."""
+#     newOrder = Coffee(size, name, type)
+#     orders.append(newOrder)
+#     return newOrder

@@ -8,5 +8,4 @@ const DashboardPage = (): JSX.Element => (
     <Title>Dashboard!</Title>
   </>
 );
-
 export default DashboardPage;

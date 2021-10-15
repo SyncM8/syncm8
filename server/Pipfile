@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+ariadne = "*"
+flask = "*"
+sendgrid = "*"
+boto3 = {extras = ["crt"], version = "*"}
+uwsgi = "*"
+pymongo = {extras = ["srv"], version = "*"}
+flask-login = "*"
+google-auth = "*"
+flask-cors = "*"
+requests = "*"
+google-api-python-client = "*"
+pytest-mock = "*"
+flask-mongoengine = "*"
+mongoengine = "*"
+
+[dev-packages]
+pytest = "*"
+pre-commit = "*"
+mypy = "*"
+mongomock = "*"
+
+[requires]
+python_version = "3.8"
