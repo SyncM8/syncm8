@@ -6,7 +6,17 @@ import {
   CloseOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Col, Divider, Popover, Row, Timeline, Typography } from "antd";
+import {
+  Col,
+  Divider,
+  Form,
+  Input,
+  Modal,
+  Popover,
+  Row,
+  Timeline,
+  Typography,
+} from "antd";
 import React, { useState } from "react";
 
 import DashboardCard from "../../components/DashboardCard/DashboardCard";
@@ -15,9 +25,16 @@ import { UpcomingSyncType } from "../types";
 
 const { Title } = Typography;
 
+type EditSyncType = {
+  sync: UpcomingSyncType;
+  title: string;
+  details: string;
+};
+
 type DashboardPageState = {
   syncs: UpcomingSyncType[];
   isModalVisible: boolean;
+  editingSync: EditSyncType;
 };
 
 let id = 0;
@@ -103,25 +120,33 @@ const DashboardPage = (): JSX.Element => {
   const [state, setState] = useState<DashboardPageState>({
     syncs: initialSyncs,
     isModalVisible: false,
+    editingSync: {
+      sync: initialSyncs[0],
+      title: "",
+      details: "",
+    },
   });
 
-  const { syncs, isModalVisible } = state;
+  const { syncs, isModalVisible, editingSync } = state;
 
   /**
    * remove specified sync from Dashboard
-   * @param syncId to be removed
+   * @param sync to be removed
    */
-  const removeSync = (syncId: number) => {
-    setState({ ...state, syncs: syncs.filter((sync) => sync.id !== syncId) });
+  const removeSync = (sync: UpcomingSyncType) => {
+    setState({ ...state, syncs: syncs.filter((s) => sync.id !== s.id) });
   };
 
   /**
-   * TODO rename this fn
+   * edit sync summary in modal
    * @param syncId to be added
    */
-  const addSyncSummary = (syncId: number) => {
-    setState({ ...state, isModalVisible: true });
-    console.log(isModalVisible, syncId); // eslint-disable-line no-console
+  const editSyncSummary = (sync: UpcomingSyncType) => {
+    setState({
+      ...state,
+      isModalVisible: true,
+      editingSync: { sync, title: "", details: "" },
+    });
   };
 
   const previousSyncs = syncs
@@ -150,28 +175,28 @@ const DashboardPage = (): JSX.Element => {
                   placement="bottom"
                   key={`${sync.id}-check`}
                 >
-                  <CheckOutlined onClick={() => removeSync(sync.id)} />
+                  <CheckOutlined onClick={() => removeSync(sync)} />
                 </Popover>,
                 <Popover
                   content="Synced, write summary"
                   placement="bottom"
                   key={`${sync.id}-edit`}
                 >
-                  <EditOutlined onClick={() => addSyncSummary(sync.id)} />
+                  <EditOutlined onClick={() => editSyncSummary(sync)} />
                 </Popover>,
                 <Popover
                   content="Decline this sync"
                   placement="bottom"
                   key={`${sync.id}-close`}
                 >
-                  <CloseOutlined onClick={() => removeSync(sync.id)} />
+                  <CloseOutlined onClick={() => removeSync(sync)} />
                 </Popover>,
                 <Popover
                   content="Reschedule sync"
                   placement="bottom"
                   key={`${sync.id}-calendar`}
                 >
-                  <CalendarOutlined onClick={() => removeSync(sync.id)} />
+                  <CalendarOutlined onClick={() => removeSync(sync)} />
                 </Popover>,
               ]}
             />
@@ -181,8 +206,67 @@ const DashboardPage = (): JSX.Element => {
     </>
   );
 
+  /**
+   * Saves the editing sync
+   */
+  const handleSummarySave = () => {
+    // TODO handle server saving
+    setState({
+      ...state,
+      syncs: syncs.filter((s) => editingSync.sync.id !== s.id),
+      isModalVisible: false,
+    });
+  };
+
+  const SummaryModal = (
+    <Modal
+      onCancel={() => setState({ ...state, isModalVisible: false })}
+      onOk={handleSummarySave}
+      visible={isModalVisible}
+      okText="Save"
+    >
+      <Form layout="vertical">
+        <Form.Item label="M8">
+          <Input value={editingSync.sync.name} disabled />
+        </Form.Item>
+        <Form.Item label="Sync Date">
+          <Input
+            value={editingSync.sync.upcomingSync.toLocaleDateString()}
+            disabled
+          />
+        </Form.Item>
+        <Form.Item label="Title">
+          <Input
+            value={editingSync.title}
+            placeholder="New Title"
+            onChange={(e) =>
+              setState({
+                ...state,
+                editingSync: { ...editingSync, title: e.target.value },
+              })
+            }
+          />
+        </Form.Item>
+        <Form.Item label="Details">
+          <Input.TextArea
+            autoSize
+            value={editingSync.details}
+            placeholder="Add details here..."
+            onChange={(e) =>
+              setState({
+                ...state,
+                editingSync: { ...editingSync, details: e.target.value },
+              })
+            }
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+
   const UpcomingSyncsNode = (
     <>
+      {SummaryModal}
       <Row justify="center">
         <Col>
           <Title level={3}>Upcoming Syncs</Title>
@@ -199,14 +283,14 @@ const DashboardPage = (): JSX.Element => {
                   placement="bottom"
                   key={`${sync.id}-carryout`}
                 >
-                  <CarryOutOutlined onClick={() => removeSync(sync.id)} />
+                  <CarryOutOutlined onClick={() => removeSync(sync)} />
                 </Popover>,
                 <Popover
                   content="Decline this sync"
                   placement="bottom"
                   key={`${sync.id}-close`}
                 >
-                  <CloseOutlined onClick={() => removeSync(sync.id)} />
+                  <CloseOutlined onClick={() => removeSync(sync)} />
                 </Popover>,
               ]}
             />

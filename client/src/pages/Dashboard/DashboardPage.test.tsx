@@ -72,3 +72,67 @@ test("remove upcoming sync when clicking decline btn", async () => {
     );
   });
 });
+
+test("open edit summary modal when clicking edit btn", async () => {
+  render(<DashboardPage />);
+  expect(screen.queryByText("John")).toBeInTheDocument();
+  expect(screen.queryByText("M8")).not.toBeInTheDocument();
+  expect(screen.queryByText("Sync Date")).not.toBeInTheDocument();
+  const editBtn = screen.getAllByLabelText("edit")[1];
+  await act(async () => {
+    fireEvent.click(editBtn);
+    await waitFor(() => {
+      expect(screen.queryByText("M8")).toBeInTheDocument();
+      expect(screen.queryByText("Sync Date")).toBeInTheDocument();
+    });
+  });
+});
+
+test("open edit summary modal when clicking edit btn", async () => {
+  render(<DashboardPage />);
+  expect(screen.queryByText("John")).toBeInTheDocument();
+  expect(screen.queryByText("M8")).not.toBeInTheDocument();
+  const editBtn = screen.getAllByLabelText("edit")[1];
+  await act(async () => {
+    fireEvent.click(editBtn);
+    await waitFor(() => expect(screen.queryByText("M8")).toBeInTheDocument());
+  });
+});
+
+test("write title and details in edit summary modal", async () => {
+  render(<DashboardPage />);
+  const title = "Chipotle Meal";
+  const details = "Ate 2 double chicken bowls!";
+
+  const editBtn = screen.getAllByLabelText("edit")[1];
+  await act(async () => {
+    fireEvent.click(editBtn);
+    await waitFor(() => expect(screen.queryByText("M8")).toBeInTheDocument());
+
+    const titleInput = screen.getByPlaceholderText("New Title");
+    fireEvent.change(titleInput, { target: { value: title } });
+
+    const detailsInput = screen.getByPlaceholderText("Add details here...");
+    fireEvent.change(detailsInput, { target: { value: details } });
+
+    await waitFor(() => {
+      expect(screen.queryByText(details)).toBeInTheDocument();
+    });
+  });
+});
+
+test("remove previous sync after saving edited sync", async () => {
+  render(<DashboardPage />);
+
+  expect(screen.queryByText("John")).toBeInTheDocument();
+  const editBtn = screen.getAllByLabelText("edit")[1];
+  await act(async () => {
+    fireEvent.click(editBtn);
+    await waitFor(() => expect(screen.queryByText("M8")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByText("Save"));
+    await waitFor(() => {
+      expect(screen.queryByText("John")).not.toBeInTheDocument();
+    });
+  });
+});
