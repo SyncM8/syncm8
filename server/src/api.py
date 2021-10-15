@@ -17,7 +17,11 @@ from .utils.error import AppErrorDictType
 
 app = Flask(__name__)
 
-connect_db(app)
+if (
+    os.environ.get("FLASK_ENV") == "production"
+    or os.environ.get("FLASK_ENV") == "development"
+):
+    connect_db(app)
 
 app.secret_key = os.environ.get("APP_SECRET_KEY")
 CORS(

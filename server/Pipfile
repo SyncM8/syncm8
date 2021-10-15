@@ -17,6 +17,7 @@ requests = "*"
 google-api-python-client = "*"
 pytest-mock = "*"
 flask-mongoengine = "*"
+mongoengine = "*"
 
 [dev-packages]
 pytest = "*"
