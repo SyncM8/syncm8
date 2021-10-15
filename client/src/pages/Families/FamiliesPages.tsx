@@ -7,7 +7,7 @@ import { NewMateType } from "../types";
 
 /* Hardcoded data below */
 const family = "College";
-const syncs: NewMateType[] = [
+export const syncs: NewMateType[] = [
   {
     name: "George Washington",
     lastSynced: new Date("2021-09-01"),
