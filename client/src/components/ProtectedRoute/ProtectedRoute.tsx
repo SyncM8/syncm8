@@ -16,7 +16,7 @@ const ProtectedRoute = ({
   exact,
 }: ProtectedRoutesPropTypes): JSX.Element => (
   <Route exact={exact} path={path}>
-    {loggedIn || isTesting ? children : <Redirect to="/login" />}
+    {loggedIn || isTesting() ? children : <Redirect to="/login" />}
   </Route>
 );
 ProtectedRoute.defaultProps = { exact: false };

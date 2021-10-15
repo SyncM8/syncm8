@@ -28,8 +28,6 @@ jobs:
             git reset --hard origin/main &&
             git pull origin main &&
             cd server &&
-            pipenv shell &&
-            source prod.env &&
             pipenv install --deploy &&
             sudo systemctl restart syncm8.service
           '
