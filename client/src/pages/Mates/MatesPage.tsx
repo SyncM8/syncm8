@@ -330,5 +330,4 @@ const MatesPage = (): JSX.Element => {
     </>
   );
 };
-
 export default MatesPage;
