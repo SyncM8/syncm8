@@ -26,7 +26,7 @@ const doLogin = () => {
     redirect_uri: `${process.env.REACT_APP_HOST_URL ?? ""}/login`,
     response_type: "token",
     include_granted_scopes: "true",
-    scope: "openid",
+    scope: "openid email profile",
   };
 
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${stringify(
