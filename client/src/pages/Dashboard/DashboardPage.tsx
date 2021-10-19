@@ -45,6 +45,29 @@ type DashboardPageState = {
 };
 
 /**
+ * Splits a list of syncs to previous and upcoming sync based on a split date.
+ * Previous is sorted ascending whereas Upcoming is sorted descending.
+ *
+ * @param syncs to be split
+ * @param splitDate date to split previous / upcoming
+ *                  default to today (optionally set for testing and mock purposes)
+ * @returns previousSyncs, upcomingSyncs
+ */
+export const splitPreviousUpcomingSyncs = (
+  syncs: UpcomingSyncType[],
+  splitDate: Date = new Date()
+): [UpcomingSyncType[], UpcomingSyncType[]] => {
+  const previousSyncs = syncs
+    .filter((sync) => sync.upcomingSync < splitDate)
+    .sort((a, b) => b.upcomingSync.valueOf() - a.upcomingSync.valueOf());
+
+  const upcomingSyncs = syncs
+    .filter((sync) => sync.upcomingSync > splitDate)
+    .sort((a, b) => a.upcomingSync.valueOf() - b.upcomingSync.valueOf());
+  return [previousSyncs, upcomingSyncs];
+};
+
+/**
  * DashboardPage
  * @returns JSX.Element
  */
@@ -86,13 +109,10 @@ const DashboardPage = (): JSX.Element => {
     });
   };
 
-  const previousSyncs = syncs
-    .filter((sync) => sync.upcomingSync < today)
-    .sort((a, b) => b.upcomingSync.valueOf() - a.upcomingSync.valueOf());
-
-  const upcomingSyncs = syncs
-    .filter((sync) => sync.upcomingSync > today)
-    .sort((a, b) => a.upcomingSync.valueOf() - b.upcomingSync.valueOf());
+  const [previousSyncs, upcomingSyncs] = splitPreviousUpcomingSyncs(
+    syncs,
+    today
+  );
 
   const PreviousSyncsNode = (
     <>
