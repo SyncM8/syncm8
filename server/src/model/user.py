@@ -41,24 +41,24 @@ class User(Document, UserMixin):
             token=token, fields=["given_name", "email", "picture", "id"]
         )
 
-        if not error and user_info:
-            existing_user = User.lookup_google_user(user_info["id"])
-            if existing_user:
-                existing_user.google_token = token
-                existing_user.save()
-                return (None, existing_user)
-            else:
-                newUser = User(
-                    first_name=user_info["given_name"],
-                    google_id=user_info["id"],
-                    google_token=token,
-                    picture_url=user_info["picture"],
-                    email=user_info["email"],
-                )
-                newUser.save()
-                return (None, newUser)
-        else:
+        if error or not user_info:
             return (error, None)
+
+        existing_user = User.lookup_google_user(user_info["id"])
+        if existing_user:
+            existing_user.google_token = token
+            existing_user.save()
+            return (None, existing_user)
+
+        newUser = User(
+            first_name=user_info["given_name"],
+            google_id=user_info["id"],
+            google_token=token,
+            picture_url=user_info["picture"],
+            email=user_info["email"],
+        )
+        newUser.save()
+        return (None, newUser)
 
     @staticmethod
     @error_bounded(None)

@@ -1,7 +1,6 @@
 ![Backend Tests](https://github.com/SyncM8/syncm8/actions/workflows/backendCI.yml/badge.svg)
 ![Frontend Tests](https://github.com/SyncM8/syncm8/actions/workflows/frontendCI.yml/badge.svg)
-![Backend Deploy](https://github.com/SyncM8/syncm8/actions/workflows/backendCD.yml/badge.svg)
-![Frontend Deploy](https://github.com/SyncM8/syncm8/actions/workflows/frontendCD.yml/badge.svg)
+![Deploy](https://github.com/SyncM8/syncm8/actions/workflows/CD.yml/badge.svg)
 ![pre-commit](https://github.com/SyncM8/syncm8/actions/workflows/pre-commit.yml/badge.svg)
 ![Heartbeat](https://github.com/SyncM8/syncm8/actions/workflows/heartbeat.yml/badge.svg)
 ![CodeQL](https://github.com/SyncM8/syncm8/actions/workflows/codeql-analysis.yml/badge.svg)
