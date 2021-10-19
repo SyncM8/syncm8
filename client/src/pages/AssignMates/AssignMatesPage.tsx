@@ -9,43 +9,10 @@ import { Prompt } from "react-router";
 
 import FamilyDroppable from "../../components/FamilyDroppable/FamilyDroppable";
 import { NewMateType } from "../types";
+import { initialGroup } from "./mockData";
 
 const { Title } = Typography;
 const { Footer } = Layout;
-
-// hardcoded data for demo
-const philosophers = [
-  "Thales",
-  "Democritus",
-  "Empedokles",
-  "Pythagoras",
-  "Socrates",
-  "Plato",
-  "Aristotle",
-  "Diogenes",
-  "Anaxagoras",
-  "Euclides",
-  "Antisthenes",
-  "Epicurus",
-  "Zeno of Citium",
-];
-const initialMates = philosophers.map(
-  (name, index) =>
-    ({
-      name,
-      lastSynced: new Date(),
-      id: `mate-id-${index}`,
-    } as NewMateType)
-);
-const families = ["school", "work", "life", "college", "concert"];
-const initialGroup: Record<string, NewMateType[]> = families.reduce(
-  (object, family) => ({
-    ...object,
-    [family]: [],
-  }),
-  { unassigned: initialMates }
-);
-// hardcoded data for demo
 
 /**
  * Reorder an item in a list
