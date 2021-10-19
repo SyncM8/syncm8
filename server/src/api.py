@@ -82,7 +82,7 @@ class LoginResponse(TypedDict):
 @csrf_protection
 def login() -> LoginResponse:
     """
-    Lgoin to app using google token.
+    Login to app using google token.
 
     If no user with specified google id exists, preforms sign up.
     """
