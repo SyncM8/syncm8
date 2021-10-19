@@ -274,7 +274,7 @@ const DashboardPage = (): JSX.Element => {
               padding: "20px",
             }}
           >
-            <Title>Hi, {name}</Title>
+            <Title style={{ fontSize: "92px" }}>Hi, {name}</Title>
           </div>
           <div style={{ backgroundColor: "#F7F8FC", padding: "20px" }}>
             {PreviousSyncsNode}
