@@ -24,3 +24,11 @@ export type SyncType = {
   details: string;
   syncStatus: SyncStatusEnum;
 };
+
+export type UpcomingSyncType = {
+  id: number;
+  name: string;
+  family: string;
+  lastSynced: Date;
+  upcomingSync: Date;
+};
