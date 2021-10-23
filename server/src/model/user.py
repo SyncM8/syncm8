@@ -20,7 +20,7 @@ class User(Document, UserMixin):
     google_token = StringField()
     picture_url = StringField()
     email = StringField(required=True, max_length=320)
-    meta = {"collection": "users"}
+    meta = {"collection": "users", "strict": False}
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""
