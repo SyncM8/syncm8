@@ -12,7 +12,7 @@ class MigrationScriptRun(Document):
 
     time_stamp = DateTimeField(required=True, default=datetime.utcnow())
     name = StringField()
-    meta = {"collection": "migration_scripts"}
+    meta = {"collection": "migration_scripts", "strict": False}
 
     def __init__(self, name: str) -> None:
         """Create and save the migration script run."""
