@@ -12,6 +12,9 @@ from flask_login import LoginManager, current_user, login_user
 from .clients.db import connect_db
 from .clients.google import is_google_token_valid
 from .gql import mutation, query
+from .model.event_log.app_event import AppEvent
+from .model.event_log.event_action_type import EventActionType
+from .model.event_log.event_meta_data import UserSignInEventMetaData
 from .model.user import User
 from .utils.error import AppErrorDictType
 
@@ -93,6 +96,13 @@ def login() -> LoginResponse:
         error, new_user = User.add_google_user(googleToken)
         if not error:
             login_user(new_user, remember=True)
+            if new_user:
+                loginEvent = AppEvent(
+                    action=EventActionType.USER_SIGN_IN,
+                    meta_data=UserSignInEventMetaData.create(),
+                )
+                loginEvent.save()
+                print(loginEvent)
             return {"isLoggedIn": True, "error": None}
 
     return {"isLoggedIn": False, "error": error.get_dict_repr() if error else None}
@@ -107,6 +117,10 @@ class IsLoggedInResponse(TypedDict):
 @app.route("/isLoggedIn", methods=["GET"])
 def is_logged_in() -> IsLoggedInResponse:
     """Return whether the user is logged in."""
+    if current_user.is_authenticated:
+        AppEvent(
+            action=EventActionType.USER_SIGN_UP, meta_data=UserSignInEventMetaData()
+        )
     return {"isLoggedIn": current_user.is_authenticated}
 
 
