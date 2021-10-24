@@ -16,6 +16,11 @@ jobs:
         with:
           python-version: '3.8'
       - name: run migration script
+        env:
+          MONGO_USER: ${{ secrets.MONGO_USER  }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD  }}
+          MONGO_HOST: ${{ secrets.MONGO_HOST  }}
+
         run: |
           cd server
           pip install pipenv
