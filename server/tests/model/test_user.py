@@ -5,6 +5,7 @@ from typing import Dict, Generator
 import pytest
 from mongoengine import connect, disconnect
 from pytest_mock import MockerFixture
+from src.model.family import Family
 from src.model.user import User
 
 userAlbert = {
@@ -96,3 +97,14 @@ def test_get_id(db_connection: None, mocker: MockerFixture) -> None:
     """Test get_id gets proper id."""
     albert = add_mock_user(mocker, userAlbert)
     assert str(albert.id) == albert.get_id()
+
+
+def test_unassigned_family_id(db_connection: None, mocker: MockerFixture) -> None:
+    """Test unassigned_family_id was created and populated."""
+    user = add_mock_user(mocker, userAlbert)
+    family_id = user.unassigned_family_id
+    assert family_id
+
+    family = Family.lookup_family(family_id)
+    assert family
+    assert family.get_id() == str(family_id)

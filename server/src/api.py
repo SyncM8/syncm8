@@ -8,12 +8,11 @@ from ariadne.constants import PLAYGROUND_HTML
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_login import LoginManager, current_user, login_user
-
-from .clients.db import connect_db
-from .clients.google import is_google_token_valid
-from .gql import mutation, query
-from .model.user import User
-from .utils.error import AppErrorDictType
+from src.clients.db import connect_db
+from src.clients.google import is_google_token_valid
+from src.gql.resolver import mutation, oid_scalar, query
+from src.model.user import User
+from src.utils.error import AppErrorDictType
 
 app = Flask(__name__)
 
@@ -61,8 +60,9 @@ def load_user(user_id: str) -> Optional[User]:
     return User.lookup_user(user_id)
 
 
-type_defs = gql(load_schema_from_path("../schema.graphql"))
-schema = make_executable_schema(type_defs, query, mutation)
+schema_path = "../schema.graphql"
+type_defs = gql(load_schema_from_path(schema_path))
+schema = make_executable_schema(type_defs, oid_scalar, query, mutation)
 
 
 @app.route("/test", methods=["GET"])
