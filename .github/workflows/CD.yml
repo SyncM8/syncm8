@@ -6,9 +6,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  migration-runner:
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - name: run migration script
+        env:
+          MONGO_USER: ${{ secrets.MONGO_USER  }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD  }}
+          MONGO_HOST: ${{ secrets.MONGO_HOST  }}
+
+        run: |
+          cd server
+          pip install pipenv
+          pipenv install --deploy
+          pipenv run python3 -m src.db.runner
+
   backend-deploy:
     runs-on: ubuntu-latest
     environment: prod
+    needs: migration-runner
 
     steps:
       - uses: actions/checkout@v2
