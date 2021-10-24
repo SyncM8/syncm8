@@ -25,7 +25,7 @@ class Family(Document):
     @staticmethod
     @error_bounded(None)
     def lookup_family(id: str) -> Optional[Family]:
-        """Lookup user by oID in db."""
+        """Lookup family by oID in db."""
         return cast(Family, Family.objects(pk=id).first())
 
     @staticmethod
