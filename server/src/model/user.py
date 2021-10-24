@@ -6,10 +6,10 @@ from __future__ import annotations
 from typing import Optional, Tuple, cast
 
 from flask_login import UserMixin
-from mongoengine import Document, StringField
-
-from ..clients.google import get_user_info
-from ..utils.error import AppError, ErrorCode, error_bounded
+from mongoengine import Document, ObjectIdField, StringField
+from src.clients.google import get_user_info
+from src.model.family import Family
+from src.utils.error import AppError, ErrorCode, error_bounded
 
 
 class User(Document, UserMixin):
@@ -19,6 +19,7 @@ class User(Document, UserMixin):
     google_id = StringField()
     google_token = StringField()
     picture_url = StringField()
+    unassigned_family_id = ObjectIdField(required=True)
     email = StringField(required=True, max_length=320)
     meta = {"collection": "users"}
 
@@ -50,12 +51,17 @@ class User(Document, UserMixin):
             existing_user.save()
             return (None, existing_user)
 
+        family_error, unassigned_family = Family.add_new_family("Unassigned", 365)
+        if family_error or not unassigned_family:
+            return (family_error, None)
+
         newUser = User(
             first_name=user_info["given_name"],
             google_id=user_info["id"],
             google_token=token,
             picture_url=user_info["picture"],
             email=user_info["email"],
+            unassigned_family_id=unassigned_family.id,
         )
         newUser.save()
         return (None, newUser)

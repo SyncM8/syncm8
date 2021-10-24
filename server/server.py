@@ -1,4 +1,4 @@
-# do not change this import statement, .ini file expeccts exactly this
+# do not change this import statement, .ini file expects exactly this
 from src.api import app
 
 if __name__ == "__main__":

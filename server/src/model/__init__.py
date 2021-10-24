@@ -1,1 +1,1 @@
-"""MongoeDB schema models."""
+"""MongoDB schema models."""
