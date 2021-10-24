@@ -2,6 +2,7 @@
 import importlib.util
 import os
 from datetime import datetime
+from typing import Any
 
 from mongoengine import Document, connect
 from mongoengine.fields import DateTimeField, StringField
@@ -10,13 +11,14 @@ from mongoengine.fields import DateTimeField, StringField
 class MigrationScriptRun(Document):
     """Record of successful MigrationScript run."""
 
-    time_stamp = DateTimeField(required=True, default=datetime.utcnow())
+    timestamp = DateTimeField(required=True, default=datetime.utcnow())
     name = StringField()
     meta = {"collection": "migration_scripts", "strict": False}
 
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, *args: Any, **kwargs: Any) -> None:
         """Create and save the migration script run."""
-        super().__init__(name=name)
+        kwargs["name"] = name
+        super().__init__(*args, **kwargs)
         self.save()
 
 
@@ -43,7 +45,7 @@ if __name__ == "__main__":
     to_run = [
         name
         for name in present_scripts
-        if name not in already_run and not name == "__init__.py"
+        if name not in already_run and name[-3:] == ".py" and not name == "__init__.py"
     ]
 
     for name in to_run:
