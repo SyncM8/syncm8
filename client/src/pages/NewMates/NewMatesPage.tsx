@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   Button,
   Col,
@@ -6,6 +7,7 @@ import {
   Form,
   Input,
   Layout,
+  notification,
   Row,
   Space,
   Typography,
@@ -14,15 +16,43 @@ import React, { useState } from "react";
 import { Prompt } from "react-router";
 
 import NewMatesCard from "../../components/NewMateCard/NewMateCard";
+import { ADD_NEW_MATES, AddNewMatesReturn, NewMatesInput } from "../../graphql";
 import { NewMatesFormType, NewMateType } from "../types";
 
 const { Title } = Typography;
 const { Footer } = Layout;
 
+/**
+ * NewMatesPage
+ * @returns JSX.Element
+ */
 const NewMatesPage = (): JSX.Element => {
   const [form] = Form.useForm<NewMatesFormType>();
   const [mates, setMates] = useState<NewMateType[]>([]);
   const [id, setId] = useState<number>(0);
+
+  const [addMatesFn] = useMutation<{ addNewMates: [AddNewMatesReturn] }>(
+    ADD_NEW_MATES,
+    {
+      onCompleted: (data) => {
+        notification.success({
+          message: `Successfully added ${data.addNewMates.length} new mates!`,
+        });
+        setMates([]);
+      },
+      onError: (error) => {
+        notification.error({
+          message: error.name,
+          description: error.message,
+        });
+      },
+      variables: {
+        newMates: mates.map(
+          ({ name, lastSynced }) => ({ name, lastSynced } as NewMatesInput)
+        ),
+      },
+    }
+  );
 
   const addNewMate = ({ name, lastSeen }: NewMatesFormType) => {
     const lastSynced = lastSeen === undefined ? new Date() : lastSeen.toDate();
@@ -33,10 +63,6 @@ const NewMatesPage = (): JSX.Element => {
 
   const removeMate = (mate: NewMateType) => {
     setMates((mateArr) => mateArr.filter((m8) => m8.id !== mate.id));
-  };
-
-  const submitNewMates = () => {
-    // TODO send to backend here
   };
 
   const cards = mates.map((mate) => (
@@ -96,7 +122,7 @@ const NewMatesPage = (): JSX.Element => {
             <Button
               type="primary"
               disabled={!pageUnsaved}
-              onClick={submitNewMates}
+              onClick={() => addMatesFn()}
             >
               Assign M8s to Families
             </Button>

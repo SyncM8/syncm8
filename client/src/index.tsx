@@ -6,12 +6,14 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 
+import { graphqlPath } from "./api";
 import App from "./pages/App/App";
 import reportWebVitals from "./reportWebVitals";
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_URL,
+  uri: graphqlPath,
   cache: new InMemoryCache(),
+  credentials: "include",
 });
 
 axios.defaults.headers.common["X-Requested-With"] = "XmlHttpRequest"; // eslint-disable-line
