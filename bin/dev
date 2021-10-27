@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Create containers and attach backend to shell to faciliatate pdb
+runDockerUp(){
+    docker-compose up --detach
+    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    cmd="docker attach "$container_id
+    echo $cmd
+    exec $cmd
+}
+
+# Stop and remove all active containers associated with syncm8
+runDockerDown(){
+    docker-compose down
+}
+
+# Stop and remove all active containers and delete all db data
+runDockerClean(){
+    runDockerDown
+    docker volume prune -f
+}
+
+# Build images for all syncm8 containers
+runDockerBuild(){
+    docker-compose build
+}
+
+# Force rebuild all containers from scratch and update to newest versions
+runDockerRebuild(){
+    runDockerClean
+    docker-compose build --pull --no-cache
+}
+
+# Run frontend webpack
+runWebpack(){
+    cd client
+    npm run start
+}
+
+# Run pytest
+runPytest(){
+    echo "NOT IMPL YET"
+}
+
+# Run js tests
+runJstest(){
+    cd client
+    npm run test
+}
+
+# Run precommit inside container
+runPrecommit(){
+    echo "NOT IMPL YET"
+}
+
+operation=$1
+
+if [ $operation == 'debug' ] || [ $operation == 'up' ] || [ $operation == 'backend' ]; then
+runDockerUp
+elif [ $operation == 'down' ]; then
+runDockerDown
+elif [ $operation == 'clean' ]; then
+runDockerClean
+elif [ $operation == 'build' ]; then
+runDockerBuild
+elif [ $operation == 'rebuild' ]; then
+runDockerRebuild
+elif [ $operation == 'webpack' ] || [ $operation == 'frontend' ]; then
+runWebpack
+elif [ $operation == 'pytest' ]; then
+runPytest
+elif [ $operation == 'jstest' ]; then
+runJstest
+elif [ $operation == 'precommit' ]; then
+runPrecommit
+fi
