@@ -1,12 +1,17 @@
 #!/bin/bash
 
 # Create containers and attach backend to shell to faciliatate pdb
-runDockerUp(){
+runDockerDebug(){
     docker-compose up --detach
     container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
     cmd="docker attach "$container_id
     echo $cmd
     exec $cmd
+}
+
+# Create containers and attach backend to shell to faciliatate pdb
+runDockerUp(){
+    docker-compose up --detach
 }
 
 # Stop and remove all active containers associated with syncm8
@@ -39,7 +44,10 @@ runWebpack(){
 
 # Run pytest
 runPytest(){
-    echo "NOT IMPL YET"
+    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    cmd="docker exec "$container_id" pytest "$*
+    echo $cmd
+    exec $cmd
 }
 
 # Run js tests
@@ -54,8 +62,11 @@ runPrecommit(){
 }
 
 operation=$1
+restArgs="${@:2}"
 
-if [ $operation == 'debug' ] || [ $operation == 'up' ] || [ $operation == 'backend' ]; then
+if [ $operation == 'debug' ] || [ $operation == 'backend' ]; then
+runDockerDebug
+elif [ $operation == 'up' ]; then
 runDockerUp
 elif [ $operation == 'down' ]; then
 runDockerDown
@@ -68,7 +79,7 @@ runDockerRebuild
 elif [ $operation == 'webpack' ] || [ $operation == 'frontend' ]; then
 runWebpack
 elif [ $operation == 'pytest' ]; then
-runPytest
+runPytest $restArgs
 elif [ $operation == 'jstest' ]; then
 runJstest
 elif [ $operation == 'precommit' ]; then

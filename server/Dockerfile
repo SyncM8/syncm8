@@ -18,8 +18,8 @@ WORKDIR /usr/src/app
 # Install python dependencies into /.venv
 COPY Pipfile .
 COPY Pipfile.lock .
-RUN pipenv install
+RUN pipenv install --dev
 
-ENV PATH /.venv/bin:$PATH
+ENV PATH /usr/src/app/.venv/bin:$PATH
 
 ENTRYPOINT ["pipenv", "run", "flask", "run", "--host", "0.0.0.0"]
