@@ -1,6 +1,5 @@
 FROM python:3.8
 
-# Expose ports
 EXPOSE 5000
 
 # Setup env
@@ -16,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
 WORKDIR /usr/src/app
 
-# Install python dependencies in /.venv
+# Install python dependencies into /.venv
 COPY Pipfile .
 COPY Pipfile.lock .
 RUN pipenv install
