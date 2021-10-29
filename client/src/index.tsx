@@ -18,7 +18,7 @@ axios.defaults.headers.common["X-Requested-With"] = "XmlHttpRequest"; // eslint-
 axios.defaults.withCredentials = true;
 
 ReactDOM.render(
-  <React.StrictMod>
+  <React.StrictModee>
     <ApolloProvider client={client}>
       <Router>
         <App />
