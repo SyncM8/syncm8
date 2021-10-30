@@ -33,7 +33,6 @@ services:
     volumes:
       - ./:/home/worker/app
       - /home/worker/app/server/.venv
-      - /home/worker/.cache/pre-commit
     networks:
       - backend
     env_file:
