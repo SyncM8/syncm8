@@ -1,6 +1,5 @@
 FROM python:3.8
 
-
 EXPOSE 5000
 
 # Setup env
@@ -15,13 +14,8 @@ ENV FLASK_APP 'server:app'
 ARG user_id
 ARG group_id
 
-
-WORKDIR /home/worker/app/server/
-
-# create pre-commit home
-RUN mkdir -p /home/worker/.cache/pre-commit
-
 # give evrything to the worker
+WORKDIR /home/worker/app/server/
 RUN chown -R $user_id:$group_id /home/worker
 
 # create worker and set as the user
@@ -39,9 +33,5 @@ COPY --chown=$user_id:$group_id ./server/Pipfile.lock .
 RUN pipenv install --dev
 
 ENV PATH /home/worker/app/server/.venv/bin:$PATH
-
-# # Set up pre-commit
-# WORKDIR /home/worker/app/
-# RUN pre-commit install
 
 ENTRYPOINT ["pipenv", "run", "flask", "run", "--host", "0.0.0.0"]
