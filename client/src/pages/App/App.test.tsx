@@ -1,13 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
-import MockAdopter from "axios-mock-adapter";
+import MockAdapter from "axios-mock-adapter";
 import { createMemoryHistory } from "history";
 import React from "react";
 import { Router } from "react-router-dom";
 
+import { name as mockName } from "../Dashboard/mockData";
 import App from "./App";
 
-const mock = new MockAdopter(axios);
+const mock = new MockAdapter(axios);
 
 beforeEach(() => {
   mock.onGet("/isLoggedIn").reply(200, { isLoggedIn: true });
@@ -63,7 +64,7 @@ test("routes Dashboard if logged in", async () => {
   );
   await waitFor(() => expect(history.location.pathname).toBe("/"));
   await waitFor(() =>
-    expect(screen.queryByText("Hi, Paul")).toBeInTheDocument()
+    expect(screen.queryByText(`Hi, ${mockName}`)).toBeInTheDocument()
   );
 });
 

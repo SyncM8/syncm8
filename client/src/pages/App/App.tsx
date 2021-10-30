@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
 import { isLoggedInPath, IsLoggedInResponse } from "../../api";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
@@ -15,30 +16,48 @@ import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
 /**
- * Main App page
- * @returns JSX.Element or null
+ * Logged In Status
  */
-const App = (): JSX.Element | null => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [checkedLoggedIn, setCheckedLoggedIn] = useState(false);
+enum LoggedInStatus {
+  LOGGED_IN = "LoggedIn",
+  LOGGED_OUT = "LoggedOut",
+  WAITING = "Waiting",
+}
+/**
+ * Main App page
+ * @returns JSX.Element
+ */
+const App = (): JSX.Element => {
+  const [loggedInStatus, setLoggedInStatus] = useState(LoggedInStatus.WAITING);
 
   useEffect(() => {
     axios
       .get<IsLoggedInResponse>(isLoggedInPath)
       .then((res) => {
-        const resLoggedIn = res.data?.isLoggedIn ?? false;
-        if (loggedIn !== resLoggedIn) {
-          setLoggedIn(resLoggedIn);
+        const resStatus = res.data?.isLoggedIn
+          ? LoggedInStatus.LOGGED_IN
+          : LoggedInStatus.LOGGED_OUT;
+        if (loggedInStatus !== resStatus) {
+          setLoggedInStatus(resStatus);
         }
       })
-      .catch((err) => console.error(err))
-      .finally(() => setCheckedLoggedIn(true));
+      .catch((err) => {
+        console.error(err);
+        setLoggedInStatus(LoggedInStatus.LOGGED_OUT);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (!checkedLoggedIn) {
-    return null;
+  const setLoggedIn = (value: boolean) => {
+    setLoggedInStatus(
+      value ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT
+    );
+  };
+
+  if (loggedInStatus === LoggedInStatus.WAITING) {
+    return <LoadingSpinner />;
   }
+  const loggedIn = loggedInStatus === LoggedInStatus.LOGGED_IN;
   return (
     <>
       <Header />

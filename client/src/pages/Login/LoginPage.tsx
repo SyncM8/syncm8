@@ -5,6 +5,7 @@ import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
 import { loginPath, LoginResponse } from "../../api";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { LocationState } from "../types";
 
 const { Title } = Typography;
@@ -35,10 +36,7 @@ const doLogin = () => {
   )}`;
 };
 
-const LoginPage = ({
-  loggedIn,
-  setLoggedIn,
-}: LoginPageProps): JSX.Element | null => {
+const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   const history = useHistory();
   const location = useLocation<LocationState>();
 
@@ -68,7 +66,7 @@ const LoginPage = ({
   if (loggedIn) {
     const prevPath = location.state?.prevPath ?? "/";
     history.replace(prevPath);
-    return null;
+    return <LoadingSpinner />;
   }
   return (
     <>
