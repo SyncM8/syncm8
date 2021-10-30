@@ -2,8 +2,16 @@
 
 # Find container id of syncm8_api in order to exec things against it
 findBackendContainerId(){
-    echo $(docker ps|grep syncm8_api|cut -d' ' -f1)
+    local  _resultvar=$1
+    local container=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    if [ ! $container ]; then
+        echo "No container for api found. Check that it is running with bin/dev ps, or start it with bin/dev up"
+        exit 1
+    fi
+    eval $_resultvar="'$container'"
 }
+
+
 
 # Run docker compose commands as correct user
 runDockerCompose(){
@@ -18,7 +26,7 @@ runDockerUp(){
 # Create containers and attach backend to shell to faciliatate pdb
 runDockerDebug(){
     runDockerUp
-    container_id=$(findBackendContainerId)
+    findBackendContainerId container_id
     cmd="docker attach "$container_id
     echo $cmd
     exec $cmd
@@ -59,7 +67,7 @@ runWebpack(){
 
 # Run pytest
 runPytest(){
-    container_id=$(findBackendContainerId)
+    findBackendContainerId container_id
     cmd="docker exec "$container_id" pytest "$*
     echo $cmd
     exec $cmd
@@ -73,7 +81,7 @@ runJstest(){
 
 # Run precommit inside container
 runPrecommit(){
-    container_id=$(findBackendContainerId)
+    findBackendContainerId container_id
     cmd="docker exec -w /home/worker/app/ "$container_id" pre-commit "$*
     echo $cmd
     exec $cmd
