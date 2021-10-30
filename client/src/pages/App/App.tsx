@@ -14,25 +14,31 @@ import LoginPage from "../Login/LoginPage";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
-const App = (): JSX.Element => {
+/**
+ * Main App page
+ * @returns JSX.Element or null
+ */
+const App = (): JSX.Element | null => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [checkedLoggedIn, setCheckedLoggedIn] = useState(false);
 
   useEffect(() => {
     axios
       .get<IsLoggedInResponse>(isLoggedInPath)
       .then((res) => {
-        let resLoggedIn = false;
-        if ("isLoggedIn" in res.data) {
-          resLoggedIn = res.data.isLoggedIn;
-        }
+        const resLoggedIn = res.data?.isLoggedIn ?? false;
         if (loggedIn !== resLoggedIn) {
           setLoggedIn(resLoggedIn);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setCheckedLoggedIn(true));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  if (!checkedLoggedIn) {
+    return null;
+  }
   return (
     <>
       <Header />

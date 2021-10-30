@@ -2,9 +2,10 @@ import { Button, notification, Typography } from "antd";
 import axios from "axios";
 import { parse, stringify } from "querystring";
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import { loginPath, LoginResponse } from "../../api";
+import { LocationState } from "../types";
 
 const { Title } = Typography;
 
@@ -34,7 +35,13 @@ const doLogin = () => {
   )}`;
 };
 
-const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
+const LoginPage = ({
+  loggedIn,
+  setLoggedIn,
+}: LoginPageProps): JSX.Element | null => {
+  const history = useHistory();
+  const location = useLocation<LocationState>();
+
   const checkloginCallback = () => {
     // window.location.hash keeps the hash, part so we chop it off with substr
     const parsedParams = parse(window.location.hash.substr(1));
@@ -57,8 +64,12 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
 
   checkloginCallback();
 
-  // Redirect if authentication is done:
-  if (loggedIn) return <Redirect to="/" />;
+  // Redirect if authentication is done
+  if (loggedIn) {
+    const prevPath = location.state?.prevPath ?? "/";
+    history.replace(prevPath);
+    return null;
+  }
   return (
     <>
       <Title>Login</Title>

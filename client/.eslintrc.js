@@ -40,6 +40,7 @@ module.exports = {
     "import/no-extraneous-dependencies": "off",
     "arrow-body-style": ["error", "as-needed"],
     "no-console": ["warn", { allow: ["warn", "error"] }],
+    "no-debugger": "warn",
   },
   ignorePatterns: [".eslintrc.js", "craco.config.js", "src/setupTests.js"],
 };

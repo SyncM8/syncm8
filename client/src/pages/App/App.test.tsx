@@ -1,36 +1,87 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import axios from "axios";
+import MockAdopter from "axios-mock-adapter";
 import { createMemoryHistory } from "history";
 import React from "react";
 import { Router } from "react-router-dom";
 
 import App from "./App";
 
-test("renders Dashboard as default", () => {
+const mock = new MockAdopter(axios);
+
+beforeEach(() => {
+  mock.onGet("/isLoggedIn").reply(200, { isLoggedIn: true });
+});
+
+afterEach(() => {
+  mock.reset();
+});
+
+test("routes /login if not logged in", async () => {
+  mock.onGet("/isLoggedIn").reply(200, { isLoggedIn: false });
+
   const history = createMemoryHistory();
   render(
     <Router history={history}>
       <App />
     </Router>
   );
-  const dashboardElement = screen.getByText("Dashboard");
-  expect(dashboardElement).toBeInTheDocument();
+  await waitFor(() => expect(history.location.pathname).toBe("/login"));
 });
 
-test("renders mates and families tabs", () => {
+test("routes /login if network error", async () => {
+  jest.spyOn(console, "error").mockImplementation(() => {}); // suppresses the expected console.error
+  mock.onGet("/isLoggedIn").reply(400);
+
   const history = createMemoryHistory();
   render(
     <Router history={history}>
       <App />
     </Router>
   );
-  const matesElement = screen.getByText("Mates");
-  expect(matesElement).toBeInTheDocument();
-
-  const familiesElement = screen.getByText("Families");
-  expect(familiesElement).toBeInTheDocument();
+  await waitFor(() => expect(history.location.pathname).toBe("/login"));
 });
 
-test("navigates to Mates page", () => {
+test("routes /login if API does not return properly formatted data", async () => {
+  mock.onGet("/isLoggedIn").reply(200, { isLoggedIn: undefined });
+
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <App />
+    </Router>
+  );
+  await waitFor(() => expect(history.location.pathname).toBe("/login"));
+});
+
+test("routes Dashboard if logged in", async () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <App />
+    </Router>
+  );
+  await waitFor(() => expect(history.location.pathname).toBe("/"));
+  await waitFor(() =>
+    expect(screen.queryByText("Hi, Paul")).toBeInTheDocument()
+  );
+});
+
+test("renders mates and families tabs", async () => {
+  const history = createMemoryHistory();
+  render(
+    <Router history={history}>
+      <App />
+    </Router>
+  );
+
+  await waitFor(() => expect(screen.queryByText("Mates")).toBeInTheDocument());
+  await waitFor(() =>
+    expect(screen.queryByText("Families")).toBeInTheDocument()
+  );
+});
+
+test("navigates to Mates page", async () => {
   const history = createMemoryHistory();
   history.push("/mates");
   render(
@@ -38,6 +89,7 @@ test("navigates to Mates page", () => {
       <App />
     </Router>
   );
-  const matesTitleElement = screen.getByText("M8");
-  expect(matesTitleElement).toBeInTheDocument();
+
+  await waitFor(() => expect(history.location.pathname).toBe("/mates"));
+  await waitFor(() => expect(screen.queryByText("M8")).toBeInTheDocument());
 });
