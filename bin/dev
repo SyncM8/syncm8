@@ -1,14 +1,24 @@
 #!/bin/bash
 
+# Find container id of syncm8_api in order to exec things against it
+findBackendContainerId(){
+    echo $(docker ps|grep syncm8_api|cut -d' ' -f1)
+}
+
+# Run docker compose commands as correct user
+runDockerCompose(){
+    user_id=$(id -u) group_id=$(id -g) docker-compose $*
+}
+
 # Create containers
 runDockerUp(){
-    user_id=$(id -u) group_id=$(id -g) docker-compose up --detach
+    runDockerCompose up --detach
 }
 
 # Create containers and attach backend to shell to faciliatate pdb
 runDockerDebug(){
     runDockerUp
-    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    container_id=$(findBackendContainerId)
     cmd="docker attach "$container_id
     echo $cmd
     exec $cmd
@@ -16,15 +26,15 @@ runDockerDebug(){
 
 # Stop and remove all active containers associated with syncm8
 runDockerDown(){
-    user_id=$(id -u) group_id=$(id -g) docker-compose down
+    runDockerCompose down
 }
 
-# Stop and remove all active containers associated with syncm8
+# Show running docker images associated with syncm8
 runDockerPs(){
     docker-compose ps
 }
 
-# Stop and remove all active containers and delete all db data
+# Stop and remove all active containers and delete all db data associated with syncm8
 runDockerClean(){
     runDockerDown
     docker volume prune -f
@@ -32,16 +42,16 @@ runDockerClean(){
 
 # Build images for all syncm8 containers
 runDockerBuild(){
-    user_id=$(id -u) group_id=$(id -g) docker-compose build
+    runDockerCompose build
 }
 
 # Force rebuild all containers from scratch and update to newest versions
 runDockerRebuild(){
     runDockerClean
-    user_id=$(id -u) group_id=$(id -g) docker-compose build --pull --no-cache
+    runDockerCompose build --pull --no-cache
 }
 
-# Run frontend webpack
+# Run frontend webpack and attach shell
 runWebpack(){
     cd client
     npm run start
@@ -49,7 +59,7 @@ runWebpack(){
 
 # Run pytest
 runPytest(){
-    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    container_id=$(findBackendContainerId)
     cmd="docker exec "$container_id" pytest "$*
     echo $cmd
     exec $cmd
@@ -58,33 +68,79 @@ runPytest(){
 # Run js tests
 runJstest(){
     cd client
-    npm run test
+    npm run test $*
 }
 
 # Run precommit inside container
 runPrecommit(){
-    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
+    container_id=$(findBackendContainerId)
     cmd="docker exec -w /home/worker/app/ "$container_id" pre-commit "$*
     echo $cmd
     exec $cmd
 }
 
-runPrecommitCi(){
-    container_id=$(docker ps|grep syncm8_api|cut -d' ' -f1)
-    cmd=" docker exec -w /home/worker/app/ "$container_id" pre-commit hook-impl
-        --config=.pre-commit-config.yaml --hook-type=pre-commit --hook-dir ."
-    echo $cmd
-    exec $cmd
-}
-
+# One time setup to add pre-commit hook
 runSetup(){
     cp bin/pre-commit .git/hooks/pre-commit
+}
+
+printHelp(){
+echo "
+SyncM8 command runner
+
+
+bin/dev COMMAND [options]
+
+
+
+backend
+    Create containers if not up and attach api container to shell to faciliatate pdb.
+
+build
+    Build images for all syncm8 containers.
+
+clean
+    Stop and remove all active containers and delete all db data associated with syncm8.
+
+debug
+    Alias for backend.
+
+down
+    Stop and remove all active containers associated with syncm8.
+
+frontend
+    Run frontend webpack and attach shell.
+
+jstest
+    Run js tests. All [options] are transparently passed.
+
+pre-commit
+    Run pre-commit inside api container. All [options] are transparently passed.
+
+ps
+    Show running docker images associated with syncm8.
+
+pytest
+    Run pytest inside the api container. All [options] are transparently passed.
+
+rebuild
+    Force rebuild all containers from scratch and update to newest versions.
+    N.b. All db data will be lost. This is primarily meant as last resort.
+
+setup
+    One time setup to add pre-commit hook to git repo.
+
+webpack
+    Alias for frontend.
+"
 }
 
 operation=$1
 restArgs="${@:2}"
 
-if [ $operation == 'debug' ] || [ $operation == 'backend' ]; then
+if [ ! $operation ] || [ $operation == "help" ]; then
+printHelp
+elif [ $operation == 'debug' ] || [ $operation == 'backend' ]; then
 runDockerDebug
 elif [ $operation == 'up' ]; then
 runDockerUp
@@ -103,13 +159,11 @@ runWebpack
 elif [ $operation == 'pytest' ]; then
 runPytest $restArgs
 elif [ $operation == 'jstest' ]; then
-runJstest
+runJstest $restArgs
 elif [ $operation == 'pre-commit' ]; then
-runPrecommit
-elif [ $operation == 'pre-commit-ci' ]; then
-runPrecommitCi
+runPrecommit $restArgs
 elif [ $operation == 'setup' ]; then
 runSetup
 else
-echo "Not IMPL"
+printHelp
 fi
