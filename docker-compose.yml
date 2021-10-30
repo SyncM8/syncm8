@@ -19,16 +19,20 @@ services:
       - 27017:27017
 
   api:
+    user: ${user_id}:${group_id}
     build:
-      context: ./server
+      context: .
       dockerfile: Dockerfile
+      args:
+        user_id: ${user_id}
+        group_id: ${group_id}
     ports:
       - "5000:5000"
     depends_on:
       - mongodb
     volumes:
-      - ./server:/usr/src/app
-      - /usr/src/app/.venv
+      - ./:/home/worker/app
+      - /home/worker/app/server/.venv
     networks:
       - backend
     env_file:
