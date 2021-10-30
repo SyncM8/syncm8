@@ -11,6 +11,8 @@ from src.clients.google import get_user_info
 from src.model.family import Family
 from src.utils.error import AppError, ErrorCode, error_bounded
 
+UNASSIGNED_FAMILY_INTERVAL = 365  # Unassigned families auto-assigned to 1-yr interval
+
 
 class User(Document, UserMixin):
     """User model class that stores ID."""
@@ -51,7 +53,9 @@ class User(Document, UserMixin):
             existing_user.save()
             return (None, existing_user)
 
-        family_error, unassigned_family = Family.add_new_family("Unassigned", 365)
+        family_error, unassigned_family = Family.add_new_family(
+            "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+        )
         if family_error or not unassigned_family:
             return (family_error, None)
 
