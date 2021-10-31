@@ -68,7 +68,7 @@ runWebpack(){
 # Run pytest
 runPytest(){
     findBackendContainerId container_id
-    cmd="docker exec "$container_id" pytest "$*
+    cmd="docker exec -t "$container_id" pytest "$*
     echo $cmd
     exec $cmd
 }
