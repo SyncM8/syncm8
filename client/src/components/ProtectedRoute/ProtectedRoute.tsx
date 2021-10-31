@@ -1,5 +1,7 @@
 import React from "react";
-import { Redirect, Route } from "react-router";
+import { Redirect, Route, useLocation } from "react-router";
+
+import { LocationState } from "../../pages/types";
 
 type ProtectedRoutesPropTypes = {
   children: React.ReactNode;
@@ -8,17 +10,25 @@ type ProtectedRoutesPropTypes = {
   exact?: boolean | undefined;
 };
 
-const isTesting = () => process.env.JEST_WORKER_ID !== undefined;
 const ProtectedRoute = ({
   children,
   loggedIn,
   path,
   exact,
-}: ProtectedRoutesPropTypes): JSX.Element => (
-  <Route exact={exact} path={path}>
-    {loggedIn || isTesting() ? children : <Redirect to="/login" />}
-  </Route>
-);
+}: ProtectedRoutesPropTypes): JSX.Element => {
+  const location = useLocation<LocationState>();
+  return (
+    <Route exact={exact} path={path}>
+      {loggedIn ? (
+        children
+      ) : (
+        <Redirect
+          to={{ pathname: "/login", state: { prevPath: location.pathname } }}
+        />
+      )}
+    </Route>
+  );
+};
 ProtectedRoute.defaultProps = { exact: false };
 
 export default ProtectedRoute;

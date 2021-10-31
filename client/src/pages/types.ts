@@ -32,3 +32,7 @@ export type UpcomingSyncType = {
   lastSynced: Date;
   upcomingSync: Date;
 };
+
+export type LocationState = {
+  prevPath: string;
+};
