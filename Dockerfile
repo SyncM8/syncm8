@@ -14,7 +14,7 @@ ENV FLASK_APP 'server:app'
 ARG user_id
 ARG group_id
 
-# give evrything to the worker
+# give everything to the worker
 WORKDIR /home/worker/app/server/
 RUN chown -R $user_id:$group_id /home/worker
 
