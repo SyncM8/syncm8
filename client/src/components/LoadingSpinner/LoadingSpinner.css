@@ -1,0 +1,11 @@
+/**
+ * Same as .div-loader in index.css
+ * Cannot use that as style gets overwritten
+ */
+.spin-center {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
