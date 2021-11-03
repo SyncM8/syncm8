@@ -61,7 +61,7 @@ def load_user(user_id: str) -> Optional[User]:
     return User.lookup_user(user_id)
 
 
-type_defs = gql(load_schema_from_path("../schema.graphql"))
+type_defs = gql(load_schema_from_path("./schema.graphql"))
 schema = make_executable_schema(type_defs, query, mutation)
 
 
