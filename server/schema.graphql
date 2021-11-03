@@ -1,0 +1,36 @@
+# keep in sync with graphql.ts and graphql.py
+scalar Date
+scalar oid
+
+type Sync {
+  id: oid!
+  timestamp: Date!
+  title: String
+  details: String
+}
+
+type Family {
+  id: oid!
+  sync_interval_days: Int!
+  name: String!
+  mate_ids: [oid!]!
+}
+
+type Mate {
+  id: oid!
+  name: String!
+  sync_ids: [oid!]!
+}
+
+input NewMatesInput {
+  name: String!
+  lastSynced: Date
+}
+
+type Query {
+  getMates: [Mate]
+}
+
+type Mutation {
+  addNewMates(mates: [NewMatesInput]!): [Mate]
+}

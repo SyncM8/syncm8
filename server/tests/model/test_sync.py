@@ -1,26 +1,16 @@
 """Test the sync model."""
 
 from datetime import datetime
-from typing import Generator
 from unittest import mock
 
 import pytest
 from dateutil.parser import isoparse  # type: ignore
-from mongoengine import connect, disconnect
 from src.model.sync import Sync
 from src.utils.error import ErrorCode
 
 
-@pytest.fixture
-def db_connection() -> Generator[None, None, None]:
-    """Connect to a mock mongodb instance."""
-    disconnect()
-    connect("mongoenginetest", host="mongomock://localhost")
-    yield None
-    disconnect()
-
-
-def test_add_new_sync(db_connection: None) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_add_new_sync() -> None:
     """Test adding a sync."""
     timestamp = isoparse("2021-10-23T20:42:06.112Z")
     title = "test title"
@@ -36,7 +26,8 @@ def test_add_new_sync(db_connection: None) -> None:
     assert sync.details == details
 
 
-def test_add_sync_with_no_details(db_connection: None) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_add_sync_with_no_details() -> None:
     """Test adding a sync with no details."""
     timestamp = isoparse("2021-10-23T20:42:06.112Z")
     error, sync = Sync.add_new_sync(timestamp)
@@ -46,8 +37,9 @@ def test_add_sync_with_no_details(db_connection: None) -> None:
     assert sync.details == ""
 
 
+@pytest.mark.usefixtures("db_connection")
 @mock.patch("src.model.sync.Sync", Exception())
-def test_add_sync_fail(db_connection: None) -> None:
+def test_add_sync_fail() -> None:
     """Test mongo error is caught."""
     timestamp = isoparse("2021-10-23T20:42:06.112Z")
     error, sync = Sync.add_new_sync(timestamp)

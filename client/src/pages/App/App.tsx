@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
 import { isLoggedInPath, IsLoggedInResponse } from "../../api";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
@@ -14,25 +15,49 @@ import LoginPage from "../Login/LoginPage";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
+/**
+ * Logged In Status
+ */
+enum LoggedInStatus {
+  LOGGED_IN = "LoggedIn",
+  LOGGED_OUT = "LoggedOut",
+  WAITING = "Waiting",
+}
+/**
+ * Main App page
+ * @returns JSX.Element
+ */
 const App = (): JSX.Element => {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedInStatus, setLoggedInStatus] = useState(LoggedInStatus.WAITING);
 
   useEffect(() => {
     axios
       .get<IsLoggedInResponse>(isLoggedInPath)
       .then((res) => {
-        let resLoggedIn = false;
-        if ("isLoggedIn" in res.data) {
-          resLoggedIn = res.data.isLoggedIn;
-        }
-        if (loggedIn !== resLoggedIn) {
-          setLoggedIn(resLoggedIn);
+        const resStatus = res.data?.isLoggedIn
+          ? LoggedInStatus.LOGGED_IN
+          : LoggedInStatus.LOGGED_OUT;
+        if (loggedInStatus !== resStatus) {
+          setLoggedInStatus(resStatus);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setLoggedInStatus(LoggedInStatus.LOGGED_OUT);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const setLoggedIn = (value: boolean) => {
+    setLoggedInStatus(
+      value ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT
+    );
+  };
+
+  if (loggedInStatus === LoggedInStatus.WAITING) {
+    return <LoadingSpinner />;
+  }
+  const loggedIn = loggedInStatus === LoggedInStatus.LOGGED_IN;
   return (
     <>
       <Header />
