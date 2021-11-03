@@ -13,3 +13,5 @@ export const isLoggedInPath = `${apiPath}/isLoggedIn`;
 export interface IsLoggedInResponse {
   isLoggedIn: boolean;
 }
+
+export const graphqlPath = `${apiPath}/graphql`;
