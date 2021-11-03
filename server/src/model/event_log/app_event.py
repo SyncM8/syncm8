@@ -14,7 +14,7 @@ from .event_meta_data import EventMetaData
 class AppEvent(Document):
     """Event model - created whenever db is modified."""
 
-    time_stamp = DateTimeField(required=True, default=datetime.utcnow())
+    time_stamp = DateTimeField(required=True, default=datetime.now)
     user_id = StringField(required=True)
     action = EnumField(EventActionType, required=True)
     meta_data = EmbeddedDocumentField(EventMetaData)

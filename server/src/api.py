@@ -97,12 +97,10 @@ def login() -> LoginResponse:
         if not error:
             login_user(new_user, remember=True)
             if new_user:
-                loginEvent = AppEvent(
+                AppEvent(
                     action=EventActionType.USER_SIGN_IN,
-                    meta_data=UserSignInEventMetaData.create(),
+                    meta_data=UserSignInEventMetaData(),
                 )
-                loginEvent.save()
-                print(loginEvent)
             return {"isLoggedIn": True, "error": None}
 
     return {"isLoggedIn": False, "error": error.get_dict_repr() if error else None}

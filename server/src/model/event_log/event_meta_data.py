@@ -1,7 +1,4 @@
 """Event Metadata for Event Log."""
-# 'annotations' import neede to return enclosing type:
-# https://www.python.org/dev/peps/pep-0563/
-from __future__ import annotations
 
 from mongoengine.document import EmbeddedDocument
 from mongoengine.fields import IntField
@@ -17,18 +14,20 @@ class EventMetaData(EmbeddedDocument):
 class UserSignInEventMetaData(EventMetaData):
     """Metadata for user sign in event."""
 
-    myVersion = 1
+    v = 1
 
     def __init__(self) -> None:
         """Create new UserSignInEventMetaData with proper version."""
-        super().__new__(version=self.myVersion)
+        super().__init__()
+        self.version = UserSignInEventMetaData.v
 
 
 class UserSignUpEventMetaData(EventMetaData):
     """Metadata for user sign up event."""
 
-    myVersion = 1
+    v = 1
 
     def __init__(self) -> None:
-        """Create new UserSignInEventMetaData with proper version."""
-        super().__new__(version=self.myVersion)
+        """Create new UserSignUpEventMetaData with proper version."""
+        super().__init__()
+        self.version = UserSignUpEventMetaData.v
