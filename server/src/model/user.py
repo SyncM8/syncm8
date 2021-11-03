@@ -6,10 +6,12 @@ from __future__ import annotations
 from typing import Optional, Tuple, cast
 
 from flask_login import UserMixin
-from mongoengine import Document, StringField
+from mongoengine import Document, ObjectIdField, StringField
+from src.clients.google import get_user_info
+from src.model.family import Family
+from src.utils.error import AppError, ErrorCode, error_bounded
 
-from ..clients.google import get_user_info
-from ..utils.error import AppError, ErrorCode, error_bounded
+UNASSIGNED_FAMILY_INTERVAL = 3650  # Unassigned families auto-assigned to 10-yr interval
 
 
 class User(Document, UserMixin):
@@ -19,6 +21,7 @@ class User(Document, UserMixin):
     google_id = StringField()
     google_token = StringField()
     picture_url = StringField()
+    unassigned_family_id = ObjectIdField(required=True)
     email = StringField(required=True, max_length=320)
     meta = {"collection": "users", "strict": False}
 
@@ -46,9 +49,24 @@ class User(Document, UserMixin):
 
         existing_user = User.lookup_google_user(user_info["id"])
         if existing_user:
+            # remove after unassigned_family migration
+            if "unassigned_family_id" not in existing_user:
+                family_error, unassigned_family = Family.add_new_family(
+                    "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+                )
+                if family_error or not unassigned_family:
+                    return (family_error, None)
+                existing_user.unassigned_family_id = unassigned_family.id
+
             existing_user.google_token = token
             existing_user.save()
             return (None, existing_user)
+
+        family_error, unassigned_family = Family.add_new_family(
+            "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+        )
+        if family_error or not unassigned_family:
+            return (family_error, None)
 
         newUser = User(
             first_name=user_info["given_name"],
@@ -56,6 +74,7 @@ class User(Document, UserMixin):
             google_token=token,
             picture_url=user_info["picture"],
             email=user_info["email"],
+            unassigned_family_id=unassigned_family.id,
         )
         newUser.save()
         return (None, newUser)

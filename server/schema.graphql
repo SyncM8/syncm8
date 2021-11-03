@@ -1,25 +1,36 @@
-enum Size {
-  SMALL
-  REGULAR
+# keep in sync with graphql.ts and graphql.py
+scalar Date
+scalar oid
+
+type Sync {
+  id: oid!
+  timestamp: Date!
+  title: String
+  details: String
 }
 
-enum CoffeeType {
-  CAPPUCCINO
-  FLAT_WHITE
-  ESPRESSO
-}
-
-type Coffee {
-  id: String!
-  size: Size!
+type Family {
+  id: oid!
+  sync_interval_days: Int!
   name: String!
-  type: CoffeeType!
+  mate_ids: [oid!]!
+}
+
+type Mate {
+  id: oid!
+  name: String!
+  sync_ids: [oid!]!
+}
+
+input NewMatesInput {
+  name: String!
+  lastSynced: Date
 }
 
 type Query {
-  orders: [Coffee]!
+  getMates: [Mate]
 }
 
 type Mutation {
-  orderCoffee(size: Size!, name: String!, type: CoffeeType!): Coffee
+  addNewMates(mates: [NewMatesInput]!): [Mate]
 }

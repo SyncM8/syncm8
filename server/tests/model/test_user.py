@@ -1,10 +1,10 @@
 """Test the user model."""
 
-from typing import Dict, Generator
+from typing import Dict
 
 import pytest
-from mongoengine import connect, disconnect
 from pytest_mock import MockerFixture
+from src.model.family import Family
 from src.model.user import User
 
 userAlbert = {
@@ -19,15 +19,6 @@ userNikola = {
     "id": "nikolaId",
     "picture": "nikola-pic.com",
 }
-
-
-@pytest.fixture
-def db_connection() -> Generator[None, None, None]:
-    """Connect to a mock mongodb instance."""
-    disconnect()
-    connect("mongoenginetest", host="mongomock://localhost")
-    yield None
-    disconnect()
 
 
 def assert_user_in_db(oid: str, name: str) -> None:
@@ -47,7 +38,8 @@ def add_mock_user(mocker: MockerFixture, user_info: Dict[str, str]) -> User:
     return user
 
 
-def test_add_new_user(db_connection: None, mocker: MockerFixture) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_add_new_user(mocker: MockerFixture) -> None:
     """Test simple case of single call to add google user."""
     user = add_mock_user(mocker, userAlbert)
 
@@ -60,7 +52,8 @@ def test_add_new_user(db_connection: None, mocker: MockerFixture) -> None:
     assert search_google_user.first_name == userAlbert["given_name"]
 
 
-def test_add_two_users(db_connection: None, mocker: MockerFixture) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_add_two_users(mocker: MockerFixture) -> None:
     """Test two different calls to add google user."""
     albert = add_mock_user(mocker, userAlbert)
     nikola = add_mock_user(mocker, userNikola)
@@ -70,7 +63,8 @@ def test_add_two_users(db_connection: None, mocker: MockerFixture) -> None:
     assert_user_in_db(nikola.id, userNikola["given_name"])
 
 
-def test_call_add_twice(db_connection: None, mocker: MockerFixture) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_call_add_twice(mocker: MockerFixture) -> None:
     """Test two calls to add user using same info."""
     albert = add_mock_user(mocker, userAlbert)
     albert2 = add_mock_user(mocker, userAlbert)
@@ -80,19 +74,34 @@ def test_call_add_twice(db_connection: None, mocker: MockerFixture) -> None:
     assert albert.id == albert2.id
 
 
-def test_google_lookup_empty(db_connection: None) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_google_lookup_empty() -> None:
     """Test call to lookup google user with empty db."""
     user = User.lookup_google_user("albertId")
     assert user is None
 
 
-def test_user_lookup_empty(db_connection: None) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_user_lookup_empty() -> None:
     """Test call to lookup user with empty db."""
     user = User.lookup_user("someId")
     assert user is None
 
 
-def test_get_id(db_connection: None, mocker: MockerFixture) -> None:
+@pytest.mark.usefixtures("db_connection")
+def test_get_id(mocker: MockerFixture) -> None:
     """Test get_id gets proper id."""
     albert = add_mock_user(mocker, userAlbert)
     assert str(albert.id) == albert.get_id()
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_unassigned_family_id(mocker: MockerFixture) -> None:
+    """Test unassigned_family_id was created and populated."""
+    user = add_mock_user(mocker, userAlbert)
+    family_id = user.unassigned_family_id
+    assert family_id
+
+    family = Family.lookup_family(family_id)
+    assert family
+    assert family.get_id() == str(family_id)
