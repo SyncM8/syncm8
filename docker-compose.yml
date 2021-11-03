@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    container_name: mongo
+    restart: unless-stopped
+    command: mongod --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: main
+      MONGODB_DATA_DIR: /data/db
+    volumes:
+      - mongodbdata:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - backend
+    ports:
+      - 27017:27017
+
+  api:
+    user: ${user_id}:${group_id}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        user_id: ${user_id}
+        group_id: ${group_id}
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./:/home/worker/app
+      - /home/worker/app/server/.venv
+    networks:
+      - backend
+    env_file:
+      - ./server/dev.env
+    stdin_open: true
+    tty: true
+
+networks:
+  backend:
+    driver: bridge
+volumes:
+  mongodbdata:
+    driver: local
