@@ -1,8 +1,4 @@
 """GraphQL Ariadne resolver functions."""
-# 'annotations' import needs to return enclosing type:
-# https://www.python.org/dev/peps/pep-0563/
-from __future__ import annotations
-
 from typing import Any, List
 
 from ariadne import MutationType, QueryType, ScalarType
@@ -12,7 +8,7 @@ from flask_login import current_user
 from src.gql.graphql import NewMatesInput
 from src.model.family import Family
 from src.model.mate import Mate
-from src.model.user import User
+from src.model.user import UNASSIGNED_FAMILY_INTERVAL, User
 
 oid_scalar = ScalarType("oid")
 
@@ -43,7 +39,9 @@ def resolve_add_new_mates(
 
     family = Family.lookup_family(user.unassigned_family_id)
     if not family:
-        family_error, family = Family.add_new_family("Unassigned", 365)
+        family_error, family = Family.add_new_family(
+            "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+        )
         if family_error or not family:
             raise Exception("Family not found and cannot be created")
         user.unassigned_family_id = family.id

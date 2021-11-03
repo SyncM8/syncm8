@@ -1,22 +1,11 @@
 """Test the resolver functions."""
 
-from typing import Generator
 from unittest import mock
 
 import pytest
 from bson.objectid import ObjectId
-from mongoengine import connect, disconnect
 from pytest_mock import MockerFixture
 from src.gql.resolver import resolve_add_new_mates, serialize_oid
-
-
-@pytest.fixture
-def db_connection() -> Generator[None, None, None]:
-    """Connect to a mock mongodb instance."""
-    disconnect()
-    connect("mongoenginetest", host="mongomock://localhost")
-    yield None
-    disconnect()
 
 
 def test_serialize_oid() -> None:
@@ -28,10 +17,9 @@ def test_serialize_oid() -> None:
     assert res == id_str
 
 
+@pytest.mark.usefixtures("db_connection")
 @mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
-def test_resolve_add_new_mates_happy(
-    db_connection: None, mocker: MockerFixture
-) -> None:
+def test_resolve_add_new_mates_happy(mocker: MockerFixture) -> None:
     """Add new mates and ensure that they are added to the unassigned family."""
     names = [{"name": "Yumi"}, {"name": "Ruby"}]
     testFamilyId = "TestFamilyId"
@@ -56,27 +44,30 @@ def test_resolve_add_new_mates_happy(
     assert user.unassigned_family_id == testFamilyId
 
 
+@pytest.mark.usefixtures("db_connection")
 @mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
-def test_resolve_add_new_mates_no_user(db_connection: None) -> None:
+def test_resolve_add_new_mates_no_user() -> None:
     """Raises error when current user cannot be found."""
     with pytest.raises(Exception, match="User not found"):
         resolve_add_new_mates(None, None, [])
 
 
+@pytest.mark.usefixtures("db_connection")
 @mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
 @mock.patch("src.gql.resolver.User.lookup_user", lambda x: mock.MagicMock())
 @mock.patch("src.gql.resolver.Family.add_new_family", lambda x, y: (Exception(), None))
-def test_resolve_add_new_mates_no_family(db_connection: None) -> None:
+def test_resolve_add_new_mates_no_family() -> None:
     """Raises error when failed to add a new family."""
     with pytest.raises(Exception, match="Family not found"):
         resolve_add_new_mates(None, None, [])
 
 
+@pytest.mark.usefixtures("db_connection")
 @mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
 @mock.patch("src.gql.resolver.User.lookup_user", lambda x: mock.MagicMock())
 @mock.patch("src.gql.resolver.Family.lookup_family", lambda x: mock.MagicMock())
 @mock.patch("src.gql.resolver.Mate.bulk_insert_new_mates", lambda x: (None, None))
-def test_resolve_add_new_mates_fail_bulk(db_connection: None) -> None:
+def test_resolve_add_new_mates_fail_bulk() -> None:
     """Raises error when failed to bulk insert new mates."""
     with pytest.raises(Exception, match="New mates not created"):
         resolve_add_new_mates(None, None, [])
