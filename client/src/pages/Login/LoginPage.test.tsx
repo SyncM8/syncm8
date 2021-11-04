@@ -5,7 +5,7 @@ import { Route, Router, Switch } from "react-router-dom";
 
 import LoginPage from "./LoginPage";
 
-test("routes to prevPath if loggedIn and prevPath is set", async () => {
+test("routes to prevPath if loggedIn and prevPath, beforeLoginPath are set", async () => {
   const prevPath = "/somewhereOverTheRainbow";
   const history = createMemoryHistory();
   history.replace("/login", { prevPath });
@@ -13,7 +13,12 @@ test("routes to prevPath if loggedIn and prevPath is set", async () => {
     <Router history={history}>
       <Switch>
         <Route path="/login">
-          <LoginPage loggedIn setLoggedIn={jest.fn()} />
+          <LoginPage
+            loggedIn
+            setLoggedIn={jest.fn()}
+            beforeLoginPath="/beforeLoginPath"
+            setBeforeLoginPath={jest.fn()}
+          />
         </Route>
       </Switch>
     </Router>
@@ -21,18 +26,24 @@ test("routes to prevPath if loggedIn and prevPath is set", async () => {
   await waitFor(() => expect(history.location.pathname).toBe(prevPath));
 });
 
-test("routes to / if loggedIn and prevPath is not set", async () => {
+test("routes to beforeLoginPath if loggedIn and prevPath is not set", async () => {
+  const beforeLoginPath = "/somewhereOverTheRainbow";
   const history = createMemoryHistory({ initialEntries: ["/login"] });
   render(
     <Router history={history}>
       <Switch>
         <Route path="/login">
-          <LoginPage loggedIn setLoggedIn={jest.fn()} />
+          <LoginPage
+            loggedIn
+            setLoggedIn={jest.fn()}
+            beforeLoginPath={beforeLoginPath}
+            setBeforeLoginPath={jest.fn()}
+          />
         </Route>
       </Switch>
     </Router>
   );
-  await waitFor(() => expect(history.location.pathname).toBe("/"));
+  await waitFor(() => expect(history.location.pathname).toBe(beforeLoginPath));
 });
 
 test("renders login button if not loggedIn", async () => {
@@ -43,7 +54,12 @@ test("renders login button if not loggedIn", async () => {
     <Router history={history}>
       <Switch>
         <Route path="/login">
-          <LoginPage loggedIn={false} setLoggedIn={jest.fn()} />
+          <LoginPage
+            loggedIn={false}
+            setLoggedIn={jest.fn()}
+            beforeLoginPath="/"
+            setBeforeLoginPath={jest.fn()}
+          />
         </Route>
       </Switch>
     </Router>
