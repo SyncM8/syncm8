@@ -1,7 +1,7 @@
 import { Button, notification, Typography } from "antd";
 import axios from "axios";
 import { parse, stringify } from "querystring";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
 import { loginPath, LoginResponse } from "../../api";
@@ -10,13 +10,11 @@ import { LocationState } from "../types";
 
 const { Title } = Typography;
 
-const PREV_PATH_KEY = "prevPath";
+export const PREV_PATH_KEY = "prevPath";
 
 type LoginPageProps = {
   loggedIn: boolean;
-  beforeLoginPath: string;
   setLoggedIn: (value: boolean) => void;
-  setBeforeLoginPath: (prevPath: string) => void;
 };
 
 const openNotification = (errorMessage: string) => {
@@ -54,14 +52,10 @@ const doLogin = (prevPath = "/") => {
  * @param logingPageProps App's states
  * @returns JSX.Element
  */
-const LoginPage = ({
-  loggedIn,
-  setLoggedIn,
-  beforeLoginPath,
-  setBeforeLoginPath,
-}: LoginPageProps): JSX.Element => {
+const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   const history = useHistory();
   const location = useLocation<LocationState>();
+  const [beforeLoginPath, setBeforeLoginPath] = useState("/");
 
   const checkloginCallback = () => {
     // window.location.hash keeps the hash, part so we chop it off with substr
@@ -70,6 +64,14 @@ const LoginPage = ({
     if ("error" in parsedParams) {
       openNotification(String(parsedParams.error));
     } else if ("access_token" in parsedParams) {
+      const { state } = parsedParams;
+      if (typeof state === "string" && state.includes(PREV_PATH_KEY)) {
+        const newPrevPath = parse(state)[PREV_PATH_KEY];
+        if (typeof newPrevPath === "string") {
+          setBeforeLoginPath(newPrevPath);
+        }
+      }
+
       axios
         .post<LoginResponse>(loginPath, parsedParams)
         .then((res) => {
@@ -81,17 +83,11 @@ const LoginPage = ({
         })
         .catch((err) => openNotification(String(err)));
     }
-
-    const { state } = parsedParams;
-    if (typeof state === "string" && state.includes(PREV_PATH_KEY)) {
-      const newPrevPath = parse(state)[PREV_PATH_KEY];
-      if (typeof newPrevPath === "string") {
-        setBeforeLoginPath(newPrevPath);
-      }
-    }
   };
 
-  checkloginCallback();
+  useEffect(() => {
+    checkloginCallback();
+  });
 
   // Redirect if authentication is done
   if (loggedIn) {

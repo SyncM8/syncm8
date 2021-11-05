@@ -29,7 +29,6 @@ enum LoggedInStatus {
  */
 const App = (): JSX.Element => {
   const [loggedInStatus, setLoggedInStatus] = useState(LoggedInStatus.WAITING);
-  const [beforeLoginPath, setBeforeLoginPath] = useState("/");
 
   useEffect(() => {
     axios
@@ -64,12 +63,7 @@ const App = (): JSX.Element => {
       <Header />
       <Switch>
         <Route path="/login">
-          <LoginPage
-            loggedIn={loggedIn}
-            setLoggedIn={setLoggedIn}
-            beforeLoginPath={beforeLoginPath}
-            setBeforeLoginPath={setBeforeLoginPath}
-          />
+          <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         </Route>
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
           <MatesPage />
