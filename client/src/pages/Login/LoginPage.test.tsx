@@ -1,11 +1,32 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import axios from "axios";
+import MockAdapter from "axios-mock-adapter";
 import { createMemoryHistory } from "history";
+import { stringify } from "querystring";
 import React from "react";
 import { Route, Router, Switch } from "react-router-dom";
 
-import LoginPage from "./LoginPage";
+import { loginPath } from "../../api";
+import LoginPage, { PREV_PATH_KEY } from "./LoginPage";
 
-test("routes to prevPath if loggedIn and prevPath is set", async () => {
+const mock = new MockAdapter(axios);
+
+afterEach(() => {
+  mock.reset();
+  cleanup();
+});
+
+beforeEach(() => {
+  mock.onPost(loginPath).reply(200, { isLoggedIn: true });
+});
+
+test("routes to prevPath if loggedIn and prevPath, beforeLoginPath are set", async () => {
   const prevPath = "/somewhereOverTheRainbow";
   const history = createMemoryHistory();
   history.replace("/login", { prevPath });
@@ -21,18 +42,46 @@ test("routes to prevPath if loggedIn and prevPath is set", async () => {
   await waitFor(() => expect(history.location.pathname).toBe(prevPath));
 });
 
-test("routes to / if loggedIn and prevPath is not set", async () => {
+test("routes to beforeLoginPath after logging in", async () => {
+  const beforeLoginPath = "/somewhereOverTheRainbow";
+  const state = stringify({
+    [PREV_PATH_KEY]: beforeLoginPath,
+  });
+  const hash = stringify({
+    access_token: "token123",
+    state,
+  });
+  Object.defineProperty(window, "location", {
+    writable: true,
+    value: { hash: `#${hash}` },
+  });
+  const setLoggedIn = jest.fn();
+
   const history = createMemoryHistory({ initialEntries: ["/login"] });
-  render(
+
+  const { rerender } = render(
     <Router history={history}>
       <Switch>
         <Route path="/login">
-          <LoginPage loggedIn setLoggedIn={jest.fn()} />
+          <LoginPage loggedIn={false} setLoggedIn={setLoggedIn} />
         </Route>
       </Switch>
     </Router>
   );
-  await waitFor(() => expect(history.location.pathname).toBe("/"));
+  await waitFor(() => expect(setLoggedIn).toHaveBeenCalledWith(true));
+
+  // re-render to simulate prop change
+  rerender(
+    <Router history={history}>
+      <Switch>
+        <Route path="/login">
+          <LoginPage loggedIn setLoggedIn={setLoggedIn} />
+        </Route>
+      </Switch>
+    </Router>
+  );
+
+  await waitFor(() => expect(history.location.pathname).toBe(beforeLoginPath));
 });
 
 test("renders login button if not loggedIn", async () => {
