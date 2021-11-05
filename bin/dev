@@ -73,6 +73,14 @@ runPytest(){
     exec $cmd
 }
 
+# Run migrate
+runMigrate(){
+    findBackendContainerId container_id
+    cmd="docker exec -t "$container_id" pipenv run python3 -m src.db.runner"
+    echo $cmd
+    exec $cmd
+}
+
 # Run js tests
 runJstest(){
     cd client
@@ -121,6 +129,9 @@ frontend
 
 jstest
     Run js tests. All [options] are transparently passed.
+
+migrate
+    Run migration scripts for database.
 
 pre-commit
     Run pre-commit inside api container. All [options] are transparently passed.
@@ -172,6 +183,8 @@ elif [ $operation == 'pre-commit' ]; then
 runPrecommit $restArgs
 elif [ $operation == 'setup' ]; then
 runSetup
+elif [ $operation == 'migrate' ]; then
+runMigrate
 else
 printHelp
 fi
