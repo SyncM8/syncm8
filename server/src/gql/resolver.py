@@ -8,7 +8,8 @@ from flask_login import current_user
 from src.gql.graphql import NewMatesInput
 from src.model.family import Family
 from src.model.mate import Mate
-from src.model.user import UNASSIGNED_FAMILY_INTERVAL, User
+from src.model.user import User
+from src.types.new_family import UNASSIGNED_FAMILY
 
 oid_scalar = ScalarType("oid")
 
@@ -40,7 +41,7 @@ def resolve_add_new_mates(
     family = Family.lookup_family(user.unassigned_family_id)
     if not family:
         family_error, family = Family.add_new_family(
-            "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+            UNASSIGNED_FAMILY.name, UNASSIGNED_FAMILY.sync_interval_days
         )
         if family_error or not family:
             raise Exception("Family not found and cannot be created")

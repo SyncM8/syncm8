@@ -3,15 +3,15 @@
 # https://www.python.org/dev/peps/pep-0563/
 from __future__ import annotations
 
-from typing import Optional, Tuple, cast
+from typing import List, Optional, Tuple, cast
 
+from bson.objectid import ObjectId
 from flask_login import UserMixin
-from mongoengine import Document, ObjectIdField, StringField
+from mongoengine import Document, ListField, ObjectIdField, StringField
 from src.clients.google import get_user_info
 from src.model.family import Family
+from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
 from src.utils.error import AppError, ErrorCode, error_bounded
-
-UNASSIGNED_FAMILY_INTERVAL = 3650  # Unassigned families auto-assigned to 10-yr interval
 
 
 class User(Document, UserMixin):
@@ -23,6 +23,7 @@ class User(Document, UserMixin):
     picture_url = StringField()
     unassigned_family_id = ObjectIdField(required=True)
     email = StringField(required=True, max_length=320)
+    family_ids = ListField(ObjectIdField(), default=list)
     meta = {"collection": "users", "strict": False}
 
     def get_id(self) -> str:
@@ -33,7 +34,7 @@ class User(Document, UserMixin):
     @error_bounded(
         (AppError(ErrorCode.MONGO_ERROR, "Mongo error when adding google user"), None)
     )
-    def add_google_user(token: str,) -> Tuple[Optional[AppError], Optional[User]]:
+    def add_google_user(token: str) -> Tuple[Optional[AppError], Optional[User]]:
         """
         Add or update new google user.
 
@@ -49,24 +50,26 @@ class User(Document, UserMixin):
 
         existing_user = User.lookup_google_user(user_info["id"])
         if existing_user:
-            # remove after unassigned_family migration
-            if "unassigned_family_id" not in existing_user:
-                family_error, unassigned_family = Family.add_new_family(
-                    "Unassigned", UNASSIGNED_FAMILY_INTERVAL
-                )
-                if family_error or not unassigned_family:
-                    return (family_error, None)
-                existing_user.unassigned_family_id = unassigned_family.id
-
             existing_user.google_token = token
             existing_user.save()
             return (None, existing_user)
 
-        family_error, unassigned_family = Family.add_new_family(
-            "Unassigned", UNASSIGNED_FAMILY_INTERVAL
+        # Create Unassigned family
+        unassigned_family_error, unassigned_family = Family.add_new_family(
+            UNASSIGNED_FAMILY.name, UNASSIGNED_FAMILY.sync_interval_days
         )
-        if family_error or not unassigned_family:
-            return (family_error, None)
+        if unassigned_family_error or not unassigned_family:
+            return (unassigned_family_error, None)
+
+        # Create starter families
+        family_ids: List[ObjectId] = [unassigned_family.id]
+        for starter_family in STARTER_FAMILIES:
+            family_error, family = Family.add_new_family(
+                starter_family.name, starter_family.sync_interval_days
+            )
+            if family_error or not family:
+                return (family_error, None)
+            family_ids.append(family.id)
 
         newUser = User(
             first_name=user_info["given_name"],
@@ -75,6 +78,7 @@ class User(Document, UserMixin):
             picture_url=user_info["picture"],
             email=user_info["email"],
             unassigned_family_id=unassigned_family.id,
+            family_ids=family_ids,
         )
         newUser.save()
         return (None, newUser)

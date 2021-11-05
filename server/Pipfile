@@ -20,10 +20,13 @@ flask-mongoengine = "*"
 mongoengine = "*"
 
 [dev-packages]
-pytest = "*"
-pre-commit = "*"
-mypy = "*"
+black = "*"
+flake8 = "*"
 mongomock = "*"
+mypy = "*"
+pre-commit = "*"
+pydocstyle = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.8"
