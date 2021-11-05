@@ -4,10 +4,8 @@
 ## Screencapture (if applicable)
 
 
-## Tests ran
-- [ ] End-to-end
-- [ ] Unit Tests
+## Testing
+- [ ] End-to-End
 
-## Tests added
 
 ## Work left to be done
