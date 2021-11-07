@@ -5,4 +5,4 @@ from src.model.user import User
 
 def run() -> None:
     """Print all Users."""
-    print(User.objects)
+    print(f"Number of users in DB: {len(User.objects)}")

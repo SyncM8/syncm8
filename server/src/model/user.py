@@ -23,7 +23,7 @@ class User(Document, UserMixin):
     picture_url = StringField()
     unassigned_family_id = ObjectIdField(required=True)
     email = StringField(required=True, max_length=320)
-    family_ids = ListField(ObjectIdField(), default=list)
+    family_ids = ListField(ObjectIdField(), required=True, default=list)
     meta = {"collection": "users", "strict": False}
 
     def get_id(self) -> str:
