@@ -15,3 +15,5 @@ export interface IsLoggedInResponse {
 }
 
 export const graphqlPath = `${apiPath}/graphql`;
+
+export const logoutPath = `${apiPath}/logout`;

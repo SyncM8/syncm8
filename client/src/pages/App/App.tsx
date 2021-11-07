@@ -23,6 +23,7 @@ enum LoggedInStatus {
   LOGGED_OUT = "LoggedOut",
   WAITING = "Waiting",
 }
+
 /**
  * Main App page
  * @returns JSX.Element
@@ -60,7 +61,7 @@ const App = (): JSX.Element => {
   const loggedIn = loggedInStatus === LoggedInStatus.LOGGED_IN;
   return (
     <>
-      <Header />
+      <Header logoutApp={() => setLoggedInStatus(LoggedInStatus.LOGGED_OUT)} />
       <Switch>
         <Route path="/login">
           <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
