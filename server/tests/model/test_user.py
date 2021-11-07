@@ -6,6 +6,7 @@ import pytest
 from pytest_mock import MockerFixture
 from src.model.family import Family
 from src.model.user import User
+from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
 
 userAlbert = {
     "given_name": "albert",
@@ -105,3 +106,36 @@ def test_unassigned_family_id(mocker: MockerFixture) -> None:
     family = Family.lookup_family(family_id)
     assert family
     assert family.get_id() == str(family_id)
+    assert family.name == UNASSIGNED_FAMILY.name
+    assert family.sync_interval_days == UNASSIGNED_FAMILY.sync_interval_days
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_starter_family_ids(mocker: MockerFixture) -> None:
+    """Test family_ids is populated with starter and unassigned families."""
+    user = add_mock_user(mocker, userAlbert)
+    family_ids = user.family_ids
+    assert family_ids
+    assert len(family_ids) == len(STARTER_FAMILIES) + 1  # account for unassigned family
+
+    found_unassigned_family = False
+    for family_id in family_ids:
+        family = Family.lookup_family(family_id)
+        assert family
+        assert family.get_id() == str(family_id)
+
+        if family.id == user.unassigned_family_id:
+            found_unassigned_family = True
+            continue
+
+        starter_family = next(
+            (
+                starter
+                for starter in STARTER_FAMILIES
+                if starter.name == family.name
+                and starter.sync_interval_days == family.sync_interval_days
+            ),
+            None,
+        )
+        assert starter_family
+    assert found_unassigned_family
