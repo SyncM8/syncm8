@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: deepakputhraya/action-pr-title@master
       with:
-        allowed_prefixes: '[feat],[fix]'
+        allowed_prefixes: '[feat],[fix],[migr]'
         prefix_case_sensitive: true
         max_length: 60
         github_token: ${{ github.token }}
