@@ -147,3 +147,12 @@ def test_log_in_csrf_failure(client: FlaskClient) -> None:
     """Test post request without proper headers results in 403."""
     res = client.post("/login", json={"access_token": "token"})
     assert res.status_code == 403
+
+
+def test_logout(client: FlaskClient, mocker: MockerFixture) -> None:
+    """Test logout returns data successfully."""
+    mocker.patch("flask_login.logout_user")
+    app.config["LOGIN_DISABLED"] = True
+    res = client.post("/logout")
+    assert res.status_code == 204
+    assert res.data == b""

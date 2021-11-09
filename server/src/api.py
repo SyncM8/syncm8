@@ -5,9 +5,15 @@ from typing import Any, Callable, Optional, TypedDict, TypeVar, cast
 
 from ariadne import gql, graphql_sync, load_schema_from_path, make_executable_schema
 from ariadne.constants import PLAYGROUND_HTML
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS
-from flask_login import LoginManager, current_user, login_user
+from flask_login import (
+    LoginManager,
+    current_user,
+    login_required,
+    login_user,
+    logout_user,
+)
 from src.clients.db import connect_db
 from src.clients.google import is_google_token_valid
 from src.gql.resolver import mutation, oid_scalar, query
@@ -108,6 +114,14 @@ class IsLoggedInResponse(TypedDict):
 def is_logged_in() -> IsLoggedInResponse:
     """Return whether the user is logged in."""
     return {"isLoggedIn": current_user.is_authenticated}
+
+
+@app.route("/logout", methods=["POST"])
+@login_required
+def logout() -> Response:
+    """Logout current user."""
+    logout_user()
+    return "", 204
 
 
 @app.route("/graphql", methods=["GET"])

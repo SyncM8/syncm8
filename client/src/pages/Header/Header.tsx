@@ -14,27 +14,18 @@ import {
   Row,
   Tabs,
 } from "antd";
+import axios from "axios";
 import React from "react";
-import { withRouter } from "react-router";
-import { Link, RouteComponentProps, useLocation } from "react-router-dom";
+import { useHistory } from "react-router";
+import { Link, useLocation } from "react-router-dom";
+
+import { logoutPath } from "../../api";
 
 const { TabPane } = Tabs;
 
-const menu = (
-  <Menu>
-    <Menu.Item key="add-mates">
-      <Link to="/add-mates">Add Mates</Link>
-    </Menu.Item>
-    <Menu.Divider />
-    <Menu.Item key="assign-families">
-      <Link to="/assign-families">Assign Families</Link>
-    </Menu.Item>
-    <Menu.Divider />
-    <Menu.Item key="settings">
-      <Link to="/settings">Setting</Link>
-    </Menu.Item>
-  </Menu>
-);
+type HeaderPageProps = {
+  logoutApp: () => void;
+};
 
 const dashboardTab = (
   <>
@@ -57,8 +48,42 @@ const familiesTab = (
   </>
 );
 
-const HeaderPage = ({ history }: RouteComponentProps): JSX.Element => {
+const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
+  const history = useHistory();
   const location = useLocation();
+
+  /**
+   * Logs out user from app
+   */
+  const logoutHandler = (): void => {
+    axios
+      .post(logoutPath)
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => logoutApp());
+  };
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="add-mates">
+        <Link to="/add-mates">Add Mates</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="assign-families">
+        <Link to="/assign-families">Assign Families</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="settings">
+        <Link to="/settings">Setting</Link>
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="logout" onClick={logoutHandler}>
+        Log Out
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <>
       <PageHeader>
@@ -93,4 +118,4 @@ const HeaderPage = ({ history }: RouteComponentProps): JSX.Element => {
   );
 };
 
-export default withRouter(HeaderPage);
+export default HeaderPage;
