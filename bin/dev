@@ -97,7 +97,7 @@ runPrecommit(){
 
 # One time setup to add pre-commit hook
 runSetup(){
-    cp bin/pre-commit .git/hooks/pre-commit
+    cp bin/pre-commit .git/hooks/pre-push
 }
 
 printHelp(){
