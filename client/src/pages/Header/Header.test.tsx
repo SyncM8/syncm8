@@ -63,7 +63,7 @@ test("logout user successfully", async () => {
   });
 });
 
-test("logout user failed", async () => {
+test("logout user request failed but locally set logged out status", async () => {
   jest.spyOn(console, "error").mockImplementation(() => {}); // suppresses the expected console.error
   mock.onPost(logoutPath).reply(400);
 
@@ -87,8 +87,7 @@ test("logout user failed", async () => {
     fireEvent.click(screen.getByText("Log Out"));
 
     await waitFor(() => {
-      expect(logoutApp).not.toHaveBeenCalled();
-      expect(screen.getByText("Logout Failed")).toBeInTheDocument();
+      expect(logoutApp).toHaveBeenCalled();
     });
   });
 });

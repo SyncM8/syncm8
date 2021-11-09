@@ -10,7 +10,6 @@ import {
   Dropdown,
   Input,
   Menu,
-  notification,
   PageHeader,
   Row,
   Tabs,
@@ -59,16 +58,10 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
   const logoutHandler = (): void => {
     axios
       .post(logoutPath)
-      .then(() => {
-        logoutApp();
-      })
       .catch((err) => {
         console.error(err);
-        notification.error({
-          message: "Logout Failed",
-          description: String(err),
-        });
-      });
+      })
+      .finally(() => logoutApp());
   };
 
   const menu = (
