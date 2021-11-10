@@ -90,7 +90,7 @@ runJstest(){
 # Run precommit inside container
 runPrecommit(){
     findBackendContainerId container_id
-    cmd="docker exec -it -w /home/worker/app/ "$container_id" pre-commit "$*
+    cmd="docker exec -t -w /home/worker/app/ "$container_id" pre-commit "$*
     echo $cmd
     exec $cmd
 }
