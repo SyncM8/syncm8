@@ -3,7 +3,7 @@
 # https://www.python.org/dev/peps/pep-0563/
 from __future__ import annotations
 
-from typing import Optional, Tuple, cast, List
+from typing import List, Optional, Tuple, cast
 
 from mongoengine import Document, IntField, LazyReferenceField, ListField, StringField
 from src.model.mate import Mate

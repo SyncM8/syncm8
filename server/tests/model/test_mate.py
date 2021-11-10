@@ -1,14 +1,14 @@
 """Test the mate model."""
 
+from datetime import datetime
 from typing import List
 from unittest import mock
-from datetime import datetime
 
 import pytest
 from pytest_mock import MockerFixture
-from src.model.sync import Sync
 from src.gql.graphql import NewMatesInput
 from src.model.mate import Mate
+from src.model.sync import Sync
 from src.utils.error import AppError, ErrorCode
 
 mateSteve: NewMatesInput = {"name": "Steve", "lastSynced": "2021-10-23T20:42:06.112Z"}

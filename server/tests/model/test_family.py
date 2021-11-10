@@ -1,14 +1,14 @@
 """Test the family model."""
 
-from unittest import mock
 from typing import List
+from unittest import mock
 
 import pytest
-from src.model.mate import Mate
-from src.model.family import Family
-from src.utils.error import ErrorCode
-from tests.model.test_mate import mateSteve, mateJobs
 from src.gql.graphql import NewMatesInput
+from src.model.family import Family
+from src.model.mate import Mate
+from src.utils.error import ErrorCode
+from tests.model.test_mate import mateJobs, mateSteve
 
 
 @pytest.mark.usefixtures("db_connection")
