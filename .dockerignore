@@ -1,0 +1,5 @@
+client/node_modules
+client/build
+.mypy_cache
+.pre_commit
+server/.venv
