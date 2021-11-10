@@ -3,7 +3,6 @@ name: pr-title
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
-    branches: [ main, dev ]
 
 jobs:
   pr-title-check:
