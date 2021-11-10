@@ -4,7 +4,6 @@ from typing import Dict
 
 import pytest
 from pytest_mock import MockerFixture
-from src.model.family import Family
 from src.model.user import User
 from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
 
@@ -100,7 +99,7 @@ def test_get_id(mocker: MockerFixture) -> None:
 def test_unassigned_family_id(mocker: MockerFixture) -> None:
     """Test unassigned_family_id was created and populated."""
     user = add_mock_user(mocker, userAlbert)
-    family = user.unassigned_family_id
+    family = user.unassigned_family_id.fetch()
     assert family
     assert family.get_id() == str(family.id)
     assert family.name == UNASSIGNED_FAMILY.name
