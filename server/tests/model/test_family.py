@@ -1,10 +1,14 @@
 """Test the family model."""
 
 from unittest import mock
+from typing import List
 
 import pytest
+from src.model.mate import Mate
 from src.model.family import Family
 from src.utils.error import ErrorCode
+from tests.model.test_mate import mateSteve, mateJobs
+from src.gql.graphql import NewMatesInput
 
 
 @pytest.mark.usefixtures("db_connection")
@@ -45,3 +49,23 @@ def test_add_new_family_fail() -> None:
     assert error
     assert error.status_code == ErrorCode.MONGO_ERROR
     assert error.error_details == "Mongo error when adding new family"
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_family_properties() -> None:
+    """Test LazyReferenceField properties."""
+    new_mates: List[NewMatesInput] = [mateSteve, mateJobs]
+    error, mates = Mate.bulk_insert_new_mates(new_mates)
+    assert mates
+    assert len(mates) == len(new_mates)
+
+    error, family = Family.add_new_family("TestFamily", 42)
+    assert family
+    family.mate_ids = [mate.id for mate in mates]
+    family.save()
+
+    assert len(family.mate_ids) == len(mates)
+    assert len(family.mates) == 2
+    assert type(family.mates[0]) == Mate
+    assert family.mates[0] == mates[0]
+    assert family.mates[1] == mates[1]

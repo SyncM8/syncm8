@@ -20,6 +20,11 @@ class Mate(Document):
     sync_ids = ListField(LazyReferenceField(Sync), default=list)
     meta = {"collection": "mates", "strict": False}
 
+    @property
+    def syncs(self) -> List[Sync]:
+        """Fetch object for sync_ids."""
+        return [sync.fetch() for sync in self.sync_ids]
+
     def get_id(self) -> str:
         """Return string version of mongo oid."""
         return str(self.id)

@@ -3,7 +3,7 @@
 # https://www.python.org/dev/peps/pep-0563/
 from __future__ import annotations
 
-from typing import Optional, Tuple, cast
+from typing import Optional, Tuple, cast, List
 
 from mongoengine import Document, IntField, LazyReferenceField, ListField, StringField
 from src.model.mate import Mate
@@ -18,6 +18,11 @@ class Family(Document):
     mate_ids = ListField(LazyReferenceField(Mate), default=list)
 
     meta = {"collection": "families", "strict": False}
+
+    @property
+    def mates(self) -> List[Mate]:
+        """Fetch object for mate_ids."""
+        return [mate.fetch() for mate in self.mate_ids]
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""

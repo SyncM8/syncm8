@@ -4,6 +4,7 @@ from typing import Dict
 
 import pytest
 from pytest_mock import MockerFixture
+from src.model.family import Family
 from src.model.user import User
 from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
 
@@ -99,7 +100,7 @@ def test_get_id(mocker: MockerFixture) -> None:
 def test_unassigned_family_id(mocker: MockerFixture) -> None:
     """Test unassigned_family_id was created and populated."""
     user = add_mock_user(mocker, userAlbert)
-    family = user.unassigned_family_id.fetch()
+    family = user.unassigned_family
     assert family
     assert family.get_id() == str(family.id)
     assert family.name == UNASSIGNED_FAMILY.name
@@ -115,10 +116,7 @@ def test_starter_family_ids(mocker: MockerFixture) -> None:
     assert len(family_ids) == len(STARTER_FAMILIES) + 1  # account for unassigned family
 
     found_unassigned_family = False
-    for family_ref in family_ids:
-        family = family_ref.fetch()
-        assert family.get_id() == str(family.id)
-
+    for family in user.families:
         if family == user.unassigned_family_id:
             found_unassigned_family = True
             continue
@@ -134,3 +132,13 @@ def test_starter_family_ids(mocker: MockerFixture) -> None:
         )
         assert starter_family
     assert found_unassigned_family
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_user_properties(mocker: MockerFixture) -> None:
+    """Test LazyReferenceField properties."""
+    user = add_mock_user(mocker, userAlbert)
+    assert type(user.unassigned_family) == Family
+
+    assert type(user.families) == list
+    assert type(user.families[0]) == Family

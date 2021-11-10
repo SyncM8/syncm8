@@ -26,6 +26,16 @@ class User(Document, UserMixin):
     family_ids = ListField(LazyReferenceField(Family), required=True, default=list)
     meta = {"collection": "users", "strict": False}
 
+    @property
+    def unassigned_family(self) -> Family:
+        """Fetch object for unassigned_family_id."""
+        return self.unassigned_family_id.fetch()  # type: ignore
+
+    @property
+    def families(self) -> List[Family]:
+        """Fetch object for family_ids."""
+        return [family_id.fetch() for family_id in self.family_ids]
+
     def get_id(self) -> str:
         """Return string version of mongo oid."""
         return str(self.id)
