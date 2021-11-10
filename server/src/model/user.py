@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple, cast
 
 from bson.objectid import ObjectId
 from flask_login import UserMixin
-from mongoengine import Document, ListField, ObjectIdField, StringField
+from mongoengine import Document, LazyReferenceField, ListField, StringField
 from src.clients.google import get_user_info
 from src.model.family import Family
 from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
@@ -21,9 +21,9 @@ class User(Document, UserMixin):
     google_id = StringField()
     google_token = StringField()
     picture_url = StringField()
-    unassigned_family_id = ObjectIdField(required=True)
+    unassigned_family_id = LazyReferenceField(Family, required=True)
     email = StringField(required=True, max_length=320)
-    family_ids = ListField(ObjectIdField(), required=True, default=list)
+    family_ids = ListField(LazyReferenceField(Family), required=True, default=list)
     meta = {"collection": "users", "strict": False}
 
     def get_id(self) -> str:

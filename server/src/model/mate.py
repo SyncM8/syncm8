@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import List, Optional, Tuple, cast
 
 from dateutil.parser import isoparse  # type: ignore
-from mongoengine import Document, ListField, ObjectIdField, StringField
+from mongoengine import Document, LazyReferenceField, ListField, StringField
 from src.gql.graphql import NewMatesInput
 from src.model.sync import Sync
 from src.utils.error import AppError, ErrorCode, error_bounded
@@ -17,7 +17,7 @@ class Mate(Document):
     """Mate model class."""
 
     name = StringField(required=True, max_length=100)
-    sync_ids = ListField(ObjectIdField(), default=list)
+    sync_ids = ListField(LazyReferenceField(Sync), default=list)
     meta = {"collection": "mates", "strict": False}
 
     def get_id(self) -> str:

@@ -68,7 +68,7 @@ runWebpack(){
 # Run pytest
 runPytest(){
     findBackendContainerId container_id
-    cmd="docker exec -t "$container_id" pytest "$*
+    cmd="docker exec -it "$container_id" pytest "$*
     echo $cmd
     exec $cmd
 }
@@ -76,7 +76,7 @@ runPytest(){
 # Run migrate
 runMigrate(){
     findBackendContainerId container_id
-    cmd="docker exec -t "$container_id" pipenv run python3 -m src.db.runner"
+    cmd="docker exec -it "$container_id" pipenv run python3 -m src.db.runner"
     echo $cmd
     exec $cmd
 }
@@ -90,7 +90,7 @@ runJstest(){
 # Run precommit inside container
 runPrecommit(){
     findBackendContainerId container_id
-    cmd="docker exec -t -w /home/worker/app/ "$container_id" pre-commit "$*
+    cmd="docker exec -it -w /home/worker/app/ "$container_id" pre-commit "$*
     echo $cmd
     exec $cmd
 }

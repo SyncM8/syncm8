@@ -5,7 +5,8 @@ from __future__ import annotations
 
 from typing import Optional, Tuple, cast
 
-from mongoengine import Document, IntField, ListField, ObjectIdField, StringField
+from mongoengine import Document, IntField, LazyReferenceField, ListField, StringField
+from src.model.mate import Mate
 from src.utils.error import AppError, ErrorCode, error_bounded
 
 
@@ -14,7 +15,7 @@ class Family(Document):
 
     sync_interval_days = IntField(required=True)
     name = StringField(required=True)
-    mate_ids = ListField(ObjectIdField(), default=list)
+    mate_ids = ListField(LazyReferenceField(Mate), default=list)
 
     meta = {"collection": "families", "strict": False}
 

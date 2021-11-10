@@ -100,12 +100,12 @@ def test_get_id(mocker: MockerFixture) -> None:
 def test_unassigned_family_id(mocker: MockerFixture) -> None:
     """Test unassigned_family_id was created and populated."""
     user = add_mock_user(mocker, userAlbert)
-    family_id = user.unassigned_family_id
-    assert family_id
-
-    family = Family.lookup_family(family_id)
+    family = user.unassigned_family_id
     assert family
-    assert family.get_id() == str(family_id)
+
+    family = Family.lookup_family(family.id)
+    assert family
+    assert family.get_id() == str(family.id)
     assert family.name == UNASSIGNED_FAMILY.name
     assert family.sync_interval_days == UNASSIGNED_FAMILY.sync_interval_days
 
@@ -119,12 +119,11 @@ def test_starter_family_ids(mocker: MockerFixture) -> None:
     assert len(family_ids) == len(STARTER_FAMILIES) + 1  # account for unassigned family
 
     found_unassigned_family = False
-    for family_id in family_ids:
-        family = Family.lookup_family(family_id)
-        assert family
-        assert family.get_id() == str(family_id)
+    for family_ref in family_ids:
+        family = family_ref.fetch()
+        assert family.get_id() == str(family.id)
 
-        if family.id == user.unassigned_family_id:
+        if family == user.unassigned_family_id:
             found_unassigned_family = True
             continue
 
