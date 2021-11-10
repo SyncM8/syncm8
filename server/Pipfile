@@ -24,6 +24,9 @@ pytest = "*"
 pre-commit = "*"
 mypy = "*"
 mongomock = "*"
+flake8 = "*"
+pydocstyle = "*"
+black = "*"
 
 [requires]
 python_version = "3.8"
