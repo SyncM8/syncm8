@@ -102,7 +102,6 @@ def test_unassigned_family_id(mocker: MockerFixture) -> None:
     user = add_mock_user(mocker, userAlbert)
     family = user.unassigned_family
     assert family
-    assert family.get_id() == str(family.id)
     assert family.name == UNASSIGNED_FAMILY.name
     assert family.sync_interval_days == UNASSIGNED_FAMILY.sync_interval_days
 
