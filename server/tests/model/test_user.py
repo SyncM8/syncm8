@@ -100,12 +100,8 @@ def test_get_id(mocker: MockerFixture) -> None:
 def test_unassigned_family_id(mocker: MockerFixture) -> None:
     """Test unassigned_family_id was created and populated."""
     user = add_mock_user(mocker, userAlbert)
-    family_id = user.unassigned_family_id
-    assert family_id
-
-    family = Family.lookup_family(family_id)
+    family = user.unassigned_family
     assert family
-    assert family.get_id() == str(family_id)
     assert family.name == UNASSIGNED_FAMILY.name
     assert family.sync_interval_days == UNASSIGNED_FAMILY.sync_interval_days
 
@@ -119,12 +115,8 @@ def test_starter_family_ids(mocker: MockerFixture) -> None:
     assert len(family_ids) == len(STARTER_FAMILIES) + 1  # account for unassigned family
 
     found_unassigned_family = False
-    for family_id in family_ids:
-        family = Family.lookup_family(family_id)
-        assert family
-        assert family.get_id() == str(family_id)
-
-        if family.id == user.unassigned_family_id:
+    for family in user.families:
+        if family == user.unassigned_family_id:
             found_unassigned_family = True
             continue
 
@@ -139,3 +131,13 @@ def test_starter_family_ids(mocker: MockerFixture) -> None:
         )
         assert starter_family
     assert found_unassigned_family
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_user_properties(mocker: MockerFixture) -> None:
+    """Test LazyReferenceField properties."""
+    user = add_mock_user(mocker, userAlbert)
+    assert type(user.unassigned_family) == Family
+
+    assert type(user.families) == list
+    assert type(user.families[0]) == Family

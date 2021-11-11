@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple, cast
 
 from bson.objectid import ObjectId
 from flask_login import UserMixin
-from mongoengine import Document, ListField, ObjectIdField, StringField
+from mongoengine import Document, LazyReferenceField, ListField, StringField
 from src.clients.google import get_user_info
 from src.model.family import Family
 from src.types.new_family import STARTER_FAMILIES, UNASSIGNED_FAMILY
@@ -21,10 +21,20 @@ class User(Document, UserMixin):
     google_id = StringField()
     google_token = StringField()
     picture_url = StringField()
-    unassigned_family_id = ObjectIdField(required=True)
+    unassigned_family_id = LazyReferenceField(Family, required=True)
     email = StringField(required=True, max_length=320)
-    family_ids = ListField(ObjectIdField(), required=True, default=list)
+    family_ids = ListField(LazyReferenceField(Family), required=True, default=list)
     meta = {"collection": "users", "strict": False}
+
+    @property
+    def unassigned_family(self) -> Family:
+        """Fetch object for unassigned_family_id."""
+        return self.unassigned_family_id.fetch()  # type: ignore
+
+    @property
+    def families(self) -> List[Family]:
+        """Fetch object for family_ids."""
+        return [family_id.fetch() for family_id in self.family_ids]
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""

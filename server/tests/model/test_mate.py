@@ -1,5 +1,6 @@
 """Test the mate model."""
 
+from datetime import datetime
 from typing import List
 from unittest import mock
 
@@ -7,6 +8,7 @@ import pytest
 from pytest_mock import MockerFixture
 from src.gql.graphql import NewMatesInput
 from src.model.mate import Mate
+from src.model.sync import Sync
 from src.utils.error import AppError, ErrorCode
 
 mateSteve: NewMatesInput = {"name": "Steve", "lastSynced": "2021-10-23T20:42:06.112Z"}
@@ -73,3 +75,21 @@ def test_bulk_insert_fail() -> None:
     assert error
     assert error.status_code == ErrorCode.MONGO_ERROR
     assert error.error_details == "Mongo error when bulk adding new mates"
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_mate_properties() -> None:
+    """Test LazyReferenceField properties."""
+    new_mates: List[NewMatesInput] = [mateSteve, mateJobs]
+    error, mates = Mate.bulk_insert_new_mates(new_mates)
+    assert mates
+    mate = mates[0]
+
+    sync0_err, sync0 = Sync.add_new_sync(datetime.now(), "zero", "details")
+    sync1_err, sync1 = Sync.add_new_sync(datetime.now(), "one", "details")
+    assert sync0 and sync1
+
+    mate.sync_ids = [sync0.id, sync1.id]
+    mate.save()
+    assert len(mate.syncs) == len(mate.sync_ids)
+    assert type(mate.syncs[0]) == Sync
