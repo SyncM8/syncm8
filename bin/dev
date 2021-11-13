@@ -11,8 +11,6 @@ findBackendContainerId(){
     eval $_resultvar="'$container'"
 }
 
-
-
 # Run docker compose commands as correct user
 runDockerCompose(){
     user_id=$(id -u) group_id=$(id -g) docker-compose $*
@@ -90,7 +88,13 @@ runJstest(){
 # Run precommit inside container
 runPrecommit(){
     findBackendContainerId container_id
-    cmd="docker exec -t -w /home/worker/app/ "$container_id" pre-commit "$*
+    # if no cli args, run standard pre-push
+    if [ ! $* ]; then
+    args="run --hook-stage push --from-ref origin/main --to-ref HEAD"
+    else
+    args=$*
+    fi
+    cmd="docker exec -t -w /home/worker/app/ "$container_id" pre-commit "$args
     echo $cmd
     exec $cmd
 }
@@ -114,6 +118,9 @@ backend
 
 build
     Build images for all syncm8 containers.
+
+check
+    Run pre-commit inside api container. All [options] are transparently passed.
 
 clean
     Stop and remove all active containers and delete all db data associated with syncm8.
@@ -179,7 +186,7 @@ elif [ $operation == 'pytest' ]; then
 runPytest $restArgs
 elif [ $operation == 'jstest' ]; then
 runJstest $restArgs
-elif [ $operation == 'pre-commit' ]; then
+elif [ $operation == 'pre-commit' ] || [ $operation == 'check' ]; then
 runPrecommit $restArgs
 elif [ $operation == 'setup' ]; then
 runSetup
