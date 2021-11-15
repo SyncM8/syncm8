@@ -14,5 +14,5 @@ jobs:
       with:
         allowed_prefixes: '[feat],[fix],[migr],[chore]'
         prefix_case_sensitive: true
-        max_length: 60
+        max_length: 80
         github_token: ${{ github.token }}

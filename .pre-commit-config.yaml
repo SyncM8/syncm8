@@ -66,3 +66,21 @@ repos:
         args:
         -    "--fix"
         -    "./client/src"
+-   repo: https://github.com/EpicPi/ReqLockHook
+    rev: v1.0.4
+    hooks:
+    -   id: req-lock
+        files: server/Pip*
+        verbose: true
+        args:
+        -   "--req server/Pipfile"
+        -   "--lock server/Pipfile.lock"
+-   repo: https://github.com/EpicPi/ReqLockHook
+    rev: v1.0.4
+    hooks:
+    -   id: req-lock
+        files: client/package*
+        verbose: true
+        args:
+        -   "--req client/package.json"
+        -   "--lock client/package-lock.json"
