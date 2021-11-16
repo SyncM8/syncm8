@@ -35,3 +35,6 @@ RUN pipenv install --dev
 ENV PATH /home/worker/app/server/.venv/bin:$PATH
 
 ENTRYPOINT ["pipenv", "run", "flask", "run", "--host", "0.0.0.0"]
+
+
+
