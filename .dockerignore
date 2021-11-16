@@ -1,4 +1,4 @@
-# Used to trim context during during docker builds.
+# Used to trim context during docker builds.
 # Only Dockerfile that actually sends context is Dockerfile_prod,
 client
 .mypy_cache
