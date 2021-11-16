@@ -1,5 +1,9 @@
-client/node_modules
-client/build
+# Used to trim context during docker builds.
+# Only Dockerfile that actually sends context is Dockerfile_prod,
+client
 .mypy_cache
 .pre-commit
+.github
+.git
+bin
 server/.venv
