@@ -1,0 +1,39 @@
+name: Dev Docker Build
+
+on:
+  push:
+    branches: [ test-2 ]
+  workflow_dispatch:
+
+jobs:
+  build-img:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: technote-space/get-diff-action@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          PATTERNS: Dockerfile_dev
+      
+      - name: Login to AWS ECR
+        if: env.GIT_DIFF
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${bin{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        env:
+          AWS_REGION: us-east-1 # public ecr lives here for everyone
+      
+      - name: Build and push
+        if: env.GIT_DIFF
+        uses: docker/build-push-action@v2
+        with:
+          pull: true # pull new intermediate images
+          push: true # push to ECR
+          tags: public.ecr.aws/a5f0m6q3/syncm8_dev:latest
+          file: Dockerfile
+      
+      
