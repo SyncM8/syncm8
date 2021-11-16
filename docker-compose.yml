@@ -2,7 +2,7 @@ version: '3.8'
 services:
   mongodb:
     image: mongo
-    container_name: mongo
+    container_name: syncm8_mongo
     restart: unless-stopped
     command: mongod --auth
     environment:
@@ -18,21 +18,17 @@ services:
     ports:
       - 27017:27017
 
-  api:
-    user: ${user_id}:${group_id}
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        user_id: ${user_id}
-        group_id: ${group_id}
+  dev:
+    image: public.ecr.aws/a5f0m6q3/syncm8_dev
+    container_name: syncm8_dev
     ports:
       - "5000:5000"
     depends_on:
       - mongodb
     volumes:
-      - ./:/home/worker/app
-      - /home/worker/app/server/.venv
+      - type: bind
+        source: ./
+        target: /home/worker/app
     networks:
       - backend
     env_file:
