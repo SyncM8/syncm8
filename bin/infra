@@ -1,0 +1,82 @@
+#!/bin/bash
+
+AWS_KEYS=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION)
+DEV_ECR_REPO="public.ecr.aws/a5f0m6q3/syncm8_dev"
+
+# Read value for specified key fron server/dev.env
+# args:
+#   1: Name of key to read
+#   2: Name of variable to set "$key=$value"
+getKeyValFromDevEnv(){
+    local key=$1
+    local _res=$2
+    local value=$(cat server/dev.env | grep $key)
+    eval $_res="'$value'"
+}
+
+# Set all the values for aws keys
+# Only avialable inside the subshell
+addAWSToEnv(){
+    for key in ${AWS_KEYS[@]}; do
+        getKeyValFromDevEnv $key keyValPair
+        export $keyValPair
+    done
+}
+
+# Authenticate docker with aws ecr
+dockerLogin(){
+    addAWSToEnv
+    local command="aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws"
+    bin/util logAndRun $command
+}
+
+# Push dev image to aws ecr
+# Must be authenticated with ecr
+dockerPush(){
+    bin/util logAndRun "docker push $DEV_ECR_REPO"
+}
+
+# Pull image from aws ecr
+dockerPull(){
+    bin/util logAndRun "docker pull $DEV_ECR_REPO"
+}
+
+# Build dev image
+dockerBuild(){
+    bin/util logAndRun "docker build --pull --rm -t $DEV_ECR_REPO - < Dockerfile_dev"
+}
+
+# Print help message
+printHelp(){
+    echo "Usage:  bin/infra COMMAND
+
+Command Runner for syncm8 infra commands.
+
+Commands:
+  build       Build dev image.
+  login       Authenticate docker with aws ecr.
+  pull        Pull image from aws ecr.
+  push        Push dev image to aws ecr.
+                  N.b. Must be authenticated with ecr."
+}
+
+op=$1
+restArgs="${@:2}"
+
+case $op in
+    build)
+        dockerBuild
+        ;;
+    login)
+        dockerLogin
+        ;;
+    pull)
+        dockerPull
+        ;;
+    push)
+        dockerPush
+        ;;
+    *)
+        printHelp
+        ;;
+esac
