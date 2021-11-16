@@ -16,6 +16,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           PATTERNS: Dockerfile
+
       
       - name: Login to AWS ECR
         if: env.GIT_DIFF
