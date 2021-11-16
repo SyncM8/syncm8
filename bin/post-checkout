@@ -1,0 +1,19 @@
+#!/bin/bash
+
+OLD_HEAD=$1
+NEW_HEAD=$2
+IS_BRANCH_CHECKOUT=$3
+
+diff=$(git diff --name-only  $OLD_HEAD $NEW_HEAD)
+pipFileChange=$(printf -- '%s\n' $diff | grep server/Pipfile)
+packageFileChange=$(printf -- '%s\n' $diff | grep client/package)
+
+
+if [ $IS_BRANCH_CHECKOUT == 1 ]; then
+    if [ ${#pipFileChange} -gt 0 ]; then
+        bin/util warn "Pipfile looks different; you may have to run 'bin/dev py-req'"
+    fi
+    if [ ${#pipFileChange} -gt 0 ]; then
+        bin/util warn "Package.json looks different; you may have to run 'bin/dev client-req'"
+    fi
+fi
