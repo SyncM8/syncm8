@@ -13,7 +13,7 @@ if [ $IS_BRANCH_CHECKOUT == 1 ]; then
     if [ ${#pipFileChange} -gt 0 ]; then
         bin/util warn "Pipfile looks different; you may have to run 'bin/dev py-req'"
     fi
-    if [ ${#pipFileChange} -gt 0 ]; then
+    if [ ${#packageFileChange} -gt 0 ]; then
         bin/util warn "Package.json looks different; you may have to run 'bin/dev client-req'"
     fi
 fi
