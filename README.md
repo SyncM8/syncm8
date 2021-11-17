@@ -10,25 +10,21 @@
 ---
 ## Dev Setup
 
-1. Install Latest Docker
-2. Install Latest Node/npm
+1. Install Latest [Docker](https://docs.docker.com/get-docker/)
+2. Install Latest [Node/npm](https://nodejs.org/en/download/)
 3. Set up the git hooks.
 ```shell
 bin/dev setup
 ```
-4. Pull dev image from AWS ECR.
-```shell
-bin/dev pull
-```
-5. Start python and mongo containers.
+4. Start python and mongo containers.
 ```shell
 bin/dev up
 ```
-6. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
+5. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
 ```shell
 bin/dev py-req
 ```
-7.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
+6.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
 ```shell
 bin/dev client-req
 ```
