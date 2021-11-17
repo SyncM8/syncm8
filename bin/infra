@@ -15,7 +15,7 @@ getKeyValFromDevEnv(){
 }
 
 # Set all the values for aws keys
-# Only avialable inside the subshell
+# Only available inside the subshell
 addAWSToEnv(){
     for key in ${AWS_KEYS[@]}; do
         getKeyValFromDevEnv $key keyValPair
