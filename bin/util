@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# colors
+RESET=`tput sgr0`
+RED=`tput setaf 1`
+MAGENTA=`tput setaf 5`
+BLUE=`tput setaf 6`
+
+# Print command to std out and execute command
+# args: str command to print and execute
+logAndRun(){
+    echo ${BLUE}$@${RESET}
+    eval $@
+}
+
+# Print error msg to std out
+# args: str to print
+error(){
+    echo ${RED}$@${RESET}
+}
+
+# Print warning message to std out
+# args: str to print
+warn(){
+    echo ${MAGENTA}$@${RESET}
+}
+
+op=$1
+restArgs="${@:2}"
+
+case $op in
+    logAndRun)
+        logAndRun $restArgs
+        ;;
+    error)
+        error $restArgs
+        ;;
+    warn)
+        warn $restArgs
+        ;;
+esac
