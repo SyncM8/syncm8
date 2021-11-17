@@ -11,7 +11,6 @@ jobs:
     steps:
     - uses: deepakputhraya/action-pr-title@master
       with:
-        allowed_prefixes: '[feat],[fix],[migr],[chore]'
-        prefix_case_sensitive: true
+        regex: '^(\[chore\]|\[feat\]|\[migr\]|\[fix\])[ ][A-Z].+[^.]$'
         max_length: 80
         github_token: ${{ github.token }}
