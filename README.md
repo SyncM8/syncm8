@@ -13,19 +13,20 @@
 
 1. Install Latest [Docker](https://docs.docker.com/get-docker/)
 2. Install Latest [Node/npm](https://nodejs.org/en/download/)
-3. Set up the git hooks.
+3. Install [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+4. Set up the git hooks.
 ```shell
 bin/dev setup
 ```
-4. Start python and mongo containers.
+5. Start python and mongo containers.
 ```shell
 bin/dev up
 ```
-5. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
+6. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
 ```shell
 bin/dev py-req
 ```
-6.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
+7.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
 ```shell
 bin/dev client-req
 ```
