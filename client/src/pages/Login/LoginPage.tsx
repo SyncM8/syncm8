@@ -38,7 +38,8 @@ const doLogin = (prevPath = "/") => {
     redirect_uri: `${process.env.REACT_APP_HOST_URL ?? ""}/login`,
     response_type: "token",
     include_granted_scopes: "true",
-    scope: "openid email profile https://www.googleapis.com/auth/contacts.readonly",
+    scope:
+      "openid email profile https://www.googleapis.com/auth/contacts.readonly",
     state,
   };
 

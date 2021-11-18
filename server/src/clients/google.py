@@ -98,23 +98,33 @@ def get_user_info(
 @error_bounded(
     (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user info"), None)
 )
-def get_people_connections_list(
-    token: str,
-) -> Tuple[Optional[AppError], Optional[Dict[str, str]]]:
+def get_people_connections_list(token: str,) -> Tuple[Optional[AppError], List[object]]:
     """
     Request list of user's contacts from Google People API.
 
-    TODO: update
+    Returns a list of Google API Person objects representing all
+    of the user's contacts
     """
-    import pdb
-
-    # pdb.set_trace()
     creds = Credentials(token) if token else None
     with build("people", "v1", credentials=creds) as people_service:
-        people = (
-            people_service.people()
-            .connections()
-            .list(resourceName="people/me", personFields="names,emailAddresses")
-        ).execute()
+        pagination_finished = False
+        next_page_token = ""
+        people_list_complete = []
+        # paginate through contacts and add to list
+        while not pagination_finished:
+            people_response = (
+                people_service.people()
+                .connections()
+                .list(
+                    resourceName="people/me",
+                    personFields="names,emailAddresses",
+                    pageToken=next_page_token,
+                )
+            ).execute()
+            people_list_complete += people_response["connections"]
+            if "nextPageToken" in people_response:
+                next_page_token = people_response["nextPageToken"]
+            else:
+                pagination_finished = True
 
-        print(people["connections"])
+        return (None, people_list_complete)
