@@ -34,7 +34,9 @@ class User(Document, UserMixin):
     @property
     def families(self) -> List[Family]:
         """Fetch object for family_ids."""
-        return [family_id.fetch() for family_id in self.family_ids]
+        return list(
+            Family.objects.in_bulk([ref.id for ref in self.family_ids]).values()
+        )
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""
