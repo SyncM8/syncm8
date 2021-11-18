@@ -21,7 +21,7 @@ def test_serialize_oid() -> None:
 def test_serialize_date() -> None:
     """Test serialization from datetime to str."""
     iso_str = "2021-11-17T23:40:37.347Z"  # new Date().toISOString() in JS
-    iso_res = "2021-11-17T23:40:37.347000+00:00Z"
+    iso_res = "2021-11-17T23:40:37.347000Z"
     date = datetime.fromisoformat(iso_str[:-1])
     res = serialize_date(date)
     assert isinstance(res, str)

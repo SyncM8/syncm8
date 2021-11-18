@@ -44,7 +44,7 @@ def patch_is_google_token_valid(
         ]
     )
 
-    return is_google_token_valid("token", http, http2)
+    return is_google_token_valid("", http, http2)
 
 
 def test_is_google_token_valid_happy(monkeypatch: MonkeyPatch) -> None:

@@ -9,10 +9,21 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT 1
 ENV FLASK_APP 'server:app'
-WORKDIR /home/worker/app/server/
 
 # install pipenv
+WORKDIR /home/worker/app/server/
 RUN pip install pipenv
+WORKDIR /home/worker/app/
+
 ENV PATH /home/worker/app/server/.venv/bin:$PATH
+
+# app specific env
+ENV FLASK_ENV development
+ENV PRE_COMMIT_HOME /home/worker/app/.pre-commit
+ENV APP_SECRET_KEY b\xaeX\xe6x5\x02/\xcb\xad\xa3\x8f\x97D\xab\xbe/!\xf2\xe4H\x1b\xdb\xdcv
+ENV GOOGLE_CLIENT_ID 711095332609-rfg1tm319vhrs7i1tf1ubclo99srmc08.apps.googleusercontent.com
+ENV MONGO_HOST mongodb
+ENV MONGO_USER user
+ENV MONGO_PASSWORD pass
 
 ENTRYPOINT ["bash"]

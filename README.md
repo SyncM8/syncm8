@@ -1,10 +1,11 @@
 ![Backend Tests](https://github.com/SyncM8/syncm8/actions/workflows/backendCI.yml/badge.svg)
 ![Frontend Tests](https://github.com/SyncM8/syncm8/actions/workflows/frontendCI.yml/badge.svg)
-![Deploy](https://github.com/SyncM8/syncm8/actions/workflows/CD.yml/badge.svg)
 ![pre-commit](https://github.com/SyncM8/syncm8/actions/workflows/pre-commit.yml/badge.svg)
-![Heartbeat](https://github.com/SyncM8/syncm8/actions/workflows/heartbeat.yml/badge.svg)
 ![CodeQL](https://github.com/SyncM8/syncm8/actions/workflows/codeql-analysis.yml/badge.svg)
 ![Pr Title Convention](https://github.com/SyncM8/syncm8/actions/workflows/prTitle.yml/badge.svg)
+![Heartbeat](https://github.com/SyncM8/syncm8/actions/workflows/heartbeat.yml/badge.svg)
+![Deploy](https://github.com/SyncM8/syncm8/actions/workflows/CD.yml/badge.svg)
+![Dev Image Build](https://github.com/SyncM8/syncm8/actions/workflows/devDockerBuild.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
 ---
@@ -12,19 +13,20 @@
 
 1. Install Latest [Docker](https://docs.docker.com/get-docker/)
 2. Install Latest [Node/npm](https://nodejs.org/en/download/)
-3. Set up the git hooks.
+3. Install [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+4. Set up the git hooks.
 ```shell
 bin/dev setup
 ```
-4. Start python and mongo containers.
+5. Start python and mongo containers.
 ```shell
 bin/dev up
 ```
-5. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
+6. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
 ```shell
 bin/dev py-req
 ```
-6.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
+7.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
 ```shell
 bin/dev client-req
 ```
