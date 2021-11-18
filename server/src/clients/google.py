@@ -92,3 +92,28 @@ def get_user_info(
             parsed_user_info[field] = user_info.get(field, "")
 
         return (None, parsed_user_info)
+
+
+@error_bounded(
+    (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user info"), None)
+)
+def get_people_connections_list(
+    token: str,
+) -> Tuple[Optional[AppError], Optional[Dict[str, str]]]:
+    """
+    Request list of user's contacts from Google People API.
+
+    TODO: update
+    """
+    import pdb
+
+    # pdb.set_trace()
+    creds = Credentials(token) if token else None
+    with build("people", "v1", credentials=creds) as people_service:
+        people = (
+            people_service.people()
+            .connections()
+            .list(resourceName="people/me", personFields="names,emailAddresses")
+        ).execute()
+
+        print(people["connections"])
