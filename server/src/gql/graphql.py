@@ -3,7 +3,7 @@ GraphQL related python types, other than MongoDB models.
 
 Keep in sync with schema.graphql (also with graphql.ts)
 """
-from typing import TypedDict
+from typing import List, TypedDict
 
 
 class NewMatesInput(TypedDict):
@@ -11,3 +11,10 @@ class NewMatesInput(TypedDict):
 
     name: str
     lastSynced: str  # date gets converted to str
+
+
+class NewAssignmentInput(TypedDict):
+    """GQL Input for assigning mates to different families."""
+
+    familyId: str
+    mateIds: List[str]
