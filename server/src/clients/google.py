@@ -37,7 +37,8 @@ def is_google_token_valid(
     (NB: the htto and http2 parameters are only used during testing - if you can figure
     out a better way to make the tests work, go ahead and remove them)
     """
-    with build("oauth2", "v2", http=http) as service:
+    creds = Credentials(token) if token else None
+    with build("oauth2", "v2", credentials=creds, http=http) as service:
         token_info_request = service.tokeninfo(access_token=token)
         token_info = token_info_request.execute(http=http2)
 
