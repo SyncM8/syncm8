@@ -95,7 +95,7 @@ def get_user_info(
 
 
 @error_bounded(
-    (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user info"), None)
+    (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user contacts"), None)
 )
 def get_people_connections_list(token: str,) -> Tuple[Optional[AppError], List[object]]:
     """
