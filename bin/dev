@@ -117,6 +117,7 @@ runSetup(){
 
 # Pull images from aws ECR
 runPull(){
+    bin/util logAndRun "bin/infra pull-env"
     bin/util logAndRun "bin/infra pull"
 }
 
