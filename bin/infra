@@ -1,6 +1,7 @@
 #!/bin/bash
 
 AWS_KEYS=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION)
+EXTERNAL_KEYS=(DEV_SENDGRID_API_KEY)
 DEV_ECR_REPO="public.ecr.aws/a5f0m6q3/syncm8_dev"
 
 # Read value for specified key fron server/dev.env
@@ -46,6 +47,32 @@ dockerBuild(){
     bin/util logAndRun "docker build --pull --rm -t $DEV_ECR_REPO - < Dockerfile_dev"
 }
 
+# Pulls secrets from AWS Parameter Store
+pullEnv(){
+    # load aws env for authentication to parameter store
+    addAWSToEnv
+
+    # create new file
+    echo "" > new.dev.env
+
+    # copy aws keys from dev.env to new.dev.env
+    for key in ${AWS_KEYS[@]}; do
+        getKeyValFromDevEnv $key keyValPair
+        echo $keyValPair >> new.dev.env
+    done
+
+    # acquire keys from aws parameter store
+    for ac in ${EXTERNAL_KEYS[@]}; do
+        ret=$(aws ssm get-parameter --name $ac)
+        value=$(echo $ret | grep -Po '"Value":.*?[^\\]",'| cut -d \" -f4)
+        key=$(echo $ac| cut -d _ -f2-)
+        echo $key=$value >> new.dev.env
+    done
+
+    # replace contents of dev.env with new.dev.env
+    mv new.dev.env server/dev.env
+}
+
 # Print help message
 printHelp(){
     echo "Usage:  bin/infra COMMAND
@@ -56,6 +83,7 @@ Commands:
   build       Build dev image.
   login       Authenticate docker with aws ecr.
   pull        Pull image from aws ecr.
+  pull-env    Pulls secrets from AWS Parameter Store
   push        Push dev image to aws ecr.
                   N.b. Must be authenticated with ecr."
 }
@@ -72,6 +100,9 @@ case $op in
         ;;
     pull)
         dockerPull
+        ;;
+    pull-env)
+        pullEnv
         ;;
     push)
         dockerPush
