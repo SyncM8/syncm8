@@ -7,8 +7,9 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 
-import { NewMateType } from "../../pages/types";
-import NewMatesCard from "../NewMateCard/NewMateCard";
+import { Mate } from "../../graphql/types";
+import { UnassignedMate } from "../../pages/types";
+import UnassignedMateCard from "../UnassignedMateCard/UnassignedMateCard";
 
 const CARD_WIDTH = 200;
 const GRID = 8;
@@ -18,10 +19,10 @@ type StyleType = DraggingStyle | NotDraggingStyle | undefined;
 type CSSType = CSSProperties | undefined;
 
 type FamilyDroppableType = {
-  mates: NewMateType[];
+  mates: UnassignedMate[];
   direction: "horizontal" | "vertical";
-  family: string;
-  removeMate: (mate: NewMateType) => void;
+  droppableId: string;
+  removeMate: (mate: Mate) => void;
 };
 
 /**
@@ -90,7 +91,7 @@ const verticalGetListStyle = (isDraggingOver: boolean): CSSType => ({
  */
 const FamilyDroppable = ({
   mates,
-  family,
+  droppableId,
   direction,
   removeMate,
 }: FamilyDroppableType): JSX.Element => {
@@ -99,18 +100,14 @@ const FamilyDroppable = ({
   const getItemStyle =
     direction === "vertical" ? verticalGetItemStyle : horizontalGetItemStyle;
   return (
-    <Droppable droppableId={family} direction={direction}>
+    <Droppable droppableId={droppableId} direction={direction}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
           style={getListStyle(snapshot.isDraggingOver)}
         >
           {mates.map((item, index) => (
-            <Draggable
-              key={item.id}
-              draggableId={item.id as string}
-              index={index}
-            >
+            <Draggable key={item.id} draggableId={item.id} index={index}>
               {(draggableProvided, draggableSnapshot) => (
                 <div
                   ref={draggableProvided.innerRef}
@@ -121,8 +118,9 @@ const FamilyDroppable = ({
                     draggableSnapshot.isDragging
                   )}
                 >
-                  <NewMatesCard
+                  <UnassignedMateCard
                     mate={item}
+                    lastSynced={item.lastSynced}
                     style={{ width: CARD_WIDTH }}
                     removeMate={removeMate}
                   />

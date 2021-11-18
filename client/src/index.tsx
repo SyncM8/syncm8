@@ -7,12 +7,25 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import { graphqlPath } from "./api";
+import { Mate } from "./graphql/types";
 import App from "./pages/App/App";
 import reportWebVitals from "./reportWebVitals";
 
 const client = new ApolloClient({
   uri: graphqlPath,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Family: {
+        fields: {
+          mates: {
+            merge(existing: Mate[], incoming: Mate[]) {
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
   credentials: "include",
 });
 
