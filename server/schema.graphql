@@ -9,17 +9,26 @@ type Sync {
   details: String
 }
 
+type Mate {
+  id: oid!
+  name: String!
+  syncs: [Sync!]!
+}
+
 type Family {
   id: oid!
   sync_interval_days: Int!
   name: String!
-  mate_ids: [oid!]!
+  mates: [Mate!]!
 }
 
-type Mate {
+type User {
   id: oid!
-  name: String!
-  sync_ids: [oid!]!
+  first_name: String!
+  picture_url: String
+  email: String!
+  unassigned_family: Family!
+  families: [Family!]!
 }
 
 input NewMatesInput {
@@ -27,10 +36,16 @@ input NewMatesInput {
   lastSynced: Date
 }
 
+input NewAssignmentInput {
+  familyId: String!
+  mateIds: [String!]!
+}
+
 type Query {
-  getMates: [Mate]
+  getUserData: User
 }
 
 type Mutation {
   addNewMates(mates: [NewMatesInput]!): [Mate]
+  assignMatesToFamilies(newAssignments: [NewAssignmentInput]!): [String!]
 }

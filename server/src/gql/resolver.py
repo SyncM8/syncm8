@@ -1,4 +1,5 @@
 """GraphQL Ariadne resolver functions."""
+from datetime import datetime
 from typing import Any, List
 
 from ariadne import MutationType, QueryType, ScalarType
@@ -23,6 +24,20 @@ def serialize_oid(id: ObjectId) -> str:
     Returns str form of the id
     """
     return str(id)
+
+
+date_scalar = ScalarType("Date")
+
+
+@date_scalar.serializer
+def serialize_date(date: datetime) -> str:
+    """
+    Convert datetime to ISO-8601 format.
+
+    Note: date.isoformat() doesn't include timezone automatically.
+    Z at the end specifies UTC timezone.
+    """
+    return f"{date.isoformat()}Z"
 
 
 query = QueryType()
