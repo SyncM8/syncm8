@@ -6,7 +6,7 @@ from ariadne import MutationType, QueryType, ScalarType
 from ariadne.types import GraphQLResolveInfo  # type: ignore
 from bson.objectid import ObjectId
 from flask_login import current_user
-from src.gql.graphql import NewAssignmentInput, NewMatesInput
+from src.gql.graphql import MateAssignmentInput, NewMatesInput
 from src.model.family import Family
 from src.model.mate import Mate
 from src.model.user import User
@@ -74,9 +74,9 @@ def resolve_add_new_mates(
     return new_mates
 
 
-@mutation.field("assignMatesToFamilies")
-def resolve_assign_mates_to_families(
-    obj: Any, info: GraphQLResolveInfo, newAssignments: List[NewAssignmentInput]
+@mutation.field("assignMates")
+def resolve_assign_mates(
+    obj: Any, info: GraphQLResolveInfo, mateAssignments: List[MateAssignmentInput]
 ) -> List[str]:
     """
     Assign mates to specified families.
@@ -85,9 +85,7 @@ def resolve_assign_mates_to_families(
     ----
         obj: GraphQL
         info: GraphQLInfo
-        newAssignments: each item of NewAssignmentInput contains
-            - familyId
-            - list of id's of mates to be assigned to that family
+        mateAssignments: mate assignment specification
 
     Returns ids of updated mates
 
@@ -98,33 +96,34 @@ def resolve_assign_mates_to_families(
 
     moved_mates: List[str] = []
 
-    unassigned_family = user.unassigned_family
-    unassigned_id = str(unassigned_family.id)
-    unassigned_mate_ids = set([str(mate.id) for mate in unassigned_family.mate_ids])
-    family_ids = set([str(family.id) for family in user.family_ids])
-    for input in newAssignments:
-        for mate_id in input["mateIds"]:
-            if mate_id not in unassigned_mate_ids:
-                raise Exception(f"Mate id {mate_id} is not unassigned")
-        if input["familyId"] not in family_ids:
-            raise Exception(f"Family id {input['familyId']} does not exist")
-
     families_map = {str(family.id): family for family in user.families}
-    for input in newAssignments:
-        for mate_id in input["mateIds"]:
-            idx = next(
-                idx
-                for idx in range(len(families_map[unassigned_id].mate_ids))
-                if str(families_map[unassigned_id].mate_ids[idx].id) == mate_id
-            )
-            mate_ref = families_map[unassigned_id].mate_ids.pop(idx)
-            families_map[input["familyId"]].mate_ids.append(mate_ref)
-            moved_mates.append(str(mate_ref.id))
+    for mate_assignment in mateAssignments:
+        mate_id = mate_assignment["mateId"]
+        from_family_id = mate_assignment["fromFamilyId"]
+        to_family_id = mate_assignment["toFamilyId"]
+        if from_family_id not in families_map:
+            raise Exception(f"fromFamilyId {from_family_id} does not exist")
+        if to_family_id not in families_map:
+            raise Exception(f"toFamilyId {to_family_id} does not exist")
+
+        from_family_mates = [
+            str(mate.id) for mate in families_map[from_family_id].mate_ids
+        ]
+        if mate_id not in from_family_mates:
+            raise Exception(f"mateId {mate_id} does not exist")
+
+        idx = next(
+            idx
+            for idx in range(len(from_family_mates))
+            if str(from_family_mates[idx]) == mate_id
+        )
+        mate_ref = families_map[from_family_id].mate_ids.pop(idx)
+        families_map[to_family_id].mate_ids.append(mate_ref)
+        moved_mates.append(str(mate_ref.id))
 
     for family in families_map.values():
         family.save()
 
-    user.save()
     return moved_mates
 
 

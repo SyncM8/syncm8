@@ -36,9 +36,10 @@ input NewMatesInput {
   lastSynced: Date
 }
 
-input NewAssignmentInput {
-  familyId: String!
-  mateIds: [String!]!
+input MateAssignmentInput {
+  mateId: String!
+  fromFamilyId: String!
+  toFamilyId: String!
 }
 
 type Query {
@@ -47,5 +48,5 @@ type Query {
 
 type Mutation {
   addNewMates(mates: [NewMatesInput]!): [Mate]
-  assignMatesToFamilies(newAssignments: [NewAssignmentInput]!): [String!]
+  assignMates(mateAssignments: [MateAssignmentInput]!): [String!]
 }
