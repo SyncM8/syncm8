@@ -77,7 +77,7 @@ def resolve_add_new_mates(
 @mutation.field("assignMatesToFamilies")
 def resolve_assign_mates_to_families(
     obj: Any, info: GraphQLResolveInfo, newAssignments: List[NewAssignmentInput]
-) -> User:
+) -> List[str]:
     """
     Assign mates to specified families.
 
@@ -89,12 +89,14 @@ def resolve_assign_mates_to_families(
             - familyId
             - list of id's of mates to be assigned to that family
 
-    Returns updated User
+    Returns ids of updated mates
 
     """
     user = User.lookup_user(current_user.get_id())
     if not user:
         raise Exception("User not found")
+
+    moved_mates: List[str] = []
 
     unassigned_family = user.unassigned_family
     unassigned_id = str(unassigned_family.id)
@@ -117,16 +119,17 @@ def resolve_assign_mates_to_families(
             )
             mate_ref = families_map[unassigned_id].mate_ids.pop(idx)
             families_map[input["familyId"]].mate_ids.append(mate_ref)
+            moved_mates.append(str(mate_ref.id))
 
     for family in families_map.values():
         family.save()
 
-    user.reload()
-    return user
+    user.save()
+    return moved_mates
 
 
 @query.field("getUserData")
-def resolve_get_user_data(obj: Any, info: GraphQLResolveInfo) -> List[Mate]:
+def resolve_get_user_data(obj: Any, info: GraphQLResolveInfo) -> User:
     """Get User object."""
     user = User.lookup_user(current_user.get_id())
     if not user:
