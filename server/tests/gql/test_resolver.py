@@ -7,10 +7,10 @@ import pytest
 from bson.objectid import ObjectId
 from dateutil.parser import isoparse  # type: ignore
 from pytest_mock import MockerFixture
-from src.gql.graphql import NewAssignmentInput, NewMatesInput
+from src.gql.graphql import MateAssignmentInput, NewMatesInput
 from src.gql.resolver import (
     resolve_add_new_mates,
-    resolve_assign_mates_to_families,
+    resolve_assign_mates,
     resolve_get_user_data,
     serialize_date,
     serialize_oid,
@@ -125,8 +125,8 @@ def test_resolve_get_user_data_fail() -> None:
 
 @pytest.mark.usefixtures("db_connection")
 @mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
-def test_resolve_assign_mates_to_families(mocker: MockerFixture) -> None:
-    """Assign mates to families."""
+def test_resolve_assign_mates(mocker: MockerFixture) -> None:
+    """Assign mates to different family."""
     error, mates = Mate.bulk_insert_new_mates(
         [mateSteve, mateJobs, mateSatya, mateNadella, mateBuzz]
     )
@@ -152,17 +152,33 @@ def test_resolve_assign_mates_to_families(mocker: MockerFixture) -> None:
     )
     user.save()
 
-    assignment_input: List[NewAssignmentInput] = [
-        {"familyId": str(family_apple.id), "mateIds": [str(steve.id), str(jobs.id)]},
-        {"familyId": str(family_msft.id), "mateIds": [str(satya.id), str(nadella.id)]},
+    assignment_input: List[MateAssignmentInput] = [
+        {
+            "mateId": str(steve.id),
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": str(family_apple.id),
+        },
+        {
+            "mateId": str(jobs.id),
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": str(family_apple.id),
+        },
+        {
+            "mateId": str(satya.id),
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": str(family_msft.id),
+        },
+        {
+            "mateId": str(nadella.id),
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": str(family_msft.id),
+        },
     ]
+
     mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
 
-    moved_mates = resolve_assign_mates_to_families(None, None, assignment_input)
-    moved_mates_len = len(assignment_input[0].get("mateIds", [])) + len(
-        assignment_input[1].get("mateIds", [])
-    )
-    assert len(moved_mates) == moved_mates_len
+    moved_mates = resolve_assign_mates(None, None, assignment_input)
+    assert len(moved_mates) == len(assignment_input)
     assert moved_mates == [str(steve.id), str(jobs.id), str(satya.id), str(nadella.id)]
 
     user.reload()
@@ -181,18 +197,36 @@ def test_resolve_assign_mates_to_families(mocker: MockerFixture) -> None:
         else:
             assert False, f"Found unrecognized family: {family.name}"
 
-    wrong_mate_input: List[NewAssignmentInput] = [
-        {"familyId": str(family_apple.id), "mateIds": ["nonexistant_mate_id"]}
+    wrong_mate_input: List[MateAssignmentInput] = [
+        {
+            "mateId": "nonexistant_mate_id",
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": str(family_apple.id),
+        }
     ]
-    with pytest.raises(
-        Exception, match="Mate id nonexistant_mate_id is not unassigned"
-    ):
-        resolve_assign_mates_to_families(None, None, wrong_mate_input)
+    with pytest.raises(Exception, match="mateId nonexistant_mate_id does not exist"):
+        resolve_assign_mates(None, None, wrong_mate_input)
 
-    wrong_family_input: List[NewAssignmentInput] = [
-        {"familyId": "nonexistant_family_id", "mateIds": []}
+    wrong_from_family_input: List[MateAssignmentInput] = [
+        {
+            "mateId": str(steve.id),
+            "fromFamilyId": "nonexistant_from_family_id",
+            "toFamilyId": str(family_apple.id),
+        }
     ]
     with pytest.raises(
-        Exception, match="Family id nonexistant_family_id does not exist"
+        Exception, match="fromFamilyId nonexistant_from_family_id does not exist"
     ):
-        resolve_assign_mates_to_families(None, None, wrong_family_input)
+        resolve_assign_mates(None, None, wrong_from_family_input)
+
+    wrong_to_family_input: List[MateAssignmentInput] = [
+        {
+            "mateId": str(steve.id),
+            "fromFamilyId": str(unassigned_family.id),
+            "toFamilyId": "nonexistant_to_family_id",
+        }
+    ]
+    with pytest.raises(
+        Exception, match="toFamilyId nonexistant_to_family_id does not exist"
+    ):
+        resolve_assign_mates(None, None, wrong_to_family_input)
