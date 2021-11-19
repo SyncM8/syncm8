@@ -148,12 +148,12 @@ const AssignMatesPage = (): JSX.Element => {
   /**
    * GQL Mutation for assigning mates
    */
-  const [assignMatesFn] = useMutation<{ assignMatesToFamilies: User }>(
+  const [assignMatesFn] = useMutation<{ assignMatesToFamilies: string[] }>(
     ASSIGN_MATES_TO_FAMILIES,
     {
       onCompleted: (data) => {
         notification.success({
-          message: "Assigned mates!",
+          message: `Assigned ${data.assignMatesToFamilies.length} mates!`,
         });
         getUnassignedData();
       },
@@ -191,10 +191,12 @@ const AssignMatesPage = (): JSX.Element => {
    * Submit mate assignments to server
    */
   const submitNewAssignments = async () => {
-    const newAssignments = Object.keys(groups).map((familyId) => ({
-      familyId,
-      mateIds: groups[familyId].map((mate) => mate.id),
-    }));
+    const newAssignments = Object.keys(groups)
+      .filter((familyId) => familyId !== unassignedId)
+      .map((familyId) => ({
+        familyId,
+        mateIds: groups[familyId].map((mate) => mate.id),
+      }));
     await assignMatesFn({
       variables: {
         newAssignments,

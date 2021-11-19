@@ -5,7 +5,11 @@ import React from "react";
 import { act } from "react-dom/test-utils";
 import { Router } from "react-router-dom";
 
-import { familyEmptyMates, mateNoSync } from "../../graphql/mock";
+import {
+  familyEmptyMates,
+  mateNoSync,
+  userTwoUnassignedMates,
+} from "../../graphql/mock";
 import AssignMatesPage from "./AssignMatesPage";
 import {
   gqlResAssignFail,
@@ -121,12 +125,16 @@ test("submits assigned mates", async () => {
     expect(screen.getByText(mateNoSync.name)).toBeInTheDocument();
   });
 
+  const numAssignedMates =
+    userTwoUnassignedMates.unassigned_family.mates.length;
   const submitBtn = screen.getByText("Save family assignments");
   await act(async () => {
     fireEvent.click(submitBtn);
     await new Promise((resolve) => setTimeout(resolve, 0)); // wait for response
     await waitFor(() => {
-      expect(screen.getByText("Assigned mates!")).toBeInTheDocument();
+      expect(
+        screen.getByText(`Assigned ${numAssignedMates} mates!`)
+      ).toBeInTheDocument();
       expect(screen.getByText("All mates assigned!")).toBeInTheDocument();
       expect(screen.queryByText(mateNoSync.name)).not.toBeInTheDocument();
     });

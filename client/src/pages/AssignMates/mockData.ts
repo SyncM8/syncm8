@@ -6,39 +6,6 @@ import {
   userNoUnassignedMates,
   userTwoUnassignedMates,
 } from "../../graphql/mock";
-import { NewMateType } from "../types";
-
-const philosophers = [
-  "Thales",
-  "Democritus",
-  "Empedokles",
-  "Pythagoras",
-  "Socrates",
-  "Plato",
-  "Aristotle",
-  "Diogenes",
-  "Anaxagoras",
-  "Euclides",
-  "Antisthenes",
-  "Epicurus",
-  "Zeno of Citium",
-];
-const initialMates = philosophers.map(
-  (name, index) =>
-    ({
-      name,
-      lastSynced: new Date(),
-      id: `mate-id-${index}`,
-    } as NewMateType)
-);
-export const families = ["school", "work", "life", "college", "concert"];
-export const initialGroup: Record<string, NewMateType[]> = families.reduce(
-  (object, family) => ({
-    ...object,
-    [family]: [],
-  }),
-  { unassigned: initialMates }
-);
 
 export const gqlResNoUnassigned = {
   request: {
@@ -71,14 +38,23 @@ export const gqlResSubmitAssignment = {
   request: {
     query: ASSIGN_MATES_TO_FAMILIES,
     variables: {
-      withSync: false,
-      newAssignments: userTwoUnassignedMates.families.map((family) => ({
-        familyId: family.id,
-        mateIds: family.mates.map((mate) => mate.id),
-      })),
+      newAssignments: [
+        {
+          familyId: userTwoUnassignedMates.families[1].id,
+          mateIds: userTwoUnassignedMates.families[1].mates.map(
+            (mate) => mate.id
+          ),
+        },
+      ],
     },
   },
-  result: { data: { assignMatesToFamilies: userNoUnassignedMates } },
+  result: {
+    data: {
+      assignMatesToFamilies: userTwoUnassignedMates.unassigned_family.mates.map(
+        (mate) => mate.id
+      ),
+    },
+  },
 };
 
 export const mockAssignErrorMsg =
@@ -88,11 +64,14 @@ export const gqlResAssignFail = {
   request: {
     query: ASSIGN_MATES_TO_FAMILIES,
     variables: {
-      withSync: false,
-      newAssignments: userTwoUnassignedMates.families.map((family) => ({
-        familyId: family.id,
-        mateIds: family.mates.map((mate) => mate.id),
-      })),
+      newAssignments: [
+        {
+          familyId: userTwoUnassignedMates.families[1].id,
+          mateIds: userTwoUnassignedMates.families[1].mates.map(
+            (mate) => mate.id
+          ),
+        },
+      ],
     },
   },
   error: new Error(mockAssignErrorMsg),
