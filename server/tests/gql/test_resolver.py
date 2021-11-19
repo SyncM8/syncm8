@@ -1,11 +1,11 @@
 """Test the resolver functions."""
 
-from datetime import datetime
 from typing import List
 from unittest import mock
 
 import pytest
 from bson.objectid import ObjectId
+from dateutil.parser import isoparse  # type: ignore
 from pytest_mock import MockerFixture
 from src.gql.graphql import NewAssignmentInput, NewMatesInput
 from src.gql.resolver import (
@@ -41,8 +41,8 @@ def test_serialize_oid() -> None:
 def test_serialize_date() -> None:
     """Test serialization from datetime to str."""
     iso_str = "2021-11-17T23:40:37.347Z"  # new Date().toISOString() in JS
-    iso_res = "2021-11-17T23:40:37.347000Z"
-    date = datetime.fromisoformat(iso_str[:-1])
+    iso_res = "2021-11-17T23:40:37.347000+00:00Z"
+    date = isoparse(iso_str)
     res = serialize_date(date)
     assert isinstance(res, str)
     assert res == iso_res
@@ -158,9 +158,15 @@ def test_resolve_assign_mates_to_families(mocker: MockerFixture) -> None:
     ]
     mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
 
-    new_user = resolve_assign_mates_to_families(None, None, assignment_input)
+    moved_mates = resolve_assign_mates_to_families(None, None, assignment_input)
+    moved_mates_len = len(assignment_input[0].get("mateIds", [])) + len(
+        assignment_input[1].get("mateIds", [])
+    )
+    assert len(moved_mates) == moved_mates_len
+    assert moved_mates == [str(steve.id), str(jobs.id), str(satya.id), str(nadella.id)]
 
-    for family in new_user.families:
+    user.reload()
+    for family in user.families:
         if family.name == "unassigned_test":
             assert len(family.mates) == 1
             assert family.mates[0].id == buzz.id
