@@ -106,9 +106,9 @@ export const GET_UNASSIGNED_DATA = gql`
 /**
  * GQL Mutation for assigning mates
  */
-export const ASSIGN_MATES_TO_FAMILIES = gql`
-  mutation assignMatesToFamiliesFn($newAssignments: [NewAssignmentInput]!) {
-    assignMatesToFamilies(newAssignments: $newAssignments)
+export const ASSIGN_MATES = gql`
+  mutation assignMates($mateAssignments: [MateAssignmentInput]!) {
+    assignMates(mateAssignments: $mateAssignments)
   }
 `;
 
