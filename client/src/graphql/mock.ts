@@ -21,12 +21,27 @@ export const mate2NoSync: Mate & Typename = {
   syncs: [],
 };
 
+export const mate3NoSync: Mate & Typename = {
+  __typename: "Mate",
+  id: makeUniqueId(""),
+  name: "mate3 no sync",
+  syncs: [],
+};
+
 export const familyEmptyMates: Family & Typename = {
   __typename: "Family",
   id: makeUniqueId(""),
   mates: [],
   name: "Family no mates",
   sync_interval_days: 100,
+};
+
+export const familyOneMate: Family & Typename = {
+  __typename: "Family",
+  id: makeUniqueId(""),
+  mates: [mate3NoSync],
+  name: "Family with one mate",
+  sync_interval_days: 123,
 };
 
 export const familyTwoMates: Family & Typename = {
@@ -52,5 +67,5 @@ export const userTwoUnassignedMates: User & Typename = {
   first_name: "Billy",
   email: "billy@aws.com",
   unassigned_family: familyTwoMates,
-  families: [familyTwoMates, familyEmptyMates],
+  families: [familyTwoMates, familyOneMate],
 };

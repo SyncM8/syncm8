@@ -18,11 +18,8 @@ import {
 import { Prompt } from "react-router";
 
 import FamilyDroppable from "../../components/FamilyDroppable/FamilyDroppable";
-import {
-  ASSIGN_MATES_TO_FAMILIES,
-  GET_UNASSIGNED_DATA,
-} from "../../graphql/graphql";
-import { Family, Mate, User } from "../../graphql/types";
+import { ASSIGN_MATES, GET_UNASSIGNED_DATA } from "../../graphql/graphql";
+import { Family, Mate, MateAssignmentInput, User } from "../../graphql/types";
 import { UnassignedMate } from "../types";
 
 const { Title } = Typography;
@@ -97,7 +94,7 @@ const populateLastSynced = (mate: Mate): UnassignedMate => {
 const AssignMatesPage = (): JSX.Element => {
   const [groups, setGroups] = useState<Record<string, UnassignedMate[]>>({});
   const [familyMap, setFamilyMap] = useState<Record<string, Family>>({});
-  const [unassignedId, setUnassignedId] = useState("");
+  const [unassignedFamilyId, setUnassignedFamilyId] = useState("");
   const [isAllAssigned, setIsAllAssigned] = useState(false);
 
   /**
@@ -133,7 +130,7 @@ const AssignMatesPage = (): JSX.Element => {
             initialGroup
           );
         setGroups(newGroups);
-        setUnassignedId(unassignedFamily.id);
+        setUnassignedFamilyId(unassignedFamily.id);
       },
       onError: (error) => {
         notification.error({
@@ -148,23 +145,20 @@ const AssignMatesPage = (): JSX.Element => {
   /**
    * GQL Mutation for assigning mates
    */
-  const [assignMatesFn] = useMutation<{ assignMatesToFamilies: string[] }>(
-    ASSIGN_MATES_TO_FAMILIES,
-    {
-      onCompleted: (data) => {
-        notification.success({
-          message: `Assigned ${data.assignMatesToFamilies.length} mates!`,
-        });
-        getUnassignedData();
-      },
-      onError: (error) => {
-        notification.error({
-          message: error.name,
-          description: error.message,
-        });
-      },
-    }
-  );
+  const [assignMatesFn] = useMutation<{ assignMates: string[] }>(ASSIGN_MATES, {
+    onCompleted: (data) => {
+      notification.success({
+        message: `Assigned ${data.assignMates.length} mates!`,
+      });
+      getUnassignedData();
+    },
+    onError: (error) => {
+      notification.error({
+        message: error.name,
+        description: error.message,
+      });
+    },
+  });
 
   useEffect(() => {
     getUnassignedData();
@@ -191,15 +185,21 @@ const AssignMatesPage = (): JSX.Element => {
    * Submit mate assignments to server
    */
   const submitNewAssignments = async () => {
-    const newAssignments = Object.keys(groups)
-      .filter((familyId) => familyId !== unassignedId)
-      .map((familyId) => ({
-        familyId,
-        mateIds: groups[familyId].map((mate) => mate.id),
-      }));
+    const mateAssignments: MateAssignmentInput[] = [];
+    Object.keys(groups)
+      .filter((familyId) => familyId !== unassignedFamilyId)
+      .forEach((familyId) => {
+        groups[familyId].forEach((unassignedMate) => {
+          mateAssignments.push({
+            mateId: unassignedMate.id,
+            fromFamilyId: unassignedFamilyId,
+            toFamilyId: familyId,
+          });
+        });
+      });
     await assignMatesFn({
       variables: {
-        newAssignments,
+        mateAssignments,
       },
     });
   };
@@ -262,15 +262,15 @@ const AssignMatesPage = (): JSX.Element => {
           </Col>
         </Row>
         <FamilyDroppable
-          mates={groups[unassignedId] ?? []}
+          mates={groups[unassignedFamilyId] ?? []}
           direction="horizontal"
-          droppableId={unassignedId}
+          droppableId={unassignedFamilyId}
           removeMate={removeMate}
         />
         <Divider />
         <Row wrap={false} style={{ overflow: "auto" }}>
           {Object.keys(groups)
-            .filter((familyId) => familyId !== unassignedId)
+            .filter((familyId) => familyId !== unassignedFamilyId)
             .map((familyId) => (
               <Col
                 key={familyId}

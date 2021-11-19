@@ -1,7 +1,4 @@
-import {
-  ASSIGN_MATES_TO_FAMILIES,
-  GET_UNASSIGNED_DATA,
-} from "../../graphql/graphql";
+import { ASSIGN_MATES, GET_UNASSIGNED_DATA } from "../../graphql/graphql";
 import {
   userNoUnassignedMates,
   userTwoUnassignedMates,
@@ -36,21 +33,14 @@ export const gqlResQueryFail = {
 
 export const gqlResSubmitAssignment = {
   request: {
-    query: ASSIGN_MATES_TO_FAMILIES,
+    query: ASSIGN_MATES,
     variables: {
-      newAssignments: [
-        {
-          familyId: userTwoUnassignedMates.families[1].id,
-          mateIds: userTwoUnassignedMates.families[1].mates.map(
-            (mate) => mate.id
-          ),
-        },
-      ],
+      mateAssignments: [],
     },
   },
   result: {
     data: {
-      assignMatesToFamilies: userTwoUnassignedMates.unassigned_family.mates.map(
+      assignMates: userTwoUnassignedMates.unassigned_family.mates.map(
         (mate) => mate.id
       ),
     },
@@ -62,16 +52,9 @@ export const mockAssignErrorMsg =
 
 export const gqlResAssignFail = {
   request: {
-    query: ASSIGN_MATES_TO_FAMILIES,
+    query: ASSIGN_MATES,
     variables: {
-      newAssignments: [
-        {
-          familyId: userTwoUnassignedMates.families[1].id,
-          mateIds: userTwoUnassignedMates.families[1].mates.map(
-            (mate) => mate.id
-          ),
-        },
-      ],
+      mateAssignments: [],
     },
   },
   error: new Error(mockAssignErrorMsg),

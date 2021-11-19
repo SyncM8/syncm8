@@ -6,7 +6,7 @@ import { act } from "react-dom/test-utils";
 import { Router } from "react-router-dom";
 
 import {
-  familyEmptyMates,
+  familyOneMate,
   mateNoSync,
   userTwoUnassignedMates,
 } from "../../graphql/mock";
@@ -89,21 +89,21 @@ test("move card to another family", async () => {
   );
 
   const mateName = mateNoSync.name;
-  const anotherFamily = familyEmptyMates.name;
+  const anotherFamily = familyOneMate.name;
 
   await waitFor(() => {
     expect(screen.getByText(mateName)).toBeInTheDocument();
     expect(screen.getByText(anotherFamily)).toBeInTheDocument();
   });
 
-  const platoCard = screen.getByText(mateName);
-  const schoolDrop = screen.getByText(anotherFamily);
+  const mateCard = screen.getByText(mateName);
+  const familyDrop = screen.getByText(anotherFamily);
 
-  fireEvent.dragStart(platoCard);
-  fireEvent.dragOver(schoolDrop);
-  fireEvent.dragEnter(schoolDrop);
-  fireEvent.drop(platoCard);
-  fireEvent.dragEnd(schoolDrop);
+  fireEvent.dragStart(mateCard);
+  fireEvent.dragOver(familyDrop);
+  fireEvent.dragEnter(familyDrop);
+  fireEvent.drop(mateCard);
+  fireEvent.dragEnd(familyDrop);
 });
 
 test("submits assigned mates", async () => {

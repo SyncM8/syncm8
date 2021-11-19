@@ -9,11 +9,12 @@ export type NewMatesInput = {
 };
 
 /**
- * Input type for assignMatesToFamilies
+ * Input type for assignMates
  */
-export type NewAssignmentInput = {
-  familyId: string;
-  mateIds: string[];
+export type MateAssignmentInput = {
+  mateId: string;
+  fromFamilyId: string;
+  toFamilyId: string;
 };
 
 /**
