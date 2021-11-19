@@ -107,27 +107,9 @@ export const GET_UNASSIGNED_DATA = gql`
  * GQL Mutation for assigning mates
  */
 export const ASSIGN_MATES_TO_FAMILIES = gql`
-  mutation assignMatesToFamiliesFn(
-    $newAssignments: [NewAssignmentInput]!
-    $withSync: Boolean = false
-  ) {
-    assignMatesToFamilies(newAssignments: $newAssignments) {
-      unassigned_family {
-        id
-        mates {
-          ...mateFields
-        }
-      }
-      families {
-        id
-        mates {
-          ...mateFields
-        }
-      }
-    }
+  mutation assignMatesToFamiliesFn($newAssignments: [NewAssignmentInput]!) {
+    assignMatesToFamilies(newAssignments: $newAssignments)
   }
-  ${MATE_FIELDS}
-  ${SYNC_FIELDS}
 `;
 
 /**

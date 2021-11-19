@@ -53,7 +53,7 @@ bin/dev pytest [args]
 ```shell
 bin/dev jstest [files]
 ```
-3. Run linters. (Runs full suite of linters on committed files - this is automatically done before `git push` and again by a github action during CI.)
+3. Run linters. ( Runs full suite of linters - this is automatically done before `git push` and again by a github action during CI.)
 ```shell
 bin/dev check
 ```
