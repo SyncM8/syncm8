@@ -1,10 +1,10 @@
 """Test the resolver functions."""
 
-from datetime import datetime
 from unittest import mock
 
 import pytest
 from bson.objectid import ObjectId
+from dateutil.parser import isoparse  # type: ignore
 from pytest_mock import MockerFixture
 from src.gql.resolver import resolve_add_new_mates, serialize_date, serialize_oid
 
@@ -21,8 +21,8 @@ def test_serialize_oid() -> None:
 def test_serialize_date() -> None:
     """Test serialization from datetime to str."""
     iso_str = "2021-11-17T23:40:37.347Z"  # new Date().toISOString() in JS
-    iso_res = "2021-11-17T23:40:37.347000Z"
-    date = datetime.fromisoformat(iso_str[:-1])
+    iso_res = "2021-11-17T23:40:37.347000+00:00Z"
+    date = isoparse(iso_str)
     res = serialize_date(date)
     assert isinstance(res, str)
     assert res == iso_res

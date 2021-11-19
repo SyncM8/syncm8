@@ -47,5 +47,5 @@ type Query {
 
 type Mutation {
   addNewMates(mates: [NewMatesInput]!): [Mate]
-  assignMatesToFamilies(newAssignments: [NewAssignmentInput]!): User
+  assignMatesToFamilies(newAssignments: [NewAssignmentInput]!): [String!]
 }
