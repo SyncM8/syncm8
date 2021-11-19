@@ -1,8 +1,14 @@
 import { Moment } from "moment";
 
+import { Mate } from "../graphql/types";
+
 export type NewMatesFormType = {
   name: string;
   lastSeen: Moment;
+};
+
+export type UnassignedMate = Mate & {
+  lastSynced?: Date;
 };
 
 export type NewMateType = {

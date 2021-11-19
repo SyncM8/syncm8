@@ -1,4 +1,5 @@
-import { ADD_NEW_MATES, Mate, NewMatesInput } from "../../graphql";
+import { ADD_NEW_MATES } from "../../graphql/graphql";
+import { Mate, NewMatesInput } from "../../graphql/types";
 
 export const newMates: NewMatesInput[] = [
   {
@@ -15,12 +16,12 @@ export const createdMates: Mate[] = [
   {
     id: "123",
     name: "Jonathan Edwards",
-    sync_ids: ["sync1"],
+    syncs: [],
   },
   {
     id: "234",
     name: "Immanuel Kant",
-    sync_ids: ["sync2"],
+    syncs: [],
   },
 ];
 

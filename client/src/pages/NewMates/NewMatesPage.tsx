@@ -16,7 +16,8 @@ import React, { useState } from "react";
 import { Prompt } from "react-router";
 
 import NewMatesCard from "../../components/NewMateCard/NewMateCard";
-import { ADD_NEW_MATES, AddNewMatesReturn, NewMatesInput } from "../../graphql";
+import { ADD_NEW_MATES, AddNewMatesReturn } from "../../graphql/graphql";
+import { NewMatesInput } from "../../graphql/types";
 import { NewMatesFormType, NewMateType } from "../types";
 
 const { Title } = Typography;
