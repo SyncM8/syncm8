@@ -140,7 +140,7 @@ Commands:
   backend     Create containers if not up and attach dev container to shell to faciliatate pdb.
   client      Run frontend webpack and attach shell.
   client-req  Install dependencies for frontend.
-  check       Run pre-commit inside dev container for committed files.
+  check       Run pre-commit inside dev container.
                 All [options] are transparently passed.
   clean       Clean docker data. N.b will delete all db data if mongo is not running.
   down        Stop and remove all active containers associated with syncm8.
