@@ -76,7 +76,7 @@ def resolve_add_new_mates(
 
 @mutation.field("assignMates")
 def resolve_assign_mates(
-    obj: Any, info: GraphQLResolveInfo, mateAssignments: List[MateAssignmentInput]
+    obj: Any, info: GraphQLResolveInfo, mate_assignment: List[MateAssignmentInput]
 ) -> List[str]:
     """
     Assign mates to specified families.
@@ -85,7 +85,7 @@ def resolve_assign_mates(
     ----
         obj: GraphQL
         info: GraphQLInfo
-        mateAssignments: mate assignment specification
+        mate_assignment: mate assignment specification
 
     Returns ids of updated mates
 
@@ -97,10 +97,10 @@ def resolve_assign_mates(
     moved_mates: List[str] = []
 
     families_map = {str(family.id): family for family in user.families}
-    for mate_assignment in mateAssignments:
-        mate_id = mate_assignment["mateId"]
-        from_family_id = mate_assignment["fromFamilyId"]
-        to_family_id = mate_assignment["toFamilyId"]
+    for assignment in mate_assignment:
+        mate_id = assignment["mateId"]
+        from_family_id = assignment["fromFamilyId"]
+        to_family_id = assignment["toFamilyId"]
         if from_family_id not in families_map:
             raise Exception(f"fromFamilyId {from_family_id} does not exist")
         if to_family_id not in families_map:
