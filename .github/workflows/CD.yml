@@ -34,26 +34,32 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy in EC2
+
+      - name: Login to Public ECR
+        uses: docker/login-action@v1
+        with:
+          registry: public.ecr.aws
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         env:
-          PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY  }}
-          HOSTNAME : ${{ secrets.EC2_HOSTNAME  }}
+          AWS_REGION: us-east-1
 
-        run: |
-          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${HOSTNAME} '
+      - name: Build and push image
+        uses: docker/build-push-action@v2
+        with:
+          pull: true # pull new intermediate images
+          push: true # push to ECR
+          tags: public.ecr.aws/a5f0m6q3/syncm8_prod:latest
+          file: Dockerfile
+          target: prod # build the prod image
 
-            #Now we have got the access of EC2 and we will start the deploy .
-            cd /home/ubuntu/syncm8 &&
-            git checkout main &&
-            git fetch --all &&
-            git reset --hard origin/main &&
-            git pull origin main &&
-            cd server &&
-            source syncm8env/bin/activate &&
-            pipenv install --deploy &&
-            sudo systemctl restart syncm8.service
-          '
+      - name: Deploy to ECS
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: us-east-2
+
+        run: aws ecs update-service --force-new-deployment --service service --cluster backend-cluster
 
   frontend-deploy:
     runs-on: ubuntu-latest
