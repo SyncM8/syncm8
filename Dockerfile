@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM python:3.8 as base
 
 EXPOSE 5000
 
@@ -9,15 +9,13 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT 1
 ENV FLASK_APP 'server:app'
-
-# install pipenv
-WORKDIR /home/worker/app/server/
-RUN pip install pipenv
-WORKDIR /home/worker/app/
-
 ENV PATH /home/worker/app/server/.venv/bin:$PATH
 
-# app specific env
+RUN pip install pipenv
+
+
+FROM base as dev
+
 ENV FLASK_ENV development
 ENV PRE_COMMIT_HOME /home/worker/app/.pre-commit
 ENV APP_SECRET_KEY b\xaeX\xe6x5\x02/\xcb\xad\xa3\x8f\x97D\xab\xbe/!\xf2\xe4H\x1b\xdb\xdcv
@@ -26,4 +24,19 @@ ENV MONGO_HOST mongodb
 ENV MONGO_USER user
 ENV MONGO_PASSWORD pass
 
-ENTRYPOINT ["bash"]
+WORKDIR /home/worker/app/
+ENTRYPOINT bash
+
+
+FROM base as prod
+# Most env is loaded through AWS during deploy
+ENV GOOGLE_CLIENT_ID 711095332609-5dun7k2lp70do0kqjrbe69u0pri5d5i0.apps.googleusercontent.com
+ENV FLASK_ENV production
+
+WORKDIR /home/worker/app/server/
+COPY server/Pipfile ./
+COPY server/Pipfile.lock ./
+RUN pipenv install --deploy
+COPY server .
+
+ENTRYPOINT pipenv run uwsgi --ini syncm8.ini
