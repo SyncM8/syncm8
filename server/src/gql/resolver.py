@@ -1,4 +1,6 @@
 """GraphQL Ariadne resolver functions."""
+# Errors raised in resolvers are caught via Ariadne and sent formatted to client.
+# Don't use ErrorBounded, as that messes up all the GQL wrappers.
 from datetime import datetime
 from typing import Any, List
 
