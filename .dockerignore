@@ -7,3 +7,4 @@ client
 .git
 bin
 server/.venv
+**/*.env
