@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Cheack Heartbeat
         run : |
-          RES=$(curl https://backend.syncm8.com/test)
-          GOOD_RES="<h1 style='color:blue'>The test is successful.</h1>"
+          RES=$(curl -s -o /dev/null -w "%{http_code}" https://backend.syncm8.com/test)
+          GOOD_RES="200"
           if [ "$RES" == "$GOOD_RES" ];
             then echo 'Success';
             else exit 1;

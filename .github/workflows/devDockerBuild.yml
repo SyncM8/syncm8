@@ -37,4 +37,5 @@ jobs:
           pull: true # pull new intermediate images
           push: true # push to ECR
           tags: public.ecr.aws/a5f0m6q3/syncm8_dev:latest
-          file: Dockerfile_dev
+          file: Dockerfile
+          target: dev
