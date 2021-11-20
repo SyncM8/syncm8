@@ -106,18 +106,18 @@ def resolve_assign_mates(
         if to_family_id not in families_map:
             raise Exception(f"toFamilyId {to_family_id} does not exist")
 
-        from_family_mates = [
-            str(mate.id) for mate in families_map[from_family_id].mate_ids
-        ]
-        if mate_id not in from_family_mates:
+        mate_ref = next(
+            (
+                mate
+                for mate in families_map[from_family_id].mate_ids
+                if str(mate.id) == mate_id
+            ),
+            None,
+        )
+        if mate_ref is None:
             raise Exception(f"mateId {mate_id} does not exist")
 
-        idx = next(
-            idx
-            for idx in range(len(from_family_mates))
-            if str(from_family_mates[idx]) == mate_id
-        )
-        mate_ref = families_map[from_family_id].mate_ids.pop(idx)
+        families_map[from_family_id].mate_ids.remove(mate_ref)
         families_map[to_family_id].mate_ids.append(mate_ref)
         moved_mates.append(str(mate_ref.id))
 
