@@ -1,0 +1,54 @@
+PROD_ECR_REPO="public.ecr.aws/a5f0m6q3/syncm8_prod"
+
+# Build prod image.
+dockerBuild(){
+    bin/util logAndRun "docker build --pull --rm --target prod -t $PROD_ECR_REPO ."
+}
+
+# Push prod image to aws ecr.
+dockerPush(){
+    read -p "Are you sure you want to push an image to PRODUCTION?????[y/n]"$'\n' ans
+    if [ $ans == "y" ]; then
+        bin/util logAndRun "docker push $PROD_ECR_REPO"
+    else
+        echo "Not pushing."
+    fi
+}
+
+# Restart AWS ECS service.
+awsDeploy(){
+    bin/infra priv "aws ecs update-service --force-new-deployment --service service --cluster backend-cluster | cat"
+}
+
+
+# Print help message
+printHelp(){
+    echo "Usage:  bin/infra COMMAND
+
+Command Runner for syncm8 infra commands.
+
+Commands:
+  build       Build prod image.
+  push        Push prod image to aws ecr.
+                  N.b. Must be authenticated with ecr.
+  deploy      Restart AWS ECS service. (pulls the latest docker image
+              from ECR. - must manually push the image.)"
+}
+
+op=$1
+restArgs="${@:2}"
+
+case $op in
+    build)
+        dockerBuild
+        ;;
+    push)
+        dockerPush
+        ;;
+    deploy)
+        awsDeploy
+        ;;
+    *)
+        printHelp
+        ;;
+esac
