@@ -1,6 +1,7 @@
 """GraphQL Ariadne resolver functions."""
 # Errors raised in resolvers are caught via Ariadne and sent formatted to client.
 # Don't use ErrorBounded, as that messes up all the GQL wrappers.
+# Argument names have to match GQL's schema as they're passed via kwargs.
 from datetime import datetime
 from typing import Any, List
 
@@ -78,7 +79,7 @@ def resolve_add_new_mates(
 
 @mutation.field("assignMates")
 def resolve_assign_mates(
-    obj: Any, info: GraphQLResolveInfo, mate_assignment: List[MateAssignmentInput]
+    obj: Any, info: GraphQLResolveInfo, mateAssignments: List[MateAssignmentInput]
 ) -> List[str]:
     """
     Assign mates to specified families.
@@ -87,7 +88,7 @@ def resolve_assign_mates(
     ----
         obj: GraphQL
         info: GraphQLInfo
-        mate_assignment: mate assignment specification
+        mateAssignments: mate assignment specification
 
     Returns ids of updated mates
 
@@ -99,7 +100,7 @@ def resolve_assign_mates(
     moved_mates: List[str] = []
 
     families_map = {str(family.id): family for family in user.families}
-    for assignment in mate_assignment:
+    for assignment in mateAssignments:
         mate_id = assignment["mateId"]
         from_family_id = assignment["fromFamilyId"]
         to_family_id = assignment["toFamilyId"]
