@@ -9,7 +9,7 @@ https://github.com/googleapis/google-api-python-client/blob/main/docs/dyn/index.
 """
 
 import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 
 import httplib2
 from google.oauth2.credentials import Credentials
@@ -98,7 +98,9 @@ def get_user_info(
 @error_bounded(
     (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user contacts"), None)
 )
-def get_people_connections_list(token: str,) -> Tuple[Optional[AppError], List[object]]:
+def get_people_connections_list(
+    token: str,
+) -> Tuple[Optional[AppError], List[Dict[str, Any]]]:
     """
     Request list of user's contacts from Google People API.
 
