@@ -15,7 +15,7 @@ from flask_login import (
     logout_user,
 )
 from src.clients.db import connect_db
-from src.clients.google import get_people_connections_list, is_google_token_valid
+from src.clients.google import is_google_token_valid
 from src.gql.resolver import mutation, oid_scalar, query
 from src.model.user import User
 from src.utils.error import AppErrorDictType
