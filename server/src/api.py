@@ -99,7 +99,6 @@ def login() -> LoginResponse:
         error, new_user = User.add_google_user(googleToken)
         if not error:
             login_user(new_user, remember=True)
-            get_people_connections_list(googleToken)
             return {"isLoggedIn": True, "error": None}
 
     return {"isLoggedIn": False, "error": error.get_dict_repr() if error else None}
