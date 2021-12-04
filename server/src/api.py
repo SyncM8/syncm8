@@ -16,7 +16,7 @@ from flask_login import (
 )
 from src.clients.db import connect_db
 from src.clients.google import is_google_token_valid
-from src.gql.resolver import mutation, oid_scalar, query
+from src.gql.resolver import date_scalar, mutation, oid_scalar, query
 from src.model.user import User
 from src.utils.error import AppErrorDictType
 
@@ -68,7 +68,7 @@ def load_user(user_id: str) -> Optional[User]:
 
 schema_path = "./schema.graphql"
 type_defs = gql(load_schema_from_path(schema_path))
-schema = make_executable_schema(type_defs, oid_scalar, query, mutation)
+schema = make_executable_schema(type_defs, oid_scalar, date_scalar, query, mutation)
 
 
 @app.route("/test", methods=["GET"])
