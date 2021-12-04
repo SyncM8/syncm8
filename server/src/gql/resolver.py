@@ -1,4 +1,7 @@
 """GraphQL Ariadne resolver functions."""
+# Errors raised in resolvers are caught via Ariadne and sent formatted to client.
+# Don't use ErrorBounded, as that messes up all the GQL wrappers.
+# Argument names have to match GQL's schema as they're passed via kwargs.
 from datetime import datetime
 from typing import Any, List
 
@@ -6,7 +9,7 @@ from ariadne import MutationType, QueryType, ScalarType
 from ariadne.types import GraphQLResolveInfo  # type: ignore
 from bson.objectid import ObjectId
 from flask_login import current_user
-from src.gql.graphql import NewMatesInput
+from src.gql.graphql import MateAssignmentInput, NewMatesInput
 from src.model.family import Family
 from src.model.mate import Mate
 from src.model.user import User
@@ -72,3 +75,65 @@ def resolve_add_new_mates(
     family.mate_ids += [new_mate.id for new_mate in new_mates]
     family.save()
     return new_mates
+
+
+@mutation.field("assignMates")
+def resolve_assign_mates(
+    obj: Any, info: GraphQLResolveInfo, mateAssignments: List[MateAssignmentInput]
+) -> List[str]:
+    """
+    Assign mates to specified families.
+
+    Args:
+    ----
+        obj: GraphQL
+        info: GraphQLInfo
+        mateAssignments: mate assignment specification
+
+    Returns ids of updated mates
+
+    """
+    user = User.lookup_user(current_user.get_id())
+    if not user:
+        raise Exception("User not found")
+
+    moved_mates: List[str] = []
+
+    families_map = {str(family.id): family for family in user.families}
+    for assignment in mateAssignments:
+        mate_id = assignment["mateId"]
+        from_family_id = assignment["fromFamilyId"]
+        to_family_id = assignment["toFamilyId"]
+        if from_family_id not in families_map:
+            raise Exception(f"fromFamilyId {from_family_id} does not exist")
+        if to_family_id not in families_map:
+            raise Exception(f"toFamilyId {to_family_id} does not exist")
+
+        mate_ref = next(
+            (
+                mate
+                for mate in families_map[from_family_id].mate_ids
+                if str(mate.id) == mate_id
+            ),
+            None,
+        )
+        if mate_ref is None:
+            raise Exception(f"mateId {mate_id} does not exist")
+
+        families_map[from_family_id].mate_ids.remove(mate_ref)
+        families_map[to_family_id].mate_ids.append(mate_ref)
+        moved_mates.append(str(mate_ref.id))
+
+    for family in families_map.values():
+        family.save()
+
+    return moved_mates
+
+
+@query.field("getUserData")
+def resolve_get_user_data(obj: Any, info: GraphQLResolveInfo) -> User:
+    """Get User object."""
+    user = User.lookup_user(current_user.get_id())
+    if not user:
+        raise Exception("User not found")
+    return user

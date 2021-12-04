@@ -11,3 +11,11 @@ class NewMatesInput(TypedDict):
 
     name: str
     lastSynced: str  # date gets converted to str
+
+
+class MateAssignmentInput(TypedDict):
+    """GQL Input for assigning mates to a different family."""
+
+    mateId: str
+    fromFamilyId: str
+    toFamilyId: str
