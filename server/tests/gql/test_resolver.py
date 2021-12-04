@@ -1,6 +1,6 @@
 """Test the resolver functions."""
 
-from typing import List
+from typing import List, Tuple
 from unittest import mock
 
 import pytest
@@ -123,15 +123,12 @@ def test_resolve_get_user_data_fail() -> None:
         resolve_get_user_data(None, None)
 
 
-@pytest.mark.usefixtures("db_connection")
-@mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
-def test_resolve_assign_mates(mocker: MockerFixture) -> None:
-    """Assign mates to different family."""
+def setup_db_for_assign_mates() -> Tuple[User, List[Mate], List[Family]]:
+    """Set up database with data so mates can be moved around."""
     error, mates = Mate.bulk_insert_new_mates(
         [mateSteve, mateJobs, mateSatya, mateNadella, mateBuzz]
     )
     assert not error and mates
-    steve, jobs, satya, nadella, buzz = mates
 
     unassigned_error, unassigned_family = Family.add_new_family("unassigned_test", 1)
     apple_error, family_apple = Family.add_new_family("Apple", 2)
@@ -140,6 +137,8 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
     assert not unassigned_error and unassigned_family
     assert not apple_error and family_apple
     assert not msft_error and family_msft
+
+    families = [unassigned_family, family_apple, family_msft]
 
     unassigned_family.mate_ids = mates
     unassigned_family.save()
@@ -151,6 +150,19 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
         family_ids=[unassigned_family.id, family_apple.id, family_msft.id],
     )
     user.save()
+
+    return user, mates, families
+
+
+@pytest.mark.usefixtures("db_connection")
+@mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
+def test_resolve_assign_mates(mocker: MockerFixture) -> None:
+    """Assign mates to different family."""
+    user, mates, families = setup_db_for_assign_mates()
+    steve, jobs, satya, nadella, buzz = mates
+    unassigned_family, family_apple, family_msft = families
+
+    mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
 
     assignment_input: List[MateAssignmentInput] = [
         {
@@ -175,13 +187,12 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
         },
     ]
 
-    mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
-
     moved_mates = resolve_assign_mates(None, None, assignment_input)
     assert len(moved_mates) == len(assignment_input)
     assert moved_mates == [str(steve.id), str(jobs.id), str(satya.id), str(nadella.id)]
 
     user.reload()
+
     for family in user.families:
         if family.name == "unassigned_test":
             assert len(family.mates) == 1
@@ -197,6 +208,16 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
         else:
             assert False, f"Found unrecognized family: {family.name}"
 
+
+@pytest.mark.usefixtures("db_connection")
+@mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
+def test_resolve_assign_mates_wrong_mate(mocker: MockerFixture) -> None:
+    """Raises error when mateId does not exist in DB."""
+    user, mates, families = setup_db_for_assign_mates()
+    unassigned_family, family_apple, family_msft = families
+
+    mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
+
     wrong_mate_input: List[MateAssignmentInput] = [
         {
             "mateId": "nonexistant_mate_id",
@@ -206,6 +227,17 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
     ]
     with pytest.raises(Exception, match="mateId nonexistant_mate_id does not exist"):
         resolve_assign_mates(None, None, wrong_mate_input)
+
+
+@pytest.mark.usefixtures("db_connection")
+@mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
+def test_resolve_assign_mates_wrong_from_family(mocker: MockerFixture) -> None:
+    """Raises error when fromFamilyId does not exist in DB."""
+    user, mates, families = setup_db_for_assign_mates()
+    steve, jobs, satya, nadella, buzz = mates
+    unassigned_family, family_apple, family_msft = families
+
+    mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
 
     wrong_from_family_input: List[MateAssignmentInput] = [
         {
@@ -218,6 +250,17 @@ def test_resolve_assign_mates(mocker: MockerFixture) -> None:
         Exception, match="fromFamilyId nonexistant_from_family_id does not exist"
     ):
         resolve_assign_mates(None, None, wrong_from_family_input)
+
+
+@pytest.mark.usefixtures("db_connection")
+@mock.patch("flask_login.utils._get_user", lambda: mock.MagicMock())
+def test_resolve_assign_mates_wrong_to_family(mocker: MockerFixture) -> None:
+    """Raises error when toFamilyId does not exist in DB."""
+    user, mates, families = setup_db_for_assign_mates()
+    steve, jobs, satya, nadella, buzz = mates
+    unassigned_family, family_apple, family_msft = families
+
+    mocker.patch("src.gql.resolver.User.lookup_user", lambda x: user)
 
     wrong_to_family_input: List[MateAssignmentInput] = [
         {
