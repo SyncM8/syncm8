@@ -8,16 +8,16 @@ import {
 import React from "react";
 import { act } from "react-dom/test-utils";
 
-import MatesPage from "./MatesPage";
+import MatePage from "./MatePage";
 
 test("renders Mates page", () => {
-  render(<MatesPage />);
+  render(<MatePage />);
   const textElement = screen.getByText("Clare Carlisle");
   expect(textElement).toBeInTheDocument();
 });
 
 test("cancel deleting card", async () => {
-  render(<MatesPage />);
+  render(<MatePage />);
   const firstTitle = "Dinner at Chipotle";
   expect(screen.queryAllByText(firstTitle)).not.toHaveLength(0);
   const removeMateBtn = screen.getAllByLabelText("delete")[0];
@@ -35,7 +35,7 @@ test("cancel deleting card", async () => {
 });
 
 test("delete first sync card", async () => {
-  render(<MatesPage />);
+  render(<MatePage />);
   const firstTitle = "Dinner at Chipotle";
   expect(screen.queryAllByText(firstTitle)).not.toHaveLength(0);
   const removeMateBtn = screen.getAllByLabelText("delete")[0];
@@ -56,7 +56,7 @@ test("delete first sync card", async () => {
 });
 
 test("renders editing modal when clicking edit", async () => {
-  render(<MatesPage />);
+  render(<MatePage />);
   const editSyncBtn = screen.getAllByLabelText("edit")[0];
   expect(screen.queryByText("Title")).not.toBeInTheDocument();
   await act(async () => {
@@ -73,7 +73,7 @@ test("adds new sync", async () => {
   const unseenTitle = "Unseen";
   const unseenDetail = "I like chocolate milk?";
   const unseenDate = "2020-01-21";
-  render(<MatesPage />);
+  render(<MatePage />);
   const addSyncBtn = screen.getByText("Add Sync");
   await act(async () => {
     fireEvent.click(addSyncBtn);

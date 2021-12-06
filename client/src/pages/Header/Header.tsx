@@ -93,11 +93,11 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
               <Menu.Item key="/" icon={<DashboardOutlined />}>
                 Dashboard
               </Menu.Item>
-              <Menu.Item key="/mates" icon={<ContactsOutlined />}>
-                Mates
-              </Menu.Item>
               <Menu.Item key="/families" icon={<TeamOutlined />}>
                 Families
+              </Menu.Item>
+              <Menu.Item key="/mates" icon={<ContactsOutlined />}>
+                Mates
               </Menu.Item>
             </Menu>
           </Col>

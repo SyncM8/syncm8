@@ -22,7 +22,7 @@ import SyncCard from "../../components/SyncCard/SyncCard";
 import { SyncStatusEnum, SyncType } from "../types";
 import { initialSyncs, mateName, newSync } from "./mockData";
 
-type MatesPageState = {
+type MatePageState = {
   isModalVisible: boolean;
   syncs: SyncType[];
   editingSync: SyncType;
@@ -44,8 +44,8 @@ const { Title } = Typography;
  * MatePage
  * @returns
  */
-const MatesPage = (): JSX.Element => {
-  const [state, setState] = useState<MatesPageState>({
+const MatePage = (): JSX.Element => {
+  const [state, setState] = useState<MatePageState>({
     syncs: initialSyncs,
     isModalVisible: false,
     editingSync: newSync,
@@ -272,4 +272,4 @@ const MatesPage = (): JSX.Element => {
     </>
   );
 };
-export default MatesPage;
+export default MatePage;
