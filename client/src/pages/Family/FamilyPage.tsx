@@ -10,10 +10,10 @@ const { confirm } = Modal;
 const { Title } = Typography;
 
 /**
- * FamiliesPage
+ * FamilyPage
  * @returns
  */
-const FamiliesPage = (): JSX.Element => {
+const FamilyPage = (): JSX.Element => {
   /**
    * Remove mate from server
    * @param mate to be removed
@@ -87,4 +87,4 @@ const FamiliesPage = (): JSX.Element => {
   );
 };
 
-export default FamiliesPage;
+export default FamilyPage;

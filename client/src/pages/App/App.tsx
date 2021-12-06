@@ -9,10 +9,10 @@ import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import AssignMatesPage from "../AssignMates/AssignMatesPage";
 import DashboardPage from "../Dashboard/DashboardPage";
-import FamiliesPage from "../Families/FamiliesPages";
+import FamilyPage from "../Family/FamilyPage";
 import Header from "../Header/Header";
 import LoginPage from "../Login/LoginPage";
-import MatesPage from "../Mates/MatesPage";
+import MatePage from "../Mate/MatePage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
 /**
@@ -67,10 +67,10 @@ const App = (): JSX.Element => {
           <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         </Route>
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
-          <MatesPage />
+          <MatePage />
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/families">
-          <FamiliesPage />
+          <FamilyPage />
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/add-mates">
           <NewMatesPage />
