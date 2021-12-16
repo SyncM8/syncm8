@@ -153,7 +153,6 @@ def get_google_person_list(
     error, api_people_list = get_api_people_connections_list(token)
     google_person_list = []
     for api_person in api_people_list:
-        print(api_person)
         name_list = api_person["names"] if "names" in api_person else None
         email_list = (
             api_person["emailAddresses"] if "emailAddresses" in api_person else None
