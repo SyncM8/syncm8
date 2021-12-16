@@ -146,8 +146,8 @@ def get_google_person_list(
     """
     Transform list of Google API Person objects into GooglePerson dataclass.
 
-    Returns a list of Google API Person objects representing all
-    of the user's contacts
+    Returns a list of GooglePerson dataclass objects based on
+    list of Google contacts
     """
     error, api_people_list = get_api_people_connections_list(token)
     google_person_list = []
