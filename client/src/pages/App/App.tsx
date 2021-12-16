@@ -14,6 +14,7 @@ import Header from "../Header/Header";
 import LoginPage from "../Login/LoginPage";
 import MatePage from "../Mate/MatePage";
 import NewMatesPage from "../NewMates/NewMatesPage";
+import ProfilePage from "../Profile/ProfilePage";
 
 /**
  * Logged In Status
@@ -77,6 +78,9 @@ const App = (): JSX.Element => {
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/assign-families">
           <AssignMatesPage />
+        </ProtectedRoute>
+        <ProtectedRoute loggedIn={loggedIn} path="/profile">
+          <ProfilePage />
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/" exact>
           <DashboardPage />

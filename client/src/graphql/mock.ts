@@ -68,4 +68,6 @@ export const userTwoUnassignedMates: User & Typename = {
   email: "billy@aws.com",
   unassigned_family: familyTwoMates,
   families: [familyTwoMates, familyOneMate],
+  picture_url:
+    "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
 };
