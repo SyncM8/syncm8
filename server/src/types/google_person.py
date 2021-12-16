@@ -9,4 +9,3 @@ class GooglePerson:
     name: str
     email: str
     profilePictureURL: str
-

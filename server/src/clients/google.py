@@ -14,7 +14,6 @@ from typing import Any, Dict, List, Optional, Tuple
 import httplib2
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
 from src.types.google_person import GooglePerson
 
 from ..utils.error import AppError, ErrorCode, error_bounded
@@ -146,7 +145,7 @@ def get_google_person_list(
     token: str,
 ) -> Tuple[Optional[AppError], List[GooglePerson]]:
     """
-    Transform list of Google API Person objects into GooglePerson dataclass
+    Transform list of Google API Person objects into GooglePerson dataclass.
 
     Returns a list of Google API Person objects representing all
     of the user's contacts
