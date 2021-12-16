@@ -15,7 +15,11 @@ from flask_login import (
     logout_user,
 )
 from src.clients.db import connect_db
-from src.clients.google import is_google_token_valid
+from src.clients.google import (
+    is_google_token_valid,
+    get_google_person_list,
+    get_api_people_connections_list,
+)
 from src.gql.resolver import mutation, oid_scalar, query
 from src.model.user import User
 from src.utils.error import AppErrorDictType
@@ -99,6 +103,8 @@ def login() -> LoginResponse:
         error, new_user = User.add_google_user(googleToken)
         if not error:
             login_user(new_user, remember=True)
+            error, google_person_list = get_google_person_list(googleToken)
+            print(google_person_list)
             return {"isLoggedIn": True, "error": None}
 
     return {"isLoggedIn": False, "error": error.get_dict_repr() if error else None}

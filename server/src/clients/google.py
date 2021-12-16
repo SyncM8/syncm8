@@ -15,6 +15,8 @@ import httplib2
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
+from src.types.google_person import GooglePerson
+
 from ..utils.error import AppError, ErrorCode, error_bounded
 
 
@@ -98,20 +100,20 @@ def get_user_info(
 @error_bounded(
     (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user contacts"), None)
 )
-def get_people_connections_list(
+def get_api_people_connections_list(
     token: str,
 ) -> Tuple[Optional[AppError], List[Dict[str, Any]]]:
     """
     Request list of user's contacts from Google People API.
 
     Returns a list of Google API Person objects representing all
-    of the user's contacts
+    of the user's contacts if they exist
     """
     creds = Credentials(token) if token else None
     with build("people", "v1", credentials=creds) as people_service:
         pagination_finished = False
         next_page_token = ""
-        people_list_complete = []
+        api_people_list_complete = []
         # paginate through contacts and add to list
         while not pagination_finished:
             people_response = (
@@ -119,14 +121,53 @@ def get_people_connections_list(
                 .connections()
                 .list(
                     resourceName="people/me",
-                    personFields="names,emailAddresses",
+                    personFields="names,emailAddresses,photos",
                     pageToken=next_page_token,
                 )
             ).execute()
-            people_list_complete += people_response["connections"]
+            api_people_list_complete += people_response["connections"]
             if "nextPageToken" in people_response:
                 next_page_token = people_response["nextPageToken"]
             else:
                 pagination_finished = True
 
-        return (None, people_list_complete)
+        return (None, api_people_list_complete)
+
+
+@error_bounded(
+    (
+        AppError(
+            ErrorCode.GOOGLE_API_ERROR, "Google api error - transform user contacts"
+        ),
+        None,
+    )
+)
+def get_google_person_list(
+    token: str,
+) -> Tuple[Optional[AppError], List[GooglePerson]]:
+    """
+    Transform list of Google API Person objects into GooglePerson dataclass
+
+    Returns a list of Google API Person objects representing all
+    of the user's contacts
+    """
+    error, api_people_list = get_api_people_connections_list(token)
+    google_person_list = []
+    for api_person in api_people_list:
+        print(api_person)
+        name_list = api_person["names"] if "names" in api_person else None
+        email_list = (
+            api_person["emailAddresses"] if "emailAddresses" in api_person else None
+        )
+        photo_list = api_person["photos"] if "photos" in api_person else None
+
+        # take first of each list as default, otherwise None
+        default_name = name_list[0]["displayName"] if name_list else None
+        default_email = email_list[0]["value"] if email_list else None
+        default_photo_url = photo_list[0]["url"] if photo_list else None
+
+        google_person_list.append(
+            GooglePerson(default_name, default_email, default_photo_url)
+        )
+
+    return (None, google_person_list)
