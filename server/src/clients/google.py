@@ -98,7 +98,7 @@ def get_user_info(
 @error_bounded(
     (AppError(ErrorCode.GOOGLE_API_ERROR, "Google api error - get user contacts"), None)
 )
-def get_api_people_connections_list(
+def _get_api_people_connections_list(
     token: str,
 ) -> Tuple[Optional[AppError], List[Dict[str, Any]]]:
     """
@@ -149,7 +149,7 @@ def get_google_person_list(
     Returns a list of GooglePerson dataclass objects based on
     list of Google contacts
     """
-    error, api_people_list = get_api_people_connections_list(token)
+    error, api_people_list = _get_api_people_connections_list(token)
     google_person_list = []
     for api_person in api_people_list:
         name_list = api_person["names"] if "names" in api_person else None

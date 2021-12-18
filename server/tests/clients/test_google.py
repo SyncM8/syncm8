@@ -124,3 +124,7 @@ def test_get_user_info_happy() -> None:
     assert userInfo["email"] == myEmail
     assert userInfo["id"] == myId
     assert userInfo["picture"] == myPicture
+
+
+def test__get_api_people_connections_list() -> None:
+    """Test call to Google People (contacts) API."""
