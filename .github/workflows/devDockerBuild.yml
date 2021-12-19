@@ -13,12 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Check If Dockerfile_dev has changed
+      - name: Check If Dockerfile has changed
         uses: technote-space/get-diff-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          PATTERNS: Dockerfile_dev
+          PATTERNS: Dockerfile
 
       - name: Login to Public ECR
         if: env.GIT_DIFF

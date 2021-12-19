@@ -18,7 +18,7 @@ findBackendContainerId(){
 # args: commands to run in container
 runDockerExec(){
     findBackendContainerId container_id
-    cmd="docker exec -it -u $(id -u):$(id -g) $container_id "$@
+    cmd="docker exec -it -u $(id -u):$(id -g) -w /home/worker/app/server $container_id "$@
     bin/util logAndRun $cmd
 }
 

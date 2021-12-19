@@ -39,12 +39,13 @@ dockerPush(){
 
 # Pull image from aws ecr
 dockerPull(){
+    dockerLogin
     bin/util logAndRun "docker pull $DEV_ECR_REPO"
 }
 
 # Build dev image
 dockerBuild(){
-    bin/util logAndRun "docker build --pull --rm -t $DEV_ECR_REPO - < Dockerfile_dev"
+    bin/util logAndRun "docker build --target dev --pull --rm -t $DEV_ECR_REPO - < Dockerfile"
 }
 
 # Pulls secrets from AWS Parameter Store

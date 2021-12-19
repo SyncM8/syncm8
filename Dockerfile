@@ -24,6 +24,10 @@ ENV MONGO_HOST mongodb
 ENV MONGO_USER user
 ENV MONGO_PASSWORD pass
 
+ENV MYSQL_HOST syncm8_mysql
+ENV MYSQL_USER user
+ENV MYSQL_PASSWORD password
+
 WORKDIR /home/worker/app/
 ENTRYPOINT bash
 
