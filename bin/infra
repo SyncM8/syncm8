@@ -3,15 +3,16 @@
 AWS_KEYS=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION)
 EXTERNAL_KEYS=(DEV_SENDGRID_API_KEY)
 DEV_ECR_REPO="public.ecr.aws/a5f0m6q3/syncm8_dev"
+DEVBOX_VERSION=$(cat DEVBOX_VERSION)
 
-# Read value for specified key fron server/dev.env
+# Read value for specified key fron dev.env
 # args:
 #   1: Name of key to read
 #   2: Name of variable to set "$key=$value"
 getKeyValFromDevEnv(){
     local key=$1
     local _res=$2
-    local value=$(cat server/dev.env | grep $key)
+    local value=$(cat dev.env | grep $key)
     eval $_res="'$value'"
 }
 
@@ -45,7 +46,7 @@ dockerPull(){
 
 # Build dev image
 dockerBuild(){
-    bin/util logAndRun "docker build --target dev --pull --rm -t $DEV_ECR_REPO - < Dockerfile"
+    bin/util logAndRun "docker build --target dev --pull --rm -t $DEV_ECR_REPO:$DEVBOX_VERSION - < Dockerfile"
 }
 
 # Pulls secrets from AWS Parameter Store
@@ -71,7 +72,7 @@ pullEnv(){
     done
 
     # replace contents of dev.env with new.dev.env
-    mv new.dev.env server/dev.env
+    mv new.dev.env dev.env
 }
 
 
