@@ -74,6 +74,12 @@ pullEnv(){
     mv new.dev.env server/dev.env
 }
 
+
+runPrivileged(){
+    addAWSToEnv
+    eval $*
+}
+
 # Print help message
 printHelp(){
     echo "Usage:  bin/infra COMMAND
@@ -83,6 +89,7 @@ Command Runner for syncm8 infra commands.
 Commands:
   build       Build dev image.
   login       Authenticate docker with aws ecr.
+  priv        Run command with aws authentication enabled.
   pull        Pull image from aws ecr.
   pull-env    Pulls secrets from AWS Parameter Store
   push        Push dev image to aws ecr.
@@ -107,6 +114,9 @@ case $op in
         ;;
     push)
         dockerPush
+        ;;
+    priv)
+        runPrivileged $restArgs
         ;;
     *)
         printHelp
