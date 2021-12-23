@@ -23,7 +23,7 @@ class Mate(Document):
     @property
     def syncs(self) -> List[Sync]:
         """Fetch object for sync_ids."""
-        return [sync.fetch() for sync in self.sync_ids]
+        return list(Sync.objects.in_bulk([ref.id for ref in self.sync_ids]).values())
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""

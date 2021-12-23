@@ -13,12 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Check If Dockerfile_dev has changed
+      - name: Populate DEVBOX_VERSION into env
+        run: |
+          echo "DEVBOX_VERSION=$(cat DEVBOX_VERSION)"  >> $GITHUB_ENV
+
+      - name: Check If Dockerfile has changed
         uses: technote-space/get-diff-action@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          PATTERNS: Dockerfile_dev
+          PATTERNS: Dockerfile
 
       - name: Login to Public ECR
         if: env.GIT_DIFF
@@ -36,6 +40,6 @@ jobs:
         with:
           pull: true # pull new intermediate images
           push: true # push to ECR
-          tags: public.ecr.aws/a5f0m6q3/syncm8_dev:latest
+          tags: public.ecr.aws/a5f0m6q3/syncm8_dev:${{env.DEVBOX_VERSION}}
           file: Dockerfile
           target: dev

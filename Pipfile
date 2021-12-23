@@ -18,6 +18,9 @@ google-api-python-client = "*"
 pytest-mock = "*"
 flask-mongoengine = "*"
 mongoengine = "*"
+sqlalchemy = "*"
+pymysql = {extras = ["rsa"], version = "*"}
+types-PyMySQL = "*"
 
 [dev-packages]
 pytest = "*"

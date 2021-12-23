@@ -18,13 +18,30 @@ services:
     ports:
       - 27017:27017
 
+  mysql:
+    image: mysql:8.0.23
+    container_name: syncm8_mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: main
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    networks:
+      - backend
+    ports:
+      - 3306:3306
+
   dev:
-    image: public.ecr.aws/a5f0m6q3/syncm8_dev
+    image: public.ecr.aws/a5f0m6q3/syncm8_dev:${DEVBOX_VERSION}
     container_name: syncm8_dev
     ports:
       - "5000:5000"
     depends_on:
       - mongodb
+      - mysql
     volumes:
       - type: bind
         source: ./
@@ -32,7 +49,7 @@ services:
     networks:
       - backend
     env_file:
-      - ./server/dev.env
+      - ./dev.env
     stdin_open: true
     tty: true
 
@@ -41,4 +58,6 @@ networks:
     driver: bridge
 volumes:
   mongodbdata:
+    driver: local
+  mysql_data:
     driver: local

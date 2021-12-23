@@ -21,7 +21,7 @@ import moment from "moment";
 import React, { useState } from "react";
 
 import DashboardCard from "../../components/DashboardCard/DashboardCard";
-import { syncs as timelineSyncs } from "../Families/mockData";
+import { syncs as timelineSyncs } from "../Family/mockData";
 import { UpcomingSyncType } from "../types";
 import { initialSyncs, name, today } from "./mockData";
 

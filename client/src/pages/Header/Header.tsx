@@ -8,11 +8,11 @@ import {
   Avatar,
   Col,
   Dropdown,
+  Image,
   Input,
   Menu,
   PageHeader,
   Row,
-  Tabs,
 } from "antd";
 import axios from "axios";
 import React from "react";
@@ -21,32 +21,9 @@ import { Link, useLocation } from "react-router-dom";
 
 import { logoutPath } from "../../api";
 
-const { TabPane } = Tabs;
-
 type HeaderPageProps = {
   logoutApp: () => void;
 };
-
-const dashboardTab = (
-  <>
-    <DashboardOutlined />
-    Dashboard
-  </>
-);
-
-const matesTab = (
-  <>
-    <ContactsOutlined />
-    Mates
-  </>
-);
-
-const familiesTab = (
-  <>
-    <TeamOutlined />
-    Families
-  </>
-);
 
 const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
   const history = useHistory();
@@ -87,28 +64,45 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
   return (
     <>
       <PageHeader>
-        <Row>
+        <Row align="middle">
+          <Col span={1}>
+            <Link to="/">
+              <Image
+                src="/logo190.png"
+                alt="syncm8_logo"
+                width="60"
+                preview={false}
+              />
+            </Link>
+          </Col>
           <Col span={8}>
             <Input.Search
               placeholder="sync with..."
               aria-label="search-input"
             />
           </Col>
-          <Col offset={6} span={6}>
-            <Tabs
-              activeKey={location.pathname}
-              onChange={(key) => {
-                history.push(key);
+          <Col offset={8} span={6}>
+            <Menu
+              mode="horizontal"
+              selectedKeys={[location.pathname]}
+              onClick={(e) => {
+                history.push(e.key);
               }}
-              animated={{ inkBar: true, tabPane: false }}
+              style={{ background: "transparent" }}
             >
-              <TabPane tab={dashboardTab} key="/" />
-              <TabPane tab={matesTab} key="/mates" />
-              <TabPane tab={familiesTab} key="/families" />
-            </Tabs>
+              <Menu.Item key="/" icon={<DashboardOutlined />}>
+                Dashboard
+              </Menu.Item>
+              <Menu.Item key="/families" icon={<TeamOutlined />}>
+                Families
+              </Menu.Item>
+              <Menu.Item key="/mates" icon={<ContactsOutlined />}>
+                Mates
+              </Menu.Item>
+            </Menu>
           </Col>
-          <Col span={4}>
-            <Dropdown overlay={menu} trigger={["click", "hover"]}>
+          <Col span={1} style={{ textAlign: "right" }}>
+            <Dropdown overlay={menu} trigger={["click"]}>
               <Avatar size="large" icon={<UserOutlined />} />
             </Dropdown>
           </Col>

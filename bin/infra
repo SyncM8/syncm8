@@ -3,15 +3,16 @@
 AWS_KEYS=(AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION)
 EXTERNAL_KEYS=(DEV_SENDGRID_API_KEY)
 DEV_ECR_REPO="public.ecr.aws/a5f0m6q3/syncm8_dev"
+DEVBOX_VERSION=$(cat DEVBOX_VERSION)
 
-# Read value for specified key fron server/dev.env
+# Read value for specified key fron dev.env
 # args:
 #   1: Name of key to read
 #   2: Name of variable to set "$key=$value"
 getKeyValFromDevEnv(){
     local key=$1
     local _res=$2
-    local value=$(cat server/dev.env | grep $key)
+    local value=$(cat dev.env | grep $key)
     eval $_res="'$value'"
 }
 
@@ -34,17 +35,18 @@ dockerLogin(){
 # Push dev image to aws ecr
 # Must be authenticated with ecr
 dockerPush(){
-    bin/util logAndRun "docker push $DEV_ECR_REPO"
+    bin/util logAndRun "docker push $DEV_ECR_REPO:$DEVBOX_VERSION"
 }
 
 # Pull image from aws ecr
 dockerPull(){
-    bin/util logAndRun "docker pull $DEV_ECR_REPO"
+    dockerLogin
+    bin/util logAndRun "docker pull $DEV_ECR_REPO:$DEVBOX_VERSION"
 }
 
 # Build dev image
 dockerBuild(){
-    bin/util logAndRun "docker build --pull --rm -t $DEV_ECR_REPO - < Dockerfile_dev"
+    bin/util logAndRun "docker build --target dev --pull --rm -t $DEV_ECR_REPO:$DEVBOX_VERSION - < Dockerfile"
 }
 
 # Pulls secrets from AWS Parameter Store
@@ -70,7 +72,13 @@ pullEnv(){
     done
 
     # replace contents of dev.env with new.dev.env
-    mv new.dev.env server/dev.env
+    mv new.dev.env dev.env
+}
+
+
+runPrivileged(){
+    addAWSToEnv
+    eval $*
 }
 
 # Print help message
@@ -82,6 +90,7 @@ Command Runner for syncm8 infra commands.
 Commands:
   build       Build dev image.
   login       Authenticate docker with aws ecr.
+  priv        Run command with aws authentication enabled.
   pull        Pull image from aws ecr.
   pull-env    Pulls secrets from AWS Parameter Store
   push        Push dev image to aws ecr.
@@ -106,6 +115,9 @@ case $op in
         ;;
     push)
         dockerPush
+        ;;
+    priv)
+        runPrivileged $restArgs
         ;;
     *)
         printHelp

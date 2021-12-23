@@ -4,9 +4,11 @@ from typing import List
 from unittest import mock
 
 import pytest
+from mongoengine.base.datastructures import LazyReference
 from src.gql.graphql import NewMatesInput
 from src.model.family import Family
 from src.model.mate import Mate
+from src.model.user import User
 from src.utils.error import ErrorCode
 from tests.model.test_mate import mateJobs, mateSteve
 
@@ -31,6 +33,26 @@ def test_lookup_family() -> None:
     assert not error and family
     id = str(family.id)
     assert family == Family.lookup_family(id)
+
+
+@pytest.mark.usefixtures("db_connection")
+def test_lookup_family_ref() -> None:
+    """Test looking up family by LazyReference."""
+    error, family = Family.add_new_family("", 1)
+    assert not error and family
+
+    newUser = User(
+        first_name="Charles",
+        email="hodge@email.com",
+        unassigned_family_id=family.id,
+        family_ids=[family.id],
+    )
+    newUser.save()
+    assert newUser
+    assert isinstance(newUser.unassigned_family_id, LazyReference)
+    family = Family.lookup_family(newUser.unassigned_family_id)
+    assert family == newUser.unassigned_family_id
+    assert family == newUser.unassigned_family_id.fetch()
 
 
 @pytest.mark.usefixtures("db_connection")

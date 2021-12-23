@@ -3,9 +3,10 @@
 # https://www.python.org/dev/peps/pep-0563/
 from __future__ import annotations
 
-from typing import List, Optional, Tuple, cast
+from typing import List, Optional, Tuple, Union, cast
 
 from mongoengine import Document, IntField, LazyReferenceField, ListField, StringField
+from mongoengine.base.datastructures import LazyReference
 from src.model.mate import Mate
 from src.utils.error import AppError, ErrorCode, error_bounded
 
@@ -22,7 +23,7 @@ class Family(Document):
     @property
     def mates(self) -> List[Mate]:
         """Fetch object for mate_ids."""
-        return [mate.fetch() for mate in self.mate_ids]
+        return list(Mate.objects.in_bulk([ref.id for ref in self.mate_ids]).values())
 
     def get_id(self) -> str:
         """Return string version of mongo oid."""
@@ -30,8 +31,9 @@ class Family(Document):
 
     @staticmethod
     @error_bounded(None)
-    def lookup_family(id: str) -> Optional[Family]:
+    def lookup_family(family: Union[str, LazyReference]) -> Optional[Family]:
         """Lookup family by oID in db."""
+        id = family if isinstance(family, str) else str(family.id)
         return cast(Family, Family.objects(pk=id).first())
 
     @staticmethod

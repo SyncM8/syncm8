@@ -84,3 +84,12 @@ repos:
         args:
         -   "--req client/package.json"
         -   "--lock client/package-lock.json"
+-   repo: https://github.com/EpicPi/ReqLockHook
+    rev: v1.0.4
+    hooks:
+    -   id: req-lock
+        files: "(Dockerfile|DEVBOX_VERSION)"
+        verbose: true
+        args:
+        -   "--req Dockerfile"
+        -   "--lock DEVBOX_VERSION"

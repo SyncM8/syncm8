@@ -1,63 +1,40 @@
 #!/bin/bash
 
-DEV_CONTAINER_NAME="syncm8_dev"
+DEVBOX_VERSION=$(cat DEVBOX_VERSION)
 
-# Find container id of syncm8_dev in order to exec things against it
-# args: name of variable to set container id
-findBackendContainerId(){
-    local  _resultvar=$1
-    local container=$(docker ps|grep $DEV_CONTAINER_NAME|cut -d ' ' -f1)
-    if [ ! $container ]; then
-        bin/util error "No container for dev found. Check that it is running with bin/dev ps, or start it with bin/dev up"
-        exit 1
-    fi
-    eval $_resultvar="'$container'"
+DOCKER_COMPOSE="export DEVBOX_VERSION=$DEVBOX_VERSION && docker-compose"
+
+runDevboxCommand(){
+    bin/util logAndRun "$DOCKER_COMPOSE run --rm -u $(id -u):$(id -g) --no-deps dev "$*
 }
 
-# Run commands in exiting dev container as correct user
-# args: commands to run in container
-runDockerExec(){
-    findBackendContainerId container_id
-    cmd="docker exec -it -u $(id -u):$(id -g) $container_id "$@
-    bin/util logAndRun $cmd
-}
-
-# Run commands with interactive turned off in exiting dev container
-# args: commands to run in container
-runDockerExecNonInteractive(){
-    findBackendContainerId container_id
-    cmd="docker exec -t -u $(id -u):$(id -g) $container_id "$@
-    bin/util logAndRun $cmd
-}
-
-runPyRequirements(){
-    runDockerExec "pipenv install --dev"
+# Run a devbox container as super user
+runDevboxSudo(){
+    bin/util logAndRun "$DOCKER_COMPOSE run --rm --no-deps dev "$*
 }
 
 # Start devbox/mongo containers
 runDockerUp(){
-    bin/util logAndRun "docker-compose up --detach"
+    bin/util logAndRun "$DOCKER_COMPOSE up --detach"
 }
 
-# Start devbox/mongo containers and run flask server inside it
+# Stop docker-compose devbox and run one interactively for debugging
+# Restart docker-compose devbox when done
 runBackendStart(){
     runDockerUp
-    runDockerExec "pipenv run flask run --host 0.0.0.0"
-}
-
-# Attach shell to devbox container
-runBackendAttach(){
-    runDockerExec "bash"
+    bin/util logAndRun "$DOCKER_COMPOSE  stop dev"
+    dockerComposeRun "--service-ports dev"
+    bin/util logAndRun "$DOCKER_COMPOSE  start dev"
 }
 
 # Stop and remove all active containers associated with syncm8
 runDockerDown(){
-    bin/util logAndRun "docker-compose down"
+    bin/util logAndRun "$DOCKER_COMPOSE down"
 }
 
 # Show running docker containers associated with syncm8
 runDockerPs(){
-    bin/util logAndRun "docker-compose ps"
+    bin/util logAndRun "$DOCKER_COMPOSE ps"
 }
 
 # Clean up unused docker stuff
@@ -80,15 +57,14 @@ runClientRequirements(){
     npm install
 }
 
-# Run pytest
-# args: list of args to pass to pytest
-runPytest(){
-    runDockerExec "pytest "$*
+# Launch a devbox container for the purpose of installing python dependencies
+runPyRequirements(){
+    runDevboxCommand "pipenv install --dev"
 }
 
 # Run migration script
 runMigrate(){
-    runDockerExec "pipenv run python3 -m src.db.runner"
+    runDevboxCommand "pipenv run python3 -m src.db.runner"
 }
 
 # Run js tests
@@ -98,7 +74,7 @@ runJstest(){
     bin/util logAndRun "npm run test $*"
 }
 
-# Run precommit inside container
+# Run precommit inside new devbox container
 # args: list of args to pass to pre-commit
 runPrecommit(){
     # if no cli args, run standard pre-push
@@ -107,7 +83,7 @@ runPrecommit(){
     else
         args=$*
     fi
-    runDockerExecNonInteractive "pre-commit "$args
+    runDevboxCommand "pre-commit "$args
 }
 
 # One time setup to change git hooks path
@@ -121,12 +97,8 @@ runPull(){
     bin/util logAndRun "bin/infra pull"
 }
 
-# Hacky solution required for host machine to use python inside venv for linting python
-# Remove the symlink to py3, copy the whole py3 binary, fix the other symlinks to point to this binary
-runFixPythonLoc(){
-    runDockerExec "rm /home/worker/app/server/.venv/bin/python3.8"
-    runDockerExec "cp /usr/local/bin/python3.8 /home/worker/app/server/.venv/bin/python3.8"
-    runDockerExec "ln -fs python3.8 /home/worker/app/server/.venv/bin/python"
+runLogs(){
+    bin/util logAndRun "$DOCKER_COMPOSE logs "$*
 }
 
 # Print help message
@@ -144,7 +116,6 @@ Commands:
                 All [options] are transparently passed.
   clean       Clean docker data. N.b will delete all db data if mongo is not running.
   down        Stop and remove all active containers associated with syncm8.
-  fix-py      Linux specific command to fix python Location in container.
   frontend    Run frontend webpack and attach shell.
   jstest      Run js tests.
                 All [options] are transparently passed.
@@ -153,10 +124,14 @@ Commands:
   ps          Show running docker images associated with syncm8.
   pull        Pull images from aws.
   py-req      Install all python requirements.
-  pytest      Run pytest inside the dev container.
-                All [options] are transparently passed.
   setup       One time setup to add all git hooks.
-  webpack     Alias for frontend."
+  webpack     Alias for frontend.
+
+  run         Commands are transparently run in new devbox container. E.g.
+                pytest
+                pipenv install pkg
+                sudo apt install pkg
+                bash"
 }
 
 op=$1
@@ -178,11 +153,11 @@ case $op in
     down)
         runDockerDown
         ;;
-    fix-py)
-        runFixPythonLoc
-        ;;
     jstest)
         runJstest $restArgs
+        ;;
+    logs)
+        runLogs $restArgs
         ;;
     migrate)
         runMigrate
@@ -199,9 +174,6 @@ case $op in
     py-req)
         runPyRequirements
         ;;
-    pytest)
-        runPytest $restArgs
-        ;;
     setup)
         runSetup
         ;;
@@ -210,6 +182,12 @@ case $op in
         ;;
     webpack|frontend|client)
         runWebpack
+        ;;
+    sudo)
+        runDevboxSudo $restArgs
+        ;;
+    run)
+        runDevboxCommand $restArgs
         ;;
     *)
         printHelp
