@@ -12,9 +12,9 @@ from typing import Optional, Tuple
 from googleapiclient.http import HttpMockSequence
 from pytest import MonkeyPatch
 from src.clients.google import (
+    get_google_person_list,
     get_user_info,
     is_google_token_valid,
-    get_google_person_list,
 )
 from src.utils.error import AppError, ErrorCode
 
