@@ -18,18 +18,15 @@
 ```shell
 bin/dev setup
 ```
-5. Start python and mongo containers.
-```shell
-bin/dev up
-```
-6. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
+5. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
 ```shell
 bin/dev py-req
 ```
-7.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
+6.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
 ```shell
 bin/dev client-req
 ```
+7. Grab the dev.env file from the notion secrets page and place it in the top level of your project.
 ---
 ## Running the App
 
@@ -45,9 +42,10 @@ bin/dev client
 
 ---
 ## Testing
+
 1. Run Backend Tests. All args are passed transparently to [pytest](https://docs.pytest.org/en/6.2.x/getting-started.html)
 ```shell
-bin/dev pytest [args]
+bin/dev run pytest [args]
 ```
 2. Run Client Tests.
 ```shell
@@ -56,4 +54,19 @@ bin/dev jstest [files]
 3. Run linters. (Runs full suite of linters on committed files - this is automatically done before `git push` and again by a github action during CI.)
 ```shell
 bin/dev check
+```
+## Updating
+
+1. Occasionally, newer versions of the devobx container will be made. Your invocation of `bin/dev backend` will likely pull it, but you can manually do so by running.
+```shell
+bin/dev pull
+```
+
+## Fix Python Location for vscode
+
+```shell
+bin/dev run bash
+rm /home/worker/app/.venv/bin/python3.8 &&
+cp /usr/local/bin/python3.8 /home/worker/app/.venv/bin/python3.8 &&
+ln -fs /home/worker/app/.venv/bin/python3.8 /home/worker/app/.venv/bin/python
 ```

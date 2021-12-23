@@ -9,7 +9,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT 1
 ENV FLASK_APP 'server:app'
-ENV PATH /home/worker/app/server/.venv/bin:$PATH
+ENV PATH /home/worker/app/.venv/bin:$PATH
 
 RUN pip install pipenv
 
@@ -29,7 +29,7 @@ ENV MYSQL_USER user
 ENV MYSQL_PASSWORD password
 
 WORKDIR /home/worker/app/
-ENTRYPOINT bash
+CMD cd server && pipenv run flask run --host 0.0.0.0
 
 
 FROM base as prod
@@ -37,10 +37,11 @@ FROM base as prod
 ENV GOOGLE_CLIENT_ID 711095332609-5dun7k2lp70do0kqjrbe69u0pri5d5i0.apps.googleusercontent.com
 ENV FLASK_ENV production
 
-WORKDIR /home/worker/app/server/
-COPY server/Pipfile ./
-COPY server/Pipfile.lock ./
+WORKDIR /home/worker/app
+COPY Pipfile ./
+COPY Pipfile.lock ./
 RUN pipenv install --deploy
-COPY server .
+COPY server ./server/
 
+WORKDIR /home/worker/app/server
 ENTRYPOINT pipenv run uwsgi --ini syncm8.ini

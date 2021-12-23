@@ -6,5 +6,5 @@ client
 .github
 .git
 bin
-server/.venv
+**/.venv
 **/*.env

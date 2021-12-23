@@ -3,3 +3,4 @@
 .vscode
 .mypy_cache/
 .pre-commit/
+*.env
