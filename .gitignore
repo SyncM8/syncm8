@@ -3,3 +3,7 @@
 .vscode
 .mypy_cache/
 .pre-commit/
+
+dev.env
+server/dev.env
+package-lock.json
