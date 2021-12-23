@@ -100,7 +100,9 @@ def get_user_info(
 )
 def _get_api_people_connections_list(
     token: str,
-) -> Tuple[Optional[AppError], List[Dict[str, Any]]]:
+    http: Optional[httplib2.Http] = None,
+    http2: Optional[httplib2.Http] = None,
+) -> Tuple[Optional[AppError], Optional[List[Dict[str, Any]]]]:
     """
     Request list of user's contacts from Google People API.
 
@@ -108,7 +110,7 @@ def _get_api_people_connections_list(
     of the user's contacts if they exist
     """
     creds = Credentials(token) if token else None
-    with build("people", "v1", credentials=creds) as people_service:
+    with build("people", "v1", credentials=creds, http=http) as people_service:
         pagination_finished = False
         next_page_token = ""
         api_people_list_complete = []
@@ -122,7 +124,7 @@ def _get_api_people_connections_list(
                     personFields="names,emailAddresses,photos",
                     pageToken=next_page_token,
                 )
-            ).execute()
+            ).execute(http=http2)
             api_people_list_complete += people_response["connections"]
             if "nextPageToken" in people_response:
                 next_page_token = people_response["nextPageToken"]
@@ -142,29 +144,36 @@ def _get_api_people_connections_list(
 )
 def get_google_person_list(
     token: str,
-) -> Tuple[Optional[AppError], List[GooglePerson]]:
+    http: Optional[httplib2.Http] = None,
+    http2: Optional[httplib2.Http] = None,
+) -> Tuple[Optional[AppError], Optional[List[GooglePerson]]]:
     """
     Transform list of Google API Person objects into GooglePerson dataclass.
 
     Returns a list of GooglePerson dataclass objects based on
     list of Google contacts
     """
-    error, api_people_list = _get_api_people_connections_list(token)
+    error, api_people_list = _get_api_people_connections_list(token, http, http2)
     google_person_list = []
-    for api_person in api_people_list:
-        name_list = api_person["names"] if "names" in api_person else None
-        email_list = (
-            api_person["emailAddresses"] if "emailAddresses" in api_person else None
-        )
-        photo_list = api_person["photos"] if "photos" in api_person else None
 
-        # take first of each list as default, otherwise None
-        default_name = name_list[0]["displayName"] if name_list else None
-        default_email = email_list[0]["value"] if email_list else None
-        default_photo_url = photo_list[0]["url"] if photo_list else None
+    if error:
+        return (error, None)
 
-        google_person_list.append(
-            GooglePerson(default_name, default_email, default_photo_url)
-        )
+    if api_people_list:
+        for api_person in api_people_list:
+            name_list = api_person["names"] if "names" in api_person else None
+            email_list = (
+                api_person["emailAddresses"] if "emailAddresses" in api_person else None
+            )
+            photo_list = api_person["photos"] if "photos" in api_person else None
+
+            # take first of each list as default, otherwise None
+            default_name = name_list[0]["displayName"] if name_list else None
+            default_email = email_list[0]["value"] if email_list else None
+            default_photo_url = photo_list[0]["url"] if photo_list else None
+
+            google_person_list.append(
+                GooglePerson(default_name, default_email, default_photo_url)
+            )
 
     return (None, google_person_list)
