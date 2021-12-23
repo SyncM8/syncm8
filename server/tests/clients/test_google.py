@@ -11,7 +11,11 @@ from typing import Optional, Tuple
 
 from googleapiclient.http import HttpMockSequence
 from pytest import MonkeyPatch
-from src.clients.google import get_user_info, is_google_token_valid
+from src.clients.google import (
+    get_user_info,
+    is_google_token_valid,
+    get_google_person_list,
+)
 from src.utils.error import AppError, ErrorCode
 
 
@@ -126,5 +130,42 @@ def test_get_user_info_happy() -> None:
     assert userInfo["picture"] == myPicture
 
 
-def test__get_api_people_connections_list() -> None:
-    """Test call to Google People (contacts) API."""
+def test_get_google_person_list_happy() -> None:
+    """Test happy path for get google person list."""
+    discovery_mock = Path(
+        os.path.join(os.path.dirname(__file__), "oauth2-discovery.json")
+    ).read_text()
+
+    http = HttpMockSequence([({"status": "200"}, discovery_mock)])
+    setattr(http, "close", lambda: None)
+
+    myName = "Albert Einstein"
+    myEmail = "albert@google.com"
+    myPicture = "albert-picture.com"
+    http2 = HttpMockSequence(
+        [
+            (
+                {"status": "200"},
+                json.dumps(
+                    {
+                        "connections": [
+                            {
+                                "emailAddresses": [{"value": myEmail}],
+                                "names": [{"displayName": myName}],
+                                "photos": [{"url": myPicture}],
+                            }
+                        ]
+                    }
+                ),
+            )
+        ]
+    )
+
+    error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
+    print(error)
+    assert not error
+    assert googlePersonList is not None
+    assert len(googlePersonList) == 1
+    assert googlePersonList[0].name == myName
+    assert googlePersonList[0].email == myEmail
+    assert googlePersonList[0].profilePictureURL == myPicture
