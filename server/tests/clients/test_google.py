@@ -150,9 +150,18 @@ def test_get_google_person_list_happy() -> None:
                     {
                         "connections": [
                             {
-                                "emailAddresses": [{"value": myEmail}],
-                                "names": [{"displayName": myName}],
-                                "photos": [{"url": myPicture}],
+                                "emailAddresses": [
+                                    {"value": myEmail},
+                                    {"value": "testNonDefaultEmail"},
+                                ],
+                                "names": [
+                                    {"displayName": myName},
+                                    {"value": "testNonDefaultName"},
+                                ],
+                                "photos": [
+                                    {"url": myPicture},
+                                    {"value": "testNonDefaultPicture"},
+                                ],
                             }
                         ]
                     }
@@ -162,10 +171,58 @@ def test_get_google_person_list_happy() -> None:
     )
 
     error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
-    print(error)
     assert not error
     assert googlePersonList is not None
     assert len(googlePersonList) == 1
     assert googlePersonList[0].name == myName
     assert googlePersonList[0].email == myEmail
     assert googlePersonList[0].profilePictureURL == myPicture
+
+
+def test_get_google_person_list_empty() -> None:
+    """Test empty case for get google person list."""
+    discovery_mock = Path(
+        os.path.join(os.path.dirname(__file__), "oauth2-discovery.json")
+    ).read_text()
+
+    http = HttpMockSequence([({"status": "200"}, discovery_mock)])
+    setattr(http, "close", lambda: None)
+
+    http2 = HttpMockSequence([({"status": "200"}, json.dumps({"connections": []}),)])
+
+    error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
+    assert not error
+    assert googlePersonList is not None
+    assert len(googlePersonList) == 0
+
+
+def test_get_google_person_list_expired() -> None:
+    """Test expired token for get google person list."""
+    discovery_mock = Path(
+        os.path.join(os.path.dirname(__file__), "oauth2-discovery.json")
+    ).read_text()
+
+    http = HttpMockSequence([({"status": "410"}, discovery_mock)])
+    setattr(http, "close", lambda: None)
+
+    http2 = HttpMockSequence([({"status": "410"},)])
+
+    error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
+    assert error
+    assert googlePersonList is None
+
+
+def test_get_google_person_list_quota() -> None:
+    """Test quota exceeded for get google person list."""
+    discovery_mock = Path(
+        os.path.join(os.path.dirname(__file__), "oauth2-discovery.json")
+    ).read_text()
+
+    http = HttpMockSequence([({"status": "429"}, discovery_mock)])
+    setattr(http, "close", lambda: None)
+
+    http2 = HttpMockSequence([({"status": "429"},)])
+
+    error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
+    assert error
+    assert googlePersonList is None
