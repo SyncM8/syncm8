@@ -188,7 +188,7 @@ def test_get_google_person_list_empty() -> None:
     http = HttpMockSequence([({"status": "200"}, discovery_mock)])
     setattr(http, "close", lambda: None)
 
-    http2 = HttpMockSequence([({"status": "200"}, json.dumps({"connections": []}),)])
+    http2 = HttpMockSequence([({"status": "200"}, json.dumps({"connections": []}))])
 
     error, googlePersonList = get_google_person_list(token="", http=http, http2=http2)
     assert not error
