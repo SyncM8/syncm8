@@ -35,13 +35,13 @@ dockerLogin(){
 # Push dev image to aws ecr
 # Must be authenticated with ecr
 dockerPush(){
-    bin/util logAndRun "docker push $DEV_ECR_REPO"
+    bin/util logAndRun "docker push $DEV_ECR_REPO:$DEVBOX_VERSION"
 }
 
 # Pull image from aws ecr
 dockerPull(){
     dockerLogin
-    bin/util logAndRun "docker pull $DEV_ECR_REPO"
+    bin/util logAndRun "docker pull $DEV_ECR_REPO:$DEVBOX_VERSION"
 }
 
 # Build dev image
