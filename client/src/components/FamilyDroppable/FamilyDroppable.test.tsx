@@ -2,41 +2,40 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 
-import { NewMateType } from "../../pages/types";
+import { mate2NoSync, mateNoSync } from "../../graphql/mock";
+import { UnassignedMate } from "../../pages/types";
 import FamilyDroppable from "./FamilyDroppable";
 
 test("renders horizontal FamilyDroppable", () => {
-  const mates: NewMateType[] = [
-    { name: "C. S. Lewis", lastSynced: new Date(), id: "LewisId" },
-  ];
+  const mates: UnassignedMate[] = [mateNoSync, mate2NoSync];
   render(
     <DragDropContext onDragEnd={() => ({})}>
       <FamilyDroppable
         mates={mates}
-        family="school"
+        droppableId="school"
         direction="horizontal"
         removeMate={() => ({})}
       />
     </DragDropContext>
   );
 
-  expect(screen.getByText("C. S. Lewis")).toBeInTheDocument();
+  expect(screen.getByText(mateNoSync.name)).toBeInTheDocument();
+  expect(screen.getByText(mate2NoSync.name)).toBeInTheDocument();
 });
 
 test("renders vertical FamilyDroppable", () => {
-  const mates: NewMateType[] = [
-    { name: "Dorothy Sayers", lastSynced: new Date(), id: "SayersId" },
-  ];
+  const mates: UnassignedMate[] = [mateNoSync, mate2NoSync];
   render(
     <DragDropContext onDragEnd={() => ({})}>
       <FamilyDroppable
         mates={mates}
-        family="school"
+        droppableId="school"
         direction="vertical"
         removeMate={() => ({})}
       />
     </DragDropContext>
   );
 
-  expect(screen.getByText("Dorothy Sayers")).toBeInTheDocument();
+  expect(screen.getByText(mateNoSync.name)).toBeInTheDocument();
+  expect(screen.getByText(mate2NoSync.name)).toBeInTheDocument();
 });
