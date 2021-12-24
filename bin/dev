@@ -4,8 +4,12 @@ DEVBOX_VERSION=$(cat DEVBOX_VERSION)
 
 DOCKER_COMPOSE="export DEVBOX_VERSION=$DEVBOX_VERSION && docker-compose"
 
+dockerComposeRun(){
+    bin/util logAndRun "$DOCKER_COMPOSE run --rm -u $(id -u):$(id -g) --no-deps "$*
+}
+
 runDevboxCommand(){
-    bin/util logAndRun "$DOCKER_COMPOSE run --rm -u $(id -u):$(id -g) --no-deps dev "$*
+    dockerComposeRun "dev "$*
 }
 
 # Run a devbox container as super user
@@ -22,9 +26,9 @@ runDockerUp(){
 # Restart docker-compose devbox when done
 runBackendStart(){
     runDockerUp
-    bin/util logAndRun "$DOCKER_COMPOSE  stop dev"
+    bin/util logAndRun "$DOCKER_COMPOSE stop dev"
     dockerComposeRun "--service-ports dev"
-    bin/util logAndRun "$DOCKER_COMPOSE  start dev"
+    bin/util logAndRun "$DOCKER_COMPOSE start dev"
 }
 
 # Stop and remove all active containers associated with syncm8
