@@ -18,15 +18,16 @@
 ```shell
 bin/dev setup
 ```
-5. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
+5. Grab the dev.env file from the notion secrets page and place it in the top level of your project.
+6. Install python dependencies in the container. (You will need to do this every time new python dependencies are added.)
 ```shell
 bin/dev py-req
 ```
-6.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
+7.  Install Client dependencies. (You will need to do this every time new npm dependencies are added.)
 ```shell
 bin/dev client-req
 ```
-7. Grab the dev.env file from the notion secrets page and place it in the top level of your project.
+
 ---
 ## Running the App
 
