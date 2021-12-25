@@ -27,7 +27,11 @@ bin/dev py-req
 ```shell
 bin/dev client-req
 ```
-
+8.  Install pre-commit.
+``` shell
+bin/dev sudo pre-commit install-hooks
+sudo chown -R $(id -u):$(id -g) .pre-commit
+```
 ---
 ## Running the App
 
