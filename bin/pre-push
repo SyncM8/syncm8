@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $SYNCM8_NO_VERIFY == true ]; then
+if [ ${SYNCM8_NO_VERIFY:-false} == true ]; then
     echo "LINTER DISABLED - re-enable by setting SYNCM8_NO_VERIFY to false"
 else
     bin/dev check
