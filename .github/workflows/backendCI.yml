@@ -15,6 +15,7 @@ jobs:
 
       - name:
         run: |
+          bin/infra build
           touch dev.env
           bin/dev py-req
           bin/dev run pytest
