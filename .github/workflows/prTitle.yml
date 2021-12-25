@@ -11,6 +11,6 @@ jobs:
     steps:
     - uses: deepakputhraya/action-pr-title@master
       with:
-        regex: '^(\[chore\]|\[feat\]|\[migr\]|\[fix\])[ ][A-Z].+[^.]$'
+        regex: '^(\[chore\]|\[feat\]|\[migr\]|\[fix\]|\[bot\])[ ][A-Z].+[^.]$'
         max_length: 80
         github_token: ${{ github.token }}

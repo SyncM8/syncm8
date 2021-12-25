@@ -1,0 +1,28 @@
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "Syncm8/devs"
+    commit-message:
+      prefix: "[bot] "
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "Syncm8/devs"
+    commit-message:
+      prefix: "[bot] "
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    reviewers:
+      - "Syncm8/devs"
+    commit-message:
+      prefix: "[bot] "
