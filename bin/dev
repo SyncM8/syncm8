@@ -74,8 +74,7 @@ runMigrate(){
 # Run js tests
 # args: list of args to pass to npm run test
 runJstest(){
-    bin/util logAndRun "cd client"
-    bin/util logAndRun "npm run test $*"
+    bin/util logAndRun "cd client && npm run test $*"
 }
 
 # Run precommit inside new devbox container
