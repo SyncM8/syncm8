@@ -21,6 +21,7 @@ mongoengine = "*"
 sqlalchemy = "*"
 pymysql = {extras = ["rsa"], version = "*"}
 types-PyMySQL = "*"
+alembic = "*"
 
 [dev-packages]
 pytest = "*"
