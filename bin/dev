@@ -81,7 +81,7 @@ runJstest(){
 # args: list of args to pass to pre-commit
 runPrecommit(){
     # if no cli args, run standard pre-push
-    if [ ! $* ]; then
+    if [ ! $1 ]; then
         args="run --hook-stage push --from-ref origin/main --to-ref HEAD"
     else
         args=$*
