@@ -160,21 +160,24 @@ def get_google_person_list(
     if error:
         return (error, None)
 
-    if api_people_list:
-        for api_person in api_people_list:
-            name_list = api_person["names"] if "names" in api_person else None
-            email_list = (
-                api_person["emailAddresses"] if "emailAddresses" in api_person else None
-            )
-            photo_list = api_person["photos"] if "photos" in api_person else None
+    if api_people_list == []:
+        return (None, [])
 
-            # take first of each list as default, otherwise None
-            default_name = name_list[0]["displayName"] if name_list else None
-            default_email = email_list[0]["value"] if email_list else None
-            default_photo_url = photo_list[0]["url"] if photo_list else None
+    if api_people_list is None:
+        return (None, None)
 
-            google_person_list.append(
-                GooglePerson(default_name, default_email, default_photo_url)
-            )
+    for api_person in api_people_list:
+        name_list = api_person.get("names")
+        email_list = api_person.get("emailAddresses")
+        photo_list = api_person.get("photos")
+
+        # take first of each list as default, otherwise None
+        default_name = name_list[0].get("displayName") if name_list else None
+        default_email = email_list[0].get("value") if email_list else None
+        default_photo_url = photo_list[0].get("url") if photo_list else None
+
+        google_person_list.append(
+            GooglePerson(default_name, default_email, default_photo_url)
+        )
 
     return (None, google_person_list)
