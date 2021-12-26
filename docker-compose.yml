@@ -20,6 +20,7 @@ services:
 
   mysql:
     image: mysql:8.0.23
+    platform: linux/x86_64
     container_name: syncm8_mysql
     volumes:
       - mysql_data:/var/lib/mysql

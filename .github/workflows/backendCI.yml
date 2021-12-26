@@ -12,17 +12,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
 
-      - name: Install Dependencies
+      - name:
         run: |
-          cd server
-          pip install pipenv
-          pipenv install --dev
-
-      - name: Run Backend Tests
-        run: |
-          cd server
-          pipenv run pytest tests
+          bin/infra build
+          touch dev.env
+          bin/dev py-req
+          bin/dev run pytest
+# Our docker-compose.yml expects there to be a dev.env file. Since our testing environment doesn't actually
+# need any of the secrets stored there, we can simply create an empty file: `touch dev.env`

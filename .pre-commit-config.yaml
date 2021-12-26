@@ -93,3 +93,10 @@ repos:
         args:
         -   "--req Dockerfile"
         -   "--lock DEVBOX_VERSION"
+-   repo: https://github.com/EpicPi/SecretFileHook
+    rev: v1.0.1
+    hooks:
+    -   id: secret-file
+        verbose: true
+        args:
+        -   "--secret dev.env"
