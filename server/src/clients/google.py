@@ -160,9 +160,6 @@ def get_google_person_list(
     if error:
         return (error, None)
 
-    if api_people_list == []:
-        return (None, [])
-
     if api_people_list is None:
         return (None, None)
 
