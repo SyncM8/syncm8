@@ -24,9 +24,7 @@ ENV MONGO_HOST mongodb
 ENV MONGO_USER user
 ENV MONGO_PASSWORD pass
 
-ENV MYSQL_HOST syncm8_mysql
-ENV MYSQL_USER user
-ENV MYSQL_PASSWORD password
+ENV MYSQL_URL mysql://user:password@syncm8_mysql/main
 
 WORKDIR /home/worker/app/
 CMD cd server && pipenv run flask run --host 0.0.0.0
