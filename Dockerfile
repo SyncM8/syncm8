@@ -10,6 +10,7 @@ ENV PYTHONUNBUFFERED 1
 ENV PIPENV_VENV_IN_PROJECT 1
 ENV FLASK_APP 'server:app'
 ENV PATH /home/worker/app/.venv/bin:$PATH
+ENV SETUPTOOLS_USE_DISTUTILS stdlib
 
 RUN pip install pipenv
 
