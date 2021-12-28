@@ -66,7 +66,7 @@ pullEnv(){
     # acquire keys from aws parameter store
     for ac in ${EXTERNAL_KEYS[@]}; do
         ret=$(aws ssm get-parameter --name $ac)
-        value=$(echo $ret | grep -Po '"Value":.*?[^\\]",'| cut -d \" -f4)
+        value=$(echo $ret | perl -nle'print $& while m{"Value":.*?[^\\]",}g'| cut -d \" -f4)
         key=$(echo $ac| cut -d _ -f2-)
         echo $key=$value >> new.dev.env
     done
