@@ -10,15 +10,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 10.x
-    - name: Install Modules
-      run: |
-        cd client
-        npm ci
 
-    - uses: pre-commit/action@v2.0.3
+    - name: Run pre-commit
+      run: |
+        git fetch origin main ${{ github.event.pull_request.base.sha }}
+        bin/infra build
+        touch dev.env
+        bin/dev run pipenv run pip install pre-commit
+        bin/dev sudo pre-commit run --hook-stage push --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.sha }}
+# Our docker-compose.yml expects there to be a dev.env file. Since our testing environment doesn't actually
+# need any of the secrets stored there, we can simply create an empty file: `touch dev.env`
+
+# We need to run `bin/dev sudo pre-commit` because of the npm issue outlined in https://github.com/SyncM8/syncm8/pull/126
+# This is alleviated in local dev environment by the `Install pre-commit.` step in the `READEME.md`
