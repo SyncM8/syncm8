@@ -160,10 +160,7 @@ def get_google_person_list(
     if error:
         return (error, None)
 
-    if api_people_list is None:
-        return (None, None)
-
-    for api_person in api_people_list:
+    for api_person in api_people_list or []:
         name_list = api_person.get("names")
         email_list = api_person.get("emailAddresses")
         photo_list = api_person.get("photos")
