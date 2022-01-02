@@ -18,10 +18,12 @@ google-api-python-client = "*"
 pytest-mock = "*"
 flask-mongoengine = "*"
 mongoengine = "*"
-sqlalchemy = "*"
+sqlalchemy = {extras = ["mypy"], version = "*"}
 pymysql = {extras = ["rsa"], version = "*"}
 types-PyMySQL = "*"
 alembic = "*"
+sqlalchemy2-stubs = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 pytest = "*"
