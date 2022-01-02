@@ -1,10 +1,34 @@
 import { makeUniqueId } from "@apollo/client/utilities";
 
-import { Family, Mate, User } from "./types";
+import { Family, Mate, Sync, User } from "./types";
 
 // Need __typename for testing to work with Fragments
 type Typename = {
   __typename: string;
+};
+
+export const sync1: Sync & Typename = {
+  __typename: "Sync",
+  id: makeUniqueId(""),
+  timestamp: "2021-12-28T12:32:12Z",
+  title: "sync title",
+  details: "sync detail blah blah",
+};
+
+export const sync2: Sync & Typename = {
+  __typename: "Sync",
+  id: makeUniqueId(""),
+  timestamp: "2021-12-25T11:34:01Z",
+  title: "sync title 2",
+  details: "sync detail blah blah",
+};
+
+export const sync3: Sync & Typename = {
+  __typename: "Sync",
+  id: makeUniqueId(""),
+  timestamp: "2021-12-12T01:23:55Z",
+  title: "sync title 3",
+  details: "sync detail blah blah",
 };
 
 export const mateNoSync: Mate & Typename = {

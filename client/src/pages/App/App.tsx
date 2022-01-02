@@ -12,7 +12,7 @@ import DashboardPage from "../Dashboard/DashboardPage";
 import FamilyPage from "../Family/FamilyPage";
 import Header from "../Header/Header";
 import LoginPage from "../Login/LoginPage";
-import MatePage from "../Mate/MatePage";
+import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
 
 /**
@@ -67,7 +67,7 @@ const App = (): JSX.Element => {
           <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         </Route>
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
-          <MatePage />
+          <MatesPage />
         </ProtectedRoute>
         <ProtectedRoute loggedIn={loggedIn} path="/families">
           <FamilyPage />
