@@ -9,7 +9,7 @@ jobs:
   migration-runner:
     runs-on: ubuntu-latest
     environment: prod
-
+    if: github.actor != 'dependabot'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
