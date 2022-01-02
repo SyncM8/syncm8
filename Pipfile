@@ -22,8 +22,8 @@ sqlalchemy = {extras = ["mypy"], version = "*"}
 pymysql = {extras = ["rsa"], version = "*"}
 types-PyMySQL = "*"
 alembic = "*"
-sqlalchemy2-stubs = "*"
 flask-sqlalchemy = "*"
+sqlalchemy-stubs = "*"
 
 [dev-packages]
 pytest = "*"

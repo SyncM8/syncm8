@@ -3,4 +3,3 @@ https://www.youtube.com/watch?v=36yw8VC3KU8
 2. keep alive on connections to db
 3. base metadata class
 4. session manager - connection pool - reuse lifo=false
-

@@ -1,10 +1,12 @@
+"""Alembic configuration script."""
+import os
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine
-from sqlalchemy import pool
-
 from alembic import context
-import os
+from sqlalchemy import create_engine, pool
+
+# MetaData object for 'autogenerate' support
+from src.model.sql.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -12,10 +14,9 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+fileConfig(config.config_file_name or "")
 
-# MetaData object for 'autogenerate' support
-from src.model.sql.base import Base
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -24,8 +25,9 @@ target_metadata = Base.metadata
 # ... etc.
 
 
-def run_migrations_offline():
-    """Run migrations in 'offline' mode.
+def run_migrations_offline() -> None:
+    """
+    Run migrations in 'offline' mode.
 
     This configures the context with just a URL
     and not an Engine, though an Engine is acceptable
@@ -38,7 +40,7 @@ def run_migrations_offline():
     N.B. This is only run during developement
 
     """
-    url = os.getenv('MYSQL_URL','')
+    url = os.getenv("MYSQL_URL", "")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -50,24 +52,20 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
-    """Run migrations in 'online' mode.
+def run_migrations_online() -> None:
+    """
+    Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     N.b. This can be run in prod or in development
     """
-    url = os.getenv('MYSQL_URL','')
-    connectable = create_engine(
-        url,
-        poolclass=pool.NullPool,
-    )
+    url = os.getenv("MYSQL_URL", "")
+    connectable = create_engine(url, poolclass=pool.NullPool)
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
