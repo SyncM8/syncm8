@@ -78,6 +78,7 @@ repos:
         -   eslint-plugin-react@7.25.1
         -   eslint-plugin-react-hooks@4.2.0
         -   eslint-plugin-simple-import-sort@7.0.0
+        -   eslint-plugin-import@2.25.2  # not in package.json but needed for pre-commit
 -   repo: https://github.com/EpicPi/ReqLockHook
     rev: v1.0.4
     hooks:
