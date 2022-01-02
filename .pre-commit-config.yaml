@@ -64,8 +64,18 @@ repos:
         types: [file]
         verbose: true
         args:
-        -    "--fix"
-        -    "./client/src"
+        -   "--fix"
+        -   "./client/src"
+        additional_dependencies:  # from package.json devDependencies
+        -   eslint@7.32.0
+        -   eslint-config-airbnb@18.2.1
+        -   eslint-config-airbnb-typescript@14.0.2
+        -   eslint-config-prettier@8.3.0
+        -   eslint-plugin-jsx-a11y@6.4.1
+        -   eslint-plugin-prettier@4.0.0
+        -   eslint-plugin-react@7.25.1
+        -   eslint-plugin-react-hooks@4.2.0
+        -   eslint-plugin-simple-import-sort@7.0.0
 -   repo: https://github.com/EpicPi/ReqLockHook
     rev: v1.0.4
     hooks:
