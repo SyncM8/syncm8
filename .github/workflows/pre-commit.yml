@@ -16,6 +16,7 @@ jobs:
         git fetch origin main ${{ github.event.pull_request.base.sha }}
         bin/infra build
         touch dev.env
+        bin/dev client-req
         bin/dev run pipenv run pip install pre-commit
         bin/dev sudo pre-commit run --hook-stage push --from-ref ${{ github.event.pull_request.base.sha }} --to-ref ${{ github.sha }}
 # Our docker-compose.yml expects there to be a dev.env file. Since our testing environment doesn't actually
