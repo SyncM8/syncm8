@@ -58,7 +58,7 @@ const SyncCard = ({
     >
       <Meta
         avatar={icon}
-        title={sync.title.trim() || "No Title"}
+        title={sync.title.trim() || "No Title?"}
         description={sync.ts.toISOString().split("T")[0]}
       />
       {sync.details && <Divider />}
