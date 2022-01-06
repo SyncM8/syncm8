@@ -47,6 +47,9 @@ repos:
         -   "--allow-untyped-decorators"
         -   "--allow-subclassing-any"
         -   "--no-warn-unused-ignores"
+        -   "--config-file=server/mypy.ini"
+        additional_dependencies:
+            - sqlalchemy-stubs
 -   repo: https://github.com/pre-commit/mirrors-prettier
     rev: v2.4.0
     hooks:
