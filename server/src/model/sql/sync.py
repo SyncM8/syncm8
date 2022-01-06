@@ -1,12 +1,13 @@
 """Sync sql model."""
 from typing import TYPE_CHECKING
+
 from sqlalchemy import DATETIME, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from src.model.sql.base import Base
-from src.utils.helpers import usually_unique
 
-if TYPE_CHECKING:
-    from src.model.sql.user import User
+# if TYPE_CHECKING:
+from src.model.sql.user import User
+from src.utils.helpers import usually_unique
 
 
 class Sync(Base):

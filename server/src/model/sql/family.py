@@ -5,10 +5,10 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from src.model.sql.base import Base
-from src.utils.helpers import usually_unique
 
-if TYPE_CHECKING:
-    from src.model.sql.user import User
+# if TYPE_CHECKING:
+from src.model.sql.user import User
+from src.utils.helpers import usually_unique
 
 
 class Family(Base):
