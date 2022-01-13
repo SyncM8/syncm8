@@ -51,8 +51,8 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
         <Link to="/assign-families">Assign Families</Link>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="settings">
-        <Link to="/settings">Setting</Link>
+      <Menu.Item key="profile">
+        <Link to="/profile">Profile</Link>
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="logout" onClick={logoutHandler}>

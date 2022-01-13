@@ -1,0 +1,104 @@
+   78  bin/dev check
+   79  node --version
+   80  sudo chown -R 501:20 "/.npm"
+   81  npm --version
+   82  git status
+   83  bin/dev check
+   84  npm cache clean --force
+   85  bin/dev check
+   86  ls ~
+   87  ls -la ~
+   88  sudo chown -R 501:20 "~/.npm"
+   89  ls ~/.npm
+   90  cd ~
+   91  ls .npm
+   92  npm install -g  update-notifier
+   93  ls -la ~
+   94  rm -rf .npm
+   95  ls -la
+   96  npm install -g  update-notifier
+   97  cd syncm8
+   98  bin/dev check
+   99  ls
+  100  cd syncm8
+  101  ls
+  102  bin/dev check
+  103  bin/dev check
+  104  echo $PATH
+  105  bin/dev check
+  106  sudo chown -R 501:20 "/.npm"
+  107  ls -la
+  108  ls -la ~
+  109  chown ~/.npm
+  110  less package.json
+  111  less ~/package.json
+  112  cd ~
+  113  chmod 755 .npm
+  114  cd syncm8
+  115  cd syncm8
+  116  bin/dev check
+  117  cd client
+  118  ls -la
+  119  rm -rf node_modules
+  120  npm install
+  121  cd ..
+  122  bin/dev check
+  123  whoami
+  124  id-u
+  125  id -u
+  126  id -u -n
+  127  sudo bin/dev check
+  128  git stash
+  129  ls
+  130  git status
+  131  git stash
+  132  git checkout -b nick
+  133  git stash
+  134  git add .
+  135  git status
+  136  git stash
+  137  bin/dev check
+  138  bin/dev check
+  139  git stash top
+  140  git stash pop
+  141  git commit
+  142  git status
+  143  bin/dev check
+  144  ls ~/.cache
+  145  ls -la
+  146  pre-commit --version
+  147  pip install pre-commit
+  148  pip3 install pre-commit
+  149  pre-commit --version
+  150  bin/dev check
+  151  command p
+  152  bin/dev check
+  153  git add .
+  154  git commit
+  155  bin/dev check
+  156  pre-commit run --all-files
+  157  bin/dev check
+  158  bin/dev check
+  159  ls -la ~/
+  160  cd ~/.cache
+  161  ls
+  162  rm -rf pre-commit
+  163  cd ../syncm8
+  164  ls
+  165  cd syncm8
+  166  bin/dev check
+  167  bin/dev check
+  168  bin/dev check
+  169  git add .
+  170  git commit
+  171  bin/dev check
+  172  bin/dev check
+  173  bin/dev backend
+  174  bin/dev client
+  175  cat ~/.bash_history
+  176  history
+  177  history
+  178  history > print.txt
+  179  less ~/.bash_history
+  180  history 100
+  181  history 1
