@@ -9,7 +9,6 @@ import {
   Layout,
   notification,
   Row,
-  Space,
   Typography,
 } from "antd";
 import React, { useState } from "react";
@@ -80,13 +79,34 @@ const NewMatesPage = (): JSX.Element => {
         when={pageUnsaved}
         message="Leaving will erase all your unsaved info. Are you sure?"
       />
-      <Layout style={{ minHeight: "100vh" }}>
+      <Layout style={{ minHeight: "100vh", paddingBottom: "75px" }}>
         <Row style={{ backgroundColor: "#F0F2F5", padding: "30px" }}>
           <Col>
             <Title>Populating M8s</Title>
           </Col>
         </Row>
-        <Row style={{ padding: "30px" }}>
+        <Row
+          style={{
+            padding: "10px 30px",
+          }}
+        >
+          <Col span={6}>
+            <Title level={2}>Import From</Title>
+          </Col>
+
+          <Col>
+            <Button type="primary" htmlType="submit">
+              Google
+            </Button>
+          </Col>
+        </Row>
+
+        <Divider />
+        <Row
+          style={{
+            padding: "10px 30px",
+          }}
+        >
           <Col span={6}>
             <Title level={2}>Manual Entry</Title>
           </Col>
@@ -116,8 +136,17 @@ const NewMatesPage = (): JSX.Element => {
         <Row style={{ padding: "10px 30px" }} gutter={[24, 24]}>
           {cards}
         </Row>
-        <Footer style={{ position: "sticky", bottom: "0" }}>
-          <Space>
+        <Footer
+          style={{
+            position: "fixed",
+            bottom: "0",
+            zIndex: 100,
+            backgroundColor: "#FFFFFF",
+            height: "75px",
+            width: "100%"
+           }}
+        >
+          <Row justify="space-between" align="middle">
             Once You’ve added all Your M8s (contacts) you can assign them to
             families
             <Button
@@ -127,7 +156,7 @@ const NewMatesPage = (): JSX.Element => {
             >
               Assign M8s to Families
             </Button>
-          </Space>
+          </Row>
         </Footer>
       </Layout>
     </>
