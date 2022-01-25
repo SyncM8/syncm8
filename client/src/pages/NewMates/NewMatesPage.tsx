@@ -133,7 +133,7 @@ const NewMatesPage = (): JSX.Element => {
         <Row style={{ padding: "10px 30px" }}>
           <Title level={2}>M8s</Title>
         </Row>
-        <Row style={{ padding: "10px 30px" }} gutter={[24, 24]}>
+        <Row style={{ padding: "10px 30px", margin: "0px" }} gutter={[24, 24]}>
           {cards}
         </Row>
         <Footer
