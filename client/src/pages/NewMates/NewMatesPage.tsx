@@ -143,8 +143,8 @@ const NewMatesPage = (): JSX.Element => {
             zIndex: 100,
             backgroundColor: "#FFFFFF",
             height: "75px",
-            width: "100%"
-           }}
+            width: "100%",
+          }}
         >
           <Row justify="space-between" align="middle">
             Once You’ve added all Your M8s (contacts) you can assign them to
