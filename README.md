@@ -7,6 +7,9 @@
 ![Deploy](https://github.com/SyncM8/syncm8/actions/workflows/CD.yml/badge.svg)
 ![Dev Image Build](https://github.com/SyncM8/syncm8/actions/workflows/devDockerBuild.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/SyncM8/syncm8.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SyncM8/syncm8/alerts/)
+[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/SyncM8/syncm8.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SyncM8/syncm8/context:javascript)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/SyncM8/syncm8.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/SyncM8/syncm8/context:python)
 
 ---
 ## Dev Setup
