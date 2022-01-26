@@ -92,5 +92,7 @@ test("navigates to Mates page", async () => {
   );
 
   await waitFor(() => expect(history.location.pathname).toBe("/mates"));
-  await waitFor(() => expect(screen.queryByText("M8")).toBeInTheDocument());
+  await waitFor(() =>
+    expect(screen.queryByText("Next Planned Sync Date")).toBeInTheDocument()
+  );
 });

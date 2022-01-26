@@ -1,6 +1,6 @@
 import { Moment } from "moment";
 
-import { Mate } from "../graphql/types";
+import { Family, Mate, Sync } from "../graphql/types";
 
 export type NewMatesFormType = {
   name: string;
@@ -41,4 +41,13 @@ export type UpcomingSyncType = {
 
 export type LocationState = {
   prevPath: string;
+};
+
+export type MateRecord = {
+  key: string;
+  mate: Mate;
+  family: Family;
+  lastSync: Sync;
+  nextSync: Sync;
+  numSyncs: number;
 };
