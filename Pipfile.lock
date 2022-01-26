@@ -891,11 +891,11 @@
         },
         "types-pymysql": {
             "hashes": [
-                "sha256:01b0e8d7e18963d664282e10fdc495f306b65b0f097cc0c5be70f3ca7e3efa1f",
-                "sha256:8b553effda99b43406b938384fe6b0f38d5844e6efb49d2da97fdddd000ef20a"
+                "sha256:0a1638b857a531241d102aa22113b365ad43f05c06c86bbde92e9504c53dc6ae",
+                "sha256:85e77c19a742654b2a86828a9c78655a83985f2dbaa9330b3fdab6485da52cf6"
             ],
             "index": "pypi",
-            "version": "==1.0.7"
+            "version": "==1.0.11"
         },
         "typing-extensions": {
             "hashes": [
