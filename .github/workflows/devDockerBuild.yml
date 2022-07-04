@@ -18,7 +18,7 @@ jobs:
           echo "DEVBOX_VERSION=$(cat DEVBOX_VERSION)"  >> $GITHUB_ENV
 
       - name: Check If Dockerfile has changed
-        uses: technote-space/get-diff-action@v5
+        uses: technote-space/get-diff-action@v6.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
