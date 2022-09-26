@@ -1,10 +1,11 @@
-import { Button, notification, Typography } from "antd";
+import { Button, Divider, Form, Input, notification, Typography } from "antd";
 import axios from "axios";
+import { ClientResponseError } from "pocketbase";
 import { parse, stringify } from "querystring";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 
-import { loginPath, LoginResponse } from "../../api";
+import { client, loginPath, LoginResponse } from "../../api";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import { LocationState } from "../types";
 
@@ -16,6 +17,11 @@ type LoginPageProps = {
   loggedIn: boolean;
   setLoggedIn: (value: boolean) => void;
 };
+
+type LoginFormType = {
+  email: string;
+  password: string;
+}
 
 const openNotification = (errorMessage: string) => {
   notification.open({
@@ -58,37 +64,51 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   const location = useLocation<LocationState>();
   const [beforeLoginPath, setBeforeLoginPath] = useState("/");
 
-  const checkloginCallback = () => {
-    // window.location.hash keeps the hash, part so we chop it off with substr
-    const parsedParams = parse(window.location.hash.substr(1));
-    window.location.hash = "";
-    if ("error" in parsedParams) {
-      openNotification(String(parsedParams.error));
-    } else if ("access_token" in parsedParams) {
-      const { state } = parsedParams;
-      if (typeof state === "string" && state.includes(PREV_PATH_KEY)) {
-        const newPrevPath = parse(state)[PREV_PATH_KEY];
-        if (typeof newPrevPath === "string") {
-          setBeforeLoginPath(newPrevPath);
-        }
-      }
+  // const checkloginCallback = () => {
+  //   // window.location.hash keeps the hash, part so we chop it off with substr
+  //   const parsedParams = parse(window.location.hash.substr(1));
+  //   window.location.hash = "";
+  //   if ("error" in parsedParams) {
+  //     openNotification(String(parsedParams.error));
+  //   } else if ("access_token" in parsedParams) {
+  //     const { state } = parsedParams;
+  //     if (typeof state === "string" && state.includes(PREV_PATH_KEY)) {
+  //       const newPrevPath = parse(state)[PREV_PATH_KEY];
+  //       if (typeof newPrevPath === "string") {
+  //         setBeforeLoginPath(newPrevPath);
+  //       }
+  //     }
 
-      axios
-        .post<LoginResponse>(loginPath, parsedParams)
-        .then((res) => {
-          if (res.data.isLoggedIn) {
-            setLoggedIn(true);
-          } else {
-            openNotification(JSON.stringify(res.data.error));
-          }
-        })
-        .catch((err) => openNotification(String(err)));
+  //     axios
+  //       .post<LoginResponse>(loginPath, parsedParams)
+  //       .then((res) => {
+  //         if (res.data.isLoggedIn) {
+  //           setLoggedIn(true);
+  //         } else {
+  //           openNotification(JSON.stringify(res.data.error));
+  //         }
+  //       })
+  //       .catch((err) => openNotification(String(err)));
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   checkloginCallback();
+  // });
+
+  const login = async (values: LoginFormType) => {
+    try {
+      await client.users.authViaEmail(values.email, values.password);
+      notification.success({
+        message: "Login Success!"
+      });
+      history.push("/");
+      setLoggedIn(true);
+    } catch (err: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      openNotification(JSON.stringify((err as ClientResponseError).data));
     }
-  };
-
-  useEffect(() => {
-    checkloginCallback();
-  });
+  }
 
   // Redirect if authentication is done
   if (loggedIn) {
@@ -99,9 +119,29 @@ const LoginPage = ({ loggedIn, setLoggedIn }: LoginPageProps): JSX.Element => {
   return (
     <>
       <Title>Login</Title>
-      <Button type="primary" onClick={() => doLogin(location.state?.prevPath)}>
-        Login with Google
-      </Button>
+      <Form onFinish={login}>
+        <Form.Item
+          label="Email"
+          name="email"
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Password"
+          name="password"
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Login!
+          </Button>
+        </Form.Item>
+        <Divider />
+        <Button type="primary" onClick={() => history.push("/register")}>
+          Register!
+        </Button>
+      </Form>
     </>
   );
 };

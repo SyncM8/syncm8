@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+// import { useMutation } from "@apollo/client";
 import {
   Button,
   Col,
@@ -12,13 +12,16 @@ import {
   Space,
   Typography,
 } from "antd";
+import { ClientResponseError, Record } from "pocketbase";
 import React, { useState } from "react";
 import { Prompt } from "react-router";
 
+import { client } from "../../api";
 import NewMatesCard from "../../components/NewMateCard/NewMateCard";
 import { ADD_NEW_MATES, AddNewMatesReturn } from "../../graphql/graphql";
 import { NewMatesInput } from "../../graphql/types";
 import { NewMatesFormType, NewMateType } from "../types";
+import { newMates } from "./mockData";
 
 const { Title } = Typography;
 const { Footer } = Layout;
@@ -32,28 +35,81 @@ const NewMatesPage = (): JSX.Element => {
   const [mates, setMates] = useState<NewMateType[]>([]);
   const [id, setId] = useState<number>(0);
 
-  const [addMatesFn] = useMutation<{ addNewMates: [AddNewMatesReturn] }>(
-    ADD_NEW_MATES,
-    {
-      onCompleted: (data) => {
-        notification.success({
-          message: `Successfully added ${data.addNewMates.length} new mates!`,
-        });
-        setMates([]);
-      },
-      onError: (error) => {
-        notification.error({
-          message: error.name,
-          description: error.message,
-        });
-      },
-      variables: {
-        newMates: mates.map(
-          ({ name, lastSynced }) => ({ name, lastSynced } as NewMatesInput)
-        ),
-      },
+  // const [addMatesFn] = useMutation<{ addNewMates: [AddNewMatesReturn] }>(
+  //   ADD_NEW_MATES,
+  //   {
+  //     onCompleted: (data) => {
+  //       notification.success({
+  //         message: `Successfully added ${data.addNewMates.length} new mates!`,
+  //       });
+  //       setMates([]);
+  //     },
+  //     onError: (error) => {
+  //       notification.error({
+  //         message: error.name,
+  //         description: error.message,
+  //       });
+  //     },
+  //     variables: {
+  //       newMates: mates.map(
+  //         ({ name, lastSynced }) => ({ name, lastSynced } as NewMatesInput)
+  //       ),
+  //     },
+  //   }
+  // );
+
+  const saveMates = async () => {
+    await client.users.refresh();
+    const userId = client.authStore?.model?.id;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const unassignedFamilyId: string = client.authStore.model.profile.unassigned_family_id;
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    console.log(client.authStore.model.profile)
+
+    const matePromises = mates.map((mate: NewMateType) => 
+      client.records.create("mates", {
+          name: mate.name,
+          user_id: userId,
+          family_id: unassignedFamilyId
+      }, { '$autoCancel': false }) // need to set to false otherwise bulk insert aborts
+    );
+    try {
+      const mateResults = await Promise.all(matePromises);
+
+      // create syncs
+      const syncPromises = mateResults.map((mateRes: Record, index: number) => {
+        const mate = mates[index];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        if (mate.name !== mateRes.name) {
+          throw Error("Something went horribly wrong!");
+        }
+        return client.records.create("syncs", {
+          timestamp: mate.lastSynced,
+          title: "Initial Sync",
+          user_id: userId,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          mate_id: mateRes.id
+        }, { '$autoCancel': false }) // need to set to false otherwise bulk insert aborts
+      });
+      await Promise.all(syncPromises);
+
+      notification.success({
+        message: `Successfully added ${mates.length} new mates!`,
+      });
+
+      setMates([]);
+    } catch (err) {
+      notification.error({
+        message: "Cannot create mates",
+        description: JSON.stringify(err)
+      })
     }
-  );
+  }
 
   const addNewMate = ({ name, lastSeen }: NewMatesFormType) => {
     const lastSynced = lastSeen === undefined ? new Date() : lastSeen.toDate();
@@ -123,7 +179,7 @@ const NewMatesPage = (): JSX.Element => {
             <Button
               type="primary"
               disabled={!pageUnsaved}
-              onClick={() => addMatesFn()}
+              onClick={() => saveMates()}
             >
               Assign M8s to Families
             </Button>

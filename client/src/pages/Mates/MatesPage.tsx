@@ -12,8 +12,9 @@ import {
 import { ColumnsType } from "antd/lib/table";
 import React, { useState } from "react";
 
-import { MateRecord } from "../types";
-import { mockData } from "./mockData";
+import { client } from "../../api";
+import { Family, getUser, Mate, Sync } from "../../utils";
+// import { mockData } from "./mockData";
 
 enum MatesSelectEnum {
   ACTIONS = "Actions",
@@ -21,12 +22,22 @@ enum MatesSelectEnum {
   UNASSIGN = "Unassign",
 }
 
+export type MateRecord = {
+  key: string;
+  mate: Mate;
+  family: Family;
+  lastSync: Sync;
+  nextSync: Sync;
+  numSyncs: number;
+};
+
 /**
  * MatesPage
  * @returns
  */
 const MatesPage = (): JSX.Element => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [mateRecords, setMateRecords] = useState<MateRecord[]>([]);
 
   /**
    * Confirm and delete selected mates
@@ -43,18 +54,34 @@ const MatesPage = (): JSX.Element => {
     });
   };
 
+  const unassignMates = async () => {
+    try {
+      const user = await getUser();
+
+      const updateMatesPromises = selectedRowKeys.map(mateKey => 
+        client.records.update("mates", mateKey as unknown as string, {
+          family_id: user.profile.unassigned_family_id
+        }));
+      await Promise.all(updateMatesPromises);
+      notification.success({
+        message: `Unassigned ${selectedRowKeys.length} mates!`,
+      });
+    } catch (err) {
+      notification.error({
+        message: "Unassigning mates failed",
+        description: err
+      })
+    }
+  }
+
   /**
    * Confirm and unassign selected mates' families
    */
-  const unassignMates = (): void => {
+  const unassignMatesConfirm = (): void => {
     Modal.confirm({
       content:
         "Are you sure you want to reassign these mates to unassigned family?",
-      onOk: () => {
-        notification.success({
-          message: `Unassigning ${selectedRowKeys.length} mates!`,
-        });
-      },
+      onOk: unassignMates,
     });
   };
 
@@ -68,7 +95,7 @@ const MatesPage = (): JSX.Element => {
         deleteMates();
         break;
       case MatesSelectEnum.UNASSIGN:
-        unassignMates();
+        unassignMatesConfirm();
         break;
       default:
         break;
@@ -78,10 +105,38 @@ const MatesPage = (): JSX.Element => {
   /**
    * Refetch mates data
    */
-  const refetchData = () => {
-    notification.info({
-      message: "Refetching mates data...",
-    });
+  const refreshData = async () => {
+    try {
+      const mates = await client.records.getFullList("mates", 200, {
+        expand: "family_id"
+      });
+      const sync: Sync = {
+        id: "",
+        timestamp: new Date(),
+        title: "",
+        description: "",
+        user_id: "",
+        mate_id: "",
+        "@exapnd": {}
+      }
+
+      const mateData: MateRecord[] = mates.map(mate => ({
+        key: mate.id,
+        mate: (mate as unknown as Mate),
+        family: (mate["@expand"]).family_id as unknown as Family,
+        lastSync: sync,
+        nextSync: sync,
+        numSyncs: 0
+      }));
+            
+      setMateRecords(mateData);
+      console.log(mates);
+    } catch (err) {
+      notification.error({
+        message: "Could not fetch mates",
+        description: err
+      })
+    }
   };
 
   const columns: ColumnsType<MateRecord> = [
@@ -104,7 +159,7 @@ const MatesPage = (): JSX.Element => {
         <>{new Date(record.lastSync.timestamp).toLocaleString()}</>
       ),
       sorter: (a, b) =>
-        a.lastSync.timestamp.localeCompare(b.lastSync.timestamp),
+        +(a.lastSync.timestamp) - +(b.lastSync.timestamp),
     },
     {
       title: "Number of Syncs",
@@ -119,7 +174,7 @@ const MatesPage = (): JSX.Element => {
         <>{new Date(record.nextSync.timestamp).toLocaleString()}</>
       ),
       sorter: (a, b) =>
-        a.nextSync.timestamp.localeCompare(b.nextSync.timestamp),
+        +(a.lastSync.timestamp) - +(b.lastSync.timestamp),
     },
     {
       title: "Family Sync Interval",
@@ -137,6 +192,12 @@ const MatesPage = (): JSX.Element => {
 
   const hasSelected = selectedRowKeys.length > 0;
 
+  React.useEffect(() => {
+    // eslint-disable-next-line no-void
+    void refreshData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <Row gutter={8} justify="end">
@@ -144,7 +205,7 @@ const MatesPage = (): JSX.Element => {
           <Tooltip title="Reload data">
             <Button
               type="primary"
-              onClick={refetchData}
+              onClick={refreshData}
               icon={<ReloadOutlined />}
             />
           </Tooltip>
@@ -157,7 +218,7 @@ const MatesPage = (): JSX.Element => {
           >
             <Select.Option
               value={MatesSelectEnum.DELETE}
-              disabled={!hasSelected}
+              disabled // TODO
             >
               Delete
             </Select.Option>
@@ -173,7 +234,7 @@ const MatesPage = (): JSX.Element => {
       <Table<MateRecord>
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={mockData}
+        dataSource={mateRecords}
         bordered
         pagination={false}
       />

@@ -1,10 +1,10 @@
 import "./App.less";
 
-import axios from "axios";
+// import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
-import { isLoggedInPath, IsLoggedInResponse } from "../../api";
+import { client, isLoggedInPath, IsLoggedInResponse } from "../../api";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import ProtectedRoute from "../../components/ProtectedRoute/ProtectedRoute";
 import AssignMatesPage from "../AssignMates/AssignMatesPage";
@@ -14,6 +14,7 @@ import Header from "../Header/Header";
 import LoginPage from "../Login/LoginPage";
 import MatesPage from "../Mates/MatesPage";
 import NewMatesPage from "../NewMates/NewMatesPage";
+import RegisterPage from "../Register/RegisterPage";
 
 /**
  * Logged In Status
@@ -29,42 +30,47 @@ enum LoggedInStatus {
  * @returns JSX.Element
  */
 const App = (): JSX.Element => {
-  const [loggedInStatus, setLoggedInStatus] = useState(LoggedInStatus.WAITING);
+  const [loggedInStatus, setLoggedInStatus] = useState(LoggedInStatus.LOGGED_OUT);
 
-  useEffect(() => {
-    axios
-      .get<IsLoggedInResponse>(isLoggedInPath)
-      .then((res) => {
-        const resStatus = res.data?.isLoggedIn
-          ? LoggedInStatus.LOGGED_IN
-          : LoggedInStatus.LOGGED_OUT;
-        if (loggedInStatus !== resStatus) {
-          setLoggedInStatus(resStatus);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoggedInStatus(LoggedInStatus.LOGGED_OUT);
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get<IsLoggedInResponse>(isLoggedInPath)
+  //     .then((res) => {
+  //       const resStatus = res.data?.isLoggedIn
+  //         ? LoggedInStatus.LOGGED_IN
+  //         : LoggedInStatus.LOGGED_OUT;
+  //       if (loggedInStatus !== resStatus) {
+  //         setLoggedInStatus(resStatus);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.error(err);
+  //       setLoggedInStatus(LoggedInStatus.LOGGED_OUT);
+  //     });
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  const setLoggedIn = (value: boolean) => {
-    setLoggedInStatus(
-      value ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT
-    );
-  };
+  // const setLoggedIn = (value: boolean) => {
+  //   setLoggedInStatus(
+  //     value ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT
+  //   );
+  // };
 
   if (loggedInStatus === LoggedInStatus.WAITING) {
     return <LoadingSpinner />;
   }
-  const loggedIn = loggedInStatus === LoggedInStatus.LOGGED_IN;
+
+  const loggedIn = client.authStore.model !== null;
+
   return (
     <>
-      <Header logoutApp={() => setLoggedInStatus(LoggedInStatus.LOGGED_OUT)} />
+      <Header logout={() => setLoggedInStatus(LoggedInStatus.LOGGED_OUT)} />
       <Switch>
         <Route path="/login">
-          <LoginPage loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+          <LoginPage loggedIn={loggedIn} setLoggedIn={(success: boolean) => setLoggedInStatus(success ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT)} />
+        </Route>
+        <Route path="/register">
+          <RegisterPage setLoggedIn={(success: boolean) => setLoggedInStatus(success ? LoggedInStatus.LOGGED_IN : LoggedInStatus.LOGGED_OUT)} />
         </Route>
         <ProtectedRoute loggedIn={loggedIn} path="/mates">
           <MatesPage />

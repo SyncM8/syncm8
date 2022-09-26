@@ -8,7 +8,7 @@ import {
 import { Avatar, Card } from "antd";
 import React, { CSSProperties } from "react";
 
-import { Mate } from "../../graphql/types";
+import { Mate } from "../../utils";
 
 type UnassignedMateCardProps = {
   mate: Mate;

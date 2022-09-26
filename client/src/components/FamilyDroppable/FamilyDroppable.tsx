@@ -7,8 +7,8 @@ import {
   NotDraggingStyle,
 } from "react-beautiful-dnd";
 
-import { Mate } from "../../graphql/types";
-import { UnassignedMate } from "../../pages/types";
+// import { UnassignedMate } from "../../pages/types";
+import { Mate } from "../../utils";
 import UnassignedMateCard from "../UnassignedMateCard/UnassignedMateCard";
 
 const CARD_WIDTH = 200;
@@ -19,7 +19,7 @@ type StyleType = DraggingStyle | NotDraggingStyle | undefined;
 type CSSType = CSSProperties | undefined;
 
 type FamilyDroppableType = {
-  mates: UnassignedMate[];
+  mates: Mate[];
   direction: "horizontal" | "vertical";
   droppableId: string;
   removeMate: (mate: Mate) => void;
@@ -120,7 +120,7 @@ const FamilyDroppable = ({
                 >
                   <UnassignedMateCard
                     mate={item}
-                    lastSynced={item.lastSynced}
+                    lastSynced={undefined} // TODO: add this back in
                     style={{ width: CARD_WIDTH }}
                     removeMate={removeMate}
                   />

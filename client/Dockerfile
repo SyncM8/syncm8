@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16-alpine
 
 # for our app
 EXPOSE 3000
@@ -10,6 +10,5 @@ WORKDIR /home/node/app
 COPY package.json .
 COPY package-lock.json .
 RUN npm install
-
 
 ENTRYPOINT [ "npm", "start"]

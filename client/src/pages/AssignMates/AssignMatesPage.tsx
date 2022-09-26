@@ -9,6 +9,7 @@ import {
   Space,
   Typography,
 } from "antd";
+import { Record as PbRecord } from "pocketbase";
 import React, { useEffect, useState } from "react";
 import {
   DragDropContext,
@@ -17,9 +18,11 @@ import {
 } from "react-beautiful-dnd";
 import { Prompt } from "react-router";
 
+import { client } from "../../api";
 import FamilyDroppable from "../../components/FamilyDroppable/FamilyDroppable";
 import { ASSIGN_MATES, GET_UNASSIGNED_DATA } from "../../graphql/graphql";
-import { Family, Mate, MateAssignmentInput, User } from "../../graphql/types";
+import { Family, MateAssignmentInput, User } from "../../graphql/types";
+import { getUser, Mate } from "../../utils";
 import { UnassignedMate } from "../types";
 
 const { Title } = Typography;
@@ -70,98 +73,130 @@ const move = <T,>(
 
 /**
  * Create UnassignedMate from mate's syncs
+ * TODO Add this feature back in
  * @param mate
  * @returns UnassignedMate with lastSynced
  */
-const populateLastSynced = (mate: Mate): UnassignedMate => {
-  if (mate.syncs?.length > 0) {
-    const date = mate.syncs.reduce(
-      (prev, cur) => (prev > cur ? prev : cur),
-      mate.syncs[0]
-    );
-    return {
-      ...mate,
-      lastSynced: new Date(date.timestamp),
-    };
-  }
-  return { ...mate };
-};
+// const populateLastSynced = (mate: Mate): UnassignedMate => {
+//   if (mate.syncs?.length > 0) {
+//     const date = mate.syncs.reduce(
+//       (prev, cur) => (prev > cur ? prev : cur),
+//       mate.syncs[0]
+//     );
+//     return {
+//       ...mate,
+//       lastSynced: new Date(date.timestamp),
+//     };
+//   }
+//   return { ...mate };
+// };
 
 /**
  * AssignMatesPage
  * @returns
  */
 const AssignMatesPage = (): JSX.Element => {
-  const [groups, setGroups] = useState<Record<string, UnassignedMate[]>>({});
-  const [familyMap, setFamilyMap] = useState<Record<string, Family>>({});
+  const [groups, setGroups] = useState<Record<string, Mate[]>>({});
+  const [familyName, setFamilyName] = useState<Record<string, string>>({});
   const [unassignedFamilyId, setUnassignedFamilyId] = useState("");
   const [isAllAssigned, setIsAllAssigned] = useState(false);
 
   /**
    * GQL Query to fetch unassigned mates and families info
    */
-  const [getUnassignedData] = useLazyQuery<{ getUserData: User }>(
-    GET_UNASSIGNED_DATA,
-    {
-      onCompleted: (data) => {
-        const { unassigned_family: unassignedFamily, families } =
-          data.getUserData;
-        const newFamilies = families.reduce(
+  const getUnassignedData = async () => {
+    try {
+      const user = await getUser();
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const { unassigned_family_id } = user.profile;
+  
+      const families = await client.records.getFullList("families", 200, {
+        sort: "+sync_interval_days"
+      });
+      
+      const familyNameMap = families.reduce(
+        (object, family) => ({
+          ...object,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          [family.id]: family.name,
+        }), {});
+        setFamilyName(familyNameMap);
+  
+      const unassignedMates = await client.records.getFullList("mates", 200, {
+        filter: `family_id = "${unassigned_family_id}"`
+      });
+  
+      const initialGroup = {
+        [unassigned_family_id]: (unassignedMates as unknown as Mate[])
+      };
+  
+      const newGroups = families
+        .filter(family => family.id !== unassigned_family_id)
+        .reduce(
           (object, family) => ({
             ...object,
-            [family.id]: family,
+            [family.id]: []
           }),
-          {}
+          initialGroup
         );
-        setFamilyMap(newFamilies);
-        setIsAllAssigned(unassignedFamily.mates.length === 0);
-
-        const initialGroup = {
-          [unassignedFamily.id]: unassignedFamily.mates.map(populateLastSynced),
-        };
-
-        const newGroups = families
-          .filter((family) => family.id !== unassignedFamily.id)
-          .reduce(
-            (object, family) => ({
-              ...object,
-              [family.id]: [],
-            }),
-            initialGroup
-          );
-        setGroups(newGroups);
-        setUnassignedFamilyId(unassignedFamily.id);
-      },
-      onError: (error) => {
-        notification.error({
-          message: error.name,
-          description: error.message,
-        });
-      },
-      fetchPolicy: "network-only",
-    }
-  );
-
-  /**
-   * GQL Mutation for assigning mates
-   */
-  const [assignMatesFn] = useMutation<{ assignMates: string[] }>(ASSIGN_MATES, {
-    onCompleted: (data) => {
-      notification.success({
-        message: `Assigned ${data.assignMates.length} mates!`,
-      });
-      getUnassignedData();
-    },
-    onError: (error) => {
+      
+      setIsAllAssigned(unassignedMates.length === 0);
+      setGroups(newGroups);
+      setUnassignedFamilyId(unassigned_family_id);  
+    } catch (err) {
       notification.error({
-        message: error.name,
-        description: error.message,
-      });
-    },
-  });
+        message: "Cannot get unassigned mates",
+        description: err
+      })
+    }
+  }
+
+  // const [getUnassignedData] = useLazyQuery<{ getUserData: User }>(
+  //   GET_UNASSIGNED_DATA,
+  //   {
+  //     onCompleted: (data) => {
+  //       const { unassigned_family: unassignedFamily, families } =
+  //         data.getUserData;
+  //       const newFamilies = families.reduce(
+  //         (object, family) => ({
+  //           ...object,
+  //           [family.id]: family,
+  //         }),
+  //         {}
+  //       );
+  //       setFamilyMap(newFamilies);
+  //       setIsAllAssigned(unassignedFamily.mates.length === 0);
+
+  //       const initialGroup = {
+  //         [unassignedFamily.id]: unassignedFamily.mates.map(populateLastSynced),
+  //       };
+
+  //       const newGroups = families
+  //         .filter((family) => family.id !== unassignedFamily.id)
+  //         .reduce(
+  //           (object, family) => ({
+  //             ...object,
+  //             [family.id]: [],
+  //           }),
+  //           initialGroup
+  //         );
+  //       setGroups(newGroups);
+  //       setUnassignedFamilyId(unassignedFamily.id);
+  //     },
+  //     onError: (error) => {
+  //       notification.error({
+  //         message: error.name,
+  //         description: error.message,
+  //       });
+  //     },
+  //     fetchPolicy: "network-only",
+  //   }
+  // );
+
 
   useEffect(() => {
-    getUnassignedData();
+    // eslint-disable-next-line no-void
+    void getUnassignedData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -170,7 +205,7 @@ const AssignMatesPage = (): JSX.Element => {
    * @param mate
    */
   const removeMate = (mate: Mate): void => {
-    // TODO: delete mate from DB
+    // TODO: delete mate from DB / add confirmation popup
     const newGroup: Record<string, Mate[]> = Object.keys(groups).reduce(
       (object, family) => ({
         ...object,
@@ -181,28 +216,76 @@ const AssignMatesPage = (): JSX.Element => {
     setGroups(newGroup);
   };
 
+  const submitNewAssignments = async () => {
+    const mateUpdatePromises: Promise<PbRecord>[] = [];
+    Object.keys(groups)
+      .filter(familyId => familyId !== unassignedFamilyId)
+      .forEach(familyId => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      groups[familyId].forEach((mate: Mate) => {
+        mateUpdatePromises.push(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+          client.records.update("mates", mate.id, {
+            family_id: familyId
+          })
+        )
+      })
+    });
+
+    try {
+      const results = await Promise.all(mateUpdatePromises);
+      notification.success({
+        message: `Updated ${results.length} mates!`
+      });
+      await getUnassignedData();
+    } catch (err) {
+      notification.error({
+        message: "Could not upate mates' families",
+        description: err
+      })
+    }
+  }
+
+  /**
+   * GQL Mutation for assigning mates
+   */
+  // const [assignMatesFn] = useMutation<{ assignMates: string[] }>(ASSIGN_MATES, {
+  //   onCompleted: (data) => {
+  //     notification.success({
+  //       message: `Assigned ${data.assignMates.length} mates!`,
+  //     });
+  //     getUnassignedData();
+  //   },
+  //   onError: (error) => {
+  //     notification.error({
+  //       message: error.name,
+  //       description: error.message,
+  //     });
+  //   },
+  // });
+
   /**
    * Submit mate assignments to server
    */
-  const submitNewAssignments = async () => {
-    const mateAssignments: MateAssignmentInput[] = [];
-    Object.keys(groups)
-      .filter((familyId) => familyId !== unassignedFamilyId)
-      .forEach((familyId) => {
-        groups[familyId].forEach((unassignedMate) => {
-          mateAssignments.push({
-            mateId: unassignedMate.id,
-            fromFamilyId: unassignedFamilyId,
-            toFamilyId: familyId,
-          });
-        });
-      });
-    await assignMatesFn({
-      variables: {
-        mateAssignments,
-      },
-    });
-  };
+  // const submitNewAssignments = async () => {
+  //   const mateAssignments: MateAssignmentInput[] = [];
+  //   Object.keys(groups)
+  //     .filter((familyId) => familyId !== unassignedFamilyId)
+  //     .forEach((familyId) => {
+  //       groups[familyId].forEach((unassignedMate) => {
+  //         mateAssignments.push({
+  //           mateId: unassignedMate.id,
+  //           fromFamilyId: unassignedFamilyId,
+  //           toFamilyId: familyId,
+  //         });
+  //       });
+  //     });
+  //   // await assignMatesFn({
+  //   //   variables: {
+  //   //     mateAssignments,
+  //   //   },
+  //   // });
+  // };
 
   /**
    * Calls when a user finishes dropping an item
@@ -239,8 +322,8 @@ const AssignMatesPage = (): JSX.Element => {
   };
 
   const pageUnsaved = Object.keys(groups)
-    .filter((family) => family !== "unassigned")
-    .some((family) => groups[family].length !== 0);
+    .filter((family) => family !== unassignedFamilyId)
+    .some((family) => groups[family].length > 0);
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -262,7 +345,7 @@ const AssignMatesPage = (): JSX.Element => {
           </Col>
         </Row>
         <FamilyDroppable
-          mates={groups[unassignedFamilyId] ?? []}
+          mates={groups[unassignedFamilyId] as unknown as Mate[] ?? []}
           direction="horizontal"
           droppableId={unassignedFamilyId}
           removeMate={removeMate}
@@ -278,11 +361,11 @@ const AssignMatesPage = (): JSX.Element => {
               >
                 <Row justify="center">
                   <Col>
-                    <Title level={2}>{familyMap[familyId].name}</Title>
+                    <Title level={2}>{familyName[familyId]}</Title>
                   </Col>
                 </Row>
                 <FamilyDroppable
-                  mates={groups[familyId] ?? []}
+                  mates={groups[familyId] as unknown as Mate[] ?? []}
                   droppableId={familyId}
                   direction="vertical"
                   removeMate={removeMate}

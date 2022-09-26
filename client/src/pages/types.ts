@@ -42,12 +42,3 @@ export type UpcomingSyncType = {
 export type LocationState = {
   prevPath: string;
 };
-
-export type MateRecord = {
-  key: string;
-  mate: Mate;
-  family: Family;
-  lastSync: Sync;
-  nextSync: Sync;
-  numSyncs: number;
-};

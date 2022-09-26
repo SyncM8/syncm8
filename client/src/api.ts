@@ -1,3 +1,5 @@
+import PocketBase from "pocketbase/dist/pocketbase.cjs";
+
 const apiPath = process.env.REACT_APP_API_URL ?? "";
 type ErrorResponse =
   | { status_code: number; error_details: string }
@@ -17,3 +19,6 @@ export interface IsLoggedInResponse {
 export const graphqlPath = `${apiPath}/graphql`;
 
 export const logoutPath = `${apiPath}/logout`;
+
+const url = "http://127.0.0.1:8090";
+export const client = new PocketBase(url);

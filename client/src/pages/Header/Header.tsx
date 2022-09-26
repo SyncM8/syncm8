@@ -19,13 +19,13 @@ import React from "react";
 import { useHistory } from "react-router";
 import { Link, useLocation } from "react-router-dom";
 
-import { logoutPath } from "../../api";
+import { client, logoutPath } from "../../api";
 
 type HeaderPageProps = {
-  logoutApp: () => void;
+  logout: () => void;
 };
 
-const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
+const HeaderPage = ({logout}: HeaderPageProps): JSX.Element => {
   const history = useHistory();
   const location = useLocation();
 
@@ -33,15 +33,18 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
    * Logs out user from app
    */
   const logoutHandler = (): void => {
-    axios
-      .post(logoutPath)
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => logoutApp());
+    // axios
+    //   .post(logoutPath)
+    //   .catch((err) => {
+    //     console.error(err);
+    //   })
+    //   .finally(() => logoutApp());
+    client.authStore.clear();
+    logout();
+    history.push("/");
   };
 
-  const menu = (
+  const menu = client.authStore.model !== null ? (
     <Menu>
       <Menu.Item key="add-mates">
         <Link to="/add-mates">Add Mates</Link>
@@ -59,7 +62,7 @@ const HeaderPage = ({ logoutApp }: HeaderPageProps): JSX.Element => {
         Log Out
       </Menu.Item>
     </Menu>
-  );
+  ) : <></>;
 
   return (
     <>
