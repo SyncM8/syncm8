@@ -165,9 +165,6 @@ case $op in
     migrate)
         runMigrate
         ;;
-    pre-commit|check)
-        runPrecommit $restArgs
-        ;;
     ps)
         runDockerPs
         ;;
